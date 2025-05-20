@@ -14,7 +14,7 @@
     "typecheck": "vue-tsc --noEmit",
     "preview": "vite preview",
     "test": "vitest",
-    "up": "taze major -I",
+    "up": "taze major -I"
   },
   "dependencies": {
     "react": "^19.1.0",
