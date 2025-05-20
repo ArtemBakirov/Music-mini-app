@@ -1,7 +1,7 @@
 {
-  "id": "test.app",
-  "name": "testing-test",
-  "description": "just testing how it works",
+  "id": "quotes.app",
+  "name": "quotes",
+  "description": "an app with quotes",
   "author": "PF4xiBDaUk6yb2AwYgrRnTKUrBtNHhoZJC",
   "permissions": []
 }
