@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { quoteDatabase } from "../data/quotes";
 import { Quote } from "../types";
 import {
   Card,
@@ -10,18 +8,12 @@ import {
   Box,
 } from "@mui/material";
 
-export default function RandomQuote() {
-  const [quote, setQuote] = useState<Quote | null>(null);
-
-  const getRandomQuote = () => {
-    const index = Math.floor(Math.random() * quoteDatabase.length);
-    setQuote(quoteDatabase[index]);
-  };
+export default function RandomQuote({quote}: {quote: Quote | null}) {
 
   return (
-    <Box sx={{ maxWidth: 600, margin: "0 auto", padding: 2 }}>
-      <Button variant="contained" color="primary" onClick={getRandomQuote}>
-        Показать цитату
+    <Box sx={{ display: "flex", flexDirection: "column", maxWidth: 600, margin: "0 auto", padding: 2 }}>
+      <Button variant="contained" color="primary" onClick={() => {}}>
+        Another Quote
       </Button>
 
       {quote && (

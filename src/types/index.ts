@@ -4,7 +4,7 @@ export interface Quote {
   id: string;
   text: string;
   author: string;
-  sourceUrl: string;     // <-- новый параметр
+  sourceUrl?: string;     // <-- новый параметр
   sourceTitle?: string;  // например: "Книга: Мартин Иден"
   tags?: string[];
   date: string;
