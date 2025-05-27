@@ -4,12 +4,11 @@ import {
   CardContent,
   Typography,
   Button,
-  Link,
   Box,
 } from "@mui/material";
 
 export default function RandomQuote({quote}: {quote: Quote | null}) {
-
+  console.log("quote is", quote);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", maxWidth: 600, margin: "0 auto", padding: 2 }}>
       <Button variant="contained" color="primary" onClick={() => {}}>
@@ -20,12 +19,12 @@ export default function RandomQuote({quote}: {quote: Quote | null}) {
         <Card sx={{ marginTop: 2 }}>
           <CardContent>
             <Typography variant="h6" gutterBottom>
-              "{quote.text}"
+              "{quote.q}"
             </Typography>
             <Typography variant="subtitle1" color="text.secondary">
-              — {quote.author}
+              — {quote.a}
             </Typography>
-            {quote.sourceUrl && (
+            {/*quote.sourceUrl && (
               <Typography variant="body2" sx={{ marginTop: 1 }}>
                 Источник:{" "}
                 <Link
@@ -36,7 +35,7 @@ export default function RandomQuote({quote}: {quote: Quote | null}) {
                   {quote.sourceTitle || quote.sourceUrl}
                 </Link>
               </Typography>
-            )}
+            )*/}
           </CardContent>
         </Card>
       )}

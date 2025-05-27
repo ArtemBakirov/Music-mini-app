@@ -1,9 +1,5 @@
 @import "tailwindcss";
 
-body{
-  background-color: #F1F6F9;
-}
-
 .main-container {
   background-image: url('./assets/example-background.jpg');
   background-size: cover;            /* Scale image to cover container */
