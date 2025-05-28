@@ -4,7 +4,7 @@ import './index.css'
 import { SdkService } from './bastyon-sdk/sdkService.ts'
 import {BrowserRouter, Routes, Route} from "react-router-dom";
 import Home from "./pages/Home.tsx";
-import {Music} from "./pages/Music.tsx";
+import Music from "./pages/Music.tsx";
 import {Layout} from "./Layout/Layout.tsx";
 void SdkService.init()
 
