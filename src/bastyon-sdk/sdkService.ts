@@ -35,6 +35,18 @@ export class SdkService {
     }
   }
 
+  public static getUsersInfo(): void {
+    this.ensureInitialized()
+    console.log("method getUsersInfo called")
+    try{
+      console.log("getting account info")
+      // return this.sdk!.get.account()
+    }catch(e){
+      console.log("Error occurred", e)
+    }
+    // const usersInfo = this.sdk!.get.account();
+  }
+
   /**
    * Ensures the SDK is initialized before calling other methods.
    * Throws an error if the SDK is not initialized.
