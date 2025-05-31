@@ -1,24 +1,23 @@
 import {useEffect, useState} from "react";
 import {SearchInput} from "../components/SearchInput.tsx";
 import {DisplaySongCard} from "../components/DisplaySongCard.tsx";
-import { SdkService } from '../bastyon-sdk/sdkService.ts'
+// import { SdkService } from '../bastyon-sdk/sdkService.ts'
 // Инициализация SDK
 
 
 // Пример использования
 async function sendNotification() {
-  await SdkService.init().then(async () => {
-    const sdk = window.BastyonSdk;
+  const sdk = new BastyonSdk();
+  await sdk.init().then(async () => {
+    sdk.emit('loaded');
     try {
-      await sdk.notifications.send({
-        title: 'Привет!',
-        body: 'Это тестовое уведомление'
-      });
+     const account = sdk.get.account();
+     console.log("account info", account);
     } catch (error) {
-      console.error('Ошибка отправки:', error);
+      console.error('Ошибка запроса:', error);
     }
   }).catch((error) => {
-    console.log("Error sending notification / initializing", error)
+    console.log("Error account / initializing", error)
   });
 }
 
