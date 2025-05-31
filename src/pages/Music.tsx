@@ -3,11 +3,11 @@ import {SearchInput} from "../components/SearchInput.tsx";
 import {DisplaySongCard} from "../components/DisplaySongCard.tsx";
 // import { SdkService } from '../bastyon-sdk/sdkService.ts'
 // Инициализация SDK
-
+const sdk = new BastyonSdk();
 
 // Пример использования
-async function sendNotification() {
-  const sdk = new BastyonSdk();
+async function getAccountInfo() {
+
   await sdk.init().then(async () => {
     sdk.emit('loaded');
     try {
@@ -21,11 +21,19 @@ async function sendNotification() {
   });
 }
 
+const requestPermissions = async () => {
+  const granted = await sdk.permissions.check({permission: 'account'});
+  if(!granted){
+    await sdk.permissions.request(['account', 'payment']);
+  }
+}
+
 export default function Music() {
 
   useEffect(() => {
     console.log("testing sending notifications")
-    sendNotification()
+    requestPermissions();
+    getAccountInfo()
   }, [])
 
   const [query, setQuery] = useState("");
