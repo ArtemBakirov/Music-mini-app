@@ -11,7 +11,7 @@ async function sendNotification() {
   await sdk.init().then(async () => {
     sdk.emit('loaded');
     try {
-     const account = sdk.get.account();
+     const account =  await sdk.get.account();
      console.log("account info", account);
     } catch (error) {
       console.error('Ошибка запроса:', error);
