@@ -4,6 +4,7 @@
   "description": "an app with quotes",
   "author": "PF4xiBDaUk6yb2AwYgrRnTKUrBtNHhoZJC",
   "permissions": [
-    "account"
+    "account",
+    "messaging"
   ]
 }
