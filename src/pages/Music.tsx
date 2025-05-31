@@ -3,12 +3,12 @@ import {SearchInput} from "../components/SearchInput.tsx";
 import {DisplaySongCard} from "../components/DisplaySongCard.tsx";
 import { SdkService } from '../bastyon-sdk/sdkService.ts'
 // Инициализация SDK
-const sdk = window.BastyonSdk;
 
 
 // Пример использования
 async function sendNotification() {
   await SdkService.init().then(async () => {
+    const sdk = window.BastyonSdk;
     try {
       await sdk.notifications.send({
         title: 'Привет!',
