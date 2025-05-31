@@ -6,7 +6,11 @@ import Home from "./pages/Home.tsx";
 import Music from "./pages/Music.tsx";
 import {Layout} from "./Layout/Layout.tsx";
 import { SdkService } from './bastyon-sdk/sdkService.ts'
-void SdkService.init()
+await SdkService.init().then(async () => {
+  await sendNotification()
+}).catch((error) => {
+  console.log("Error sending notification / initializing", error)
+});
 // Инициализация SDK
 const sdk = window.BastyonSdk;
 console.log("testing sending notifications")
@@ -21,7 +25,7 @@ async function sendNotification() {
     console.error('Ошибка отправки:', error);
   }
 }
-sendNotification()
+
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
