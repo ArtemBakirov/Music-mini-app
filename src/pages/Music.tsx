@@ -1,8 +1,34 @@
-import { useState } from "react";
+import {useEffect, useState} from "react";
 import {SearchInput} from "../components/SearchInput.tsx";
 import {DisplaySongCard} from "../components/DisplaySongCard.tsx";
+import { SdkService } from '../bastyon-sdk/sdkService.ts'
+// Инициализация SDK
+const sdk = window.BastyonSdk;
+
+
+// Пример использования
+async function sendNotification() {
+  await SdkService.init().then(async () => {
+    try {
+      await sdk.notifications.send({
+        title: 'Привет!',
+        body: 'Это тестовое уведомление'
+      });
+    } catch (error) {
+      console.error('Ошибка отправки:', error);
+    }
+  }).catch((error) => {
+    console.log("Error sending notification / initializing", error)
+  });
+}
 
 export default function Music() {
+
+  useEffect(() => {
+    console.log("testing sending notifications")
+    sendNotification()
+  }, [])
+
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<any[]>([]);
 
