@@ -1,12 +1,12 @@
 import {useEffect, useState} from "react";
 import {SearchInput} from "../components/SearchInput.tsx";
 import {DisplaySongCard} from "../components/DisplaySongCard.tsx";
-// import { SdkService } from '../bastyon-sdk/sdkService.ts'
+import { SdkService } from '../bastyon-sdk/sdkService.ts'
 // Инициализация SDK
-const sdk = new BastyonSdk();
+// const sdk = new BastyonSdk();
 
 // Пример использования
-async function getAccountInfo() {
+/*async function getAccountInfo() {
 
   await sdk.init().then(async () => {
     sdk.emit('loaded');
@@ -19,21 +19,20 @@ async function getAccountInfo() {
   }).catch((error) => {
     console.log("Error account / initializing", error)
   });
-}
+}*/
 
-const requestPermissions = async () => {
-  const granted = await sdk.permissions.check({permission: 'account'});
-  if(!granted){
-    await sdk.permissions.request(['account', 'payment']);
-  }
-}
+/*const requestPermissions = async () => {
+
+}*/
 
 export default function Music() {
 
   useEffect(() => {
+    void SdkService.init();
     console.log("testing sending notifications")
-    requestPermissions();
-    getAccountInfo()
+    void SdkService.requestPermissions();
+    void SdkService.getUsersInfo();
+    // getAccountInfo()
   }, [])
 
   const [query, setQuery] = useState("");

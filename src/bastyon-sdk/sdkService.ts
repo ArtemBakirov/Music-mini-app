@@ -25,8 +25,10 @@ export class SdkService {
 
     try {
       this.sdk = new window.BastyonSdk()
-      await this.sdk.init()
-      this.sdk.emit('loaded') // Notify the platform that the app is ready
+      await this.sdk.init().then(async () => {
+       this.sdk!.emit('loaded') // Notify the platform that the app is ready
+      })
+
       console.log('Bastyon SDK successfully initialized.')
     }
     catch (error) {
@@ -35,14 +37,21 @@ export class SdkService {
     }
   }
 
-  public static getUsersInfo(): void {
+  public static async requestPermissions(){
+    this.ensureInitialized();
+    const granted = await this.sdk!.permissions.check({permission: 'account'});
+    if(!granted){
+      await this.sdk!.permissions.request(['account']);
+    }
+  }
+
+  public static async getUsersInfo(): Promise<void> {
     this.ensureInitialized()
-    console.log("method getUsersInfo called")
-    try{
-      console.log("getting account info")
-      // return this.sdk!.get.account()
-    }catch(e){
-      console.log("Error occurred", e)
+    try {
+      const account =  await this.sdk!.get.account();
+      console.log("account info", account);
+    } catch (error) {
+      console.error('Ошибка запроса:', error);
     }
     // const usersInfo = this.sdk!.get.account();
   }
