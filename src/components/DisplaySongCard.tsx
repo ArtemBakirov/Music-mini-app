@@ -1,8 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
+import Add from "../assets/icons/add.svg?react";
+import Check from "../assets/icons/check.svg?react";
+import { Song } from "../types/playList.types.ts";
 
-export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) => {
+export const DisplaySongCard = ({
+  songData,
+  idx,
+}: {
+  songData: any;
+  idx: number;
+}) => {
   const playerRef = useRef<any>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -24,7 +33,6 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
       }
     }
   };
-
 
   const onYouTubeIframeAPIReady = () => {
     playerRef.current = new YT.Player(`yt-player-${songData.videoId}`, {
@@ -49,7 +57,9 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
 
   useEffect(() => {
     const interval = setInterval(() => {
-      const playerDiv = document.getElementById(`yt-player-${songData.videoId}`);
+      const playerDiv = document.getElementById(
+        `yt-player-${songData.videoId}`,
+      );
       if (window.YT?.Player && playerDiv && !playerRef.current) {
         clearInterval(interval);
         playerRef.current = new YT.Player(`yt-player-${songData.videoId}`, {
@@ -80,7 +90,6 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
   };
   const pauseSong = () => playerRef.current.pauseVideo();
 
-
   /*const playSong = async () => {
     const allIframes = document.querySelectorAll('iframe[id^="yt-player-"]');
 
@@ -103,7 +112,20 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
     );
   }*/
 
-  return(
+  const addSongToPlaylist = async (song: Song) => {
+    const playlistId = prompt("Enter playlist ID to add to:"); // or use modal
+    if (!playlistId) return;
+
+    await fetch(`https:/localhost:3000/api/playlists/${playlistId}/add`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(song),
+    });
+
+    alert("Added!");
+  };
+
+  return (
     <div className={"px-4 py-0"}>
       <div
         key={idx}
@@ -135,7 +157,9 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
               <div
                 className="h-2 bg-gray-600 rounded mt-2 cursor-pointer border-red-700 border-2"
                 onClick={(e) => {
-                  const rect = (e.target as HTMLDivElement).getBoundingClientRect();
+                  const rect = (
+                    e.target as HTMLDivElement
+                  ).getBoundingClientRect();
                   const clickX = e.clientX - rect.left;
                   const width = rect.width;
                   const percentage = (clickX / width) * 100;
@@ -150,10 +174,41 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
             )}
           </div>
         </div>
-        <div>
-          <div onClick={isPlaying? pauseSong: playSong} className={"bg-[#B059F6] rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"}>
-            <div className={"bg-white rounded-full w-6 h-6 flex items-center justify-center"}>
-              {isPlaying? <Pause className={"text-black"} />: <Play className={"text-black"}/>}
+        <div className={"flex gap-4"}>
+          <div
+            onClick={() => addSongToPlaylist(songData)}
+            className={
+              "bg-[#B059F6] rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
+            }
+          >
+            <div
+              className={
+                "bg-white rounded-full w-6 h-6 flex items-center justify-center"
+              }
+            >
+              {!isPlaying ? (
+                <Add className={"text-black"} />
+              ) : (
+                <Check className={"text-black"} />
+              )}
+            </div>
+          </div>
+          <div
+            onClick={isPlaying ? pauseSong : playSong}
+            className={
+              "bg-[#B059F6] rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
+            }
+          >
+            <div
+              className={
+                "bg-white rounded-full w-6 h-6 flex items-center justify-center"
+              }
+            >
+              {isPlaying ? (
+                <Pause className={"text-black"} />
+              ) : (
+                <Play className={"text-black"} />
+              )}
             </div>
           </div>
 
@@ -186,15 +241,13 @@ export const DisplaySongCard = ({songData, idx}: {songData: any, idx: number}) =
           </button>
         </div>*/}
         {/* Controls */}
-        </div>
-        {/* Thumbnail */}
+      </div>
+      {/* Thumbnail */}
 
-
-
-        {/* Hidden YouTube Player */}
+      {/* Hidden YouTube Player */}
       <div className="hidden">
         <div id={`yt-player-${songData.videoId}`}></div>
       </div>
     </div>
-  )
-}
+  );
+};

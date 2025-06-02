@@ -1,4 +1,4 @@
-import {Box, Typography} from "@mui/material";
+/*import {Box, Typography} from "@mui/material";
 import RandomQuote from "../components/RandomQuote";
 import { useState, useEffect } from "react";
 import {PicturesService} from "../services/pictures.service.ts";
@@ -27,12 +27,7 @@ function Home() {
 
 
 
-  return (
-      <Box sx={
-        {/*
-          backgroundImage: `url(${backgroundUrl})`,
-        */}
-      }
+
            className={"main-container w-full flex flex-col items-center justify-center"}>
         <div className={"flex flex-col gap-4 items-center justify-center"}>
           <Typography variant="h4" align="center" gutterBottom>
@@ -44,4 +39,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Home;*/
