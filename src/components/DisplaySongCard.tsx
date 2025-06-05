@@ -3,7 +3,18 @@ import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
 import Add from "../assets/icons/add.svg?react";
 import Check from "../assets/icons/check.svg?react";
-import { Song } from "../types/playList.types.ts";
+import { Playlist, Song } from "../types/playList.types.ts";
+
+import { AddSongToolBar } from "./AddSongToolBar.tsx";
+import axios from "axios";
+import {
+  usePlaylists,
+  useAddSongToPlaylist,
+} from "../hooks/query/playlist.queries.ts";
+
+const { data: playlists } = usePlaylists("test_address");
+
+const { mutate: addSong } = useAddSongToPlaylist();
 
 export const DisplaySongCard = ({
   songData,
@@ -17,6 +28,7 @@ export const DisplaySongCard = ({
   const [progress, setProgress] = useState(0);
   const intervalRef = useRef<number | null>(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
+  const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
 
   const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
     if (event.data === YT.PlayerState.PLAYING) {
@@ -33,27 +45,6 @@ export const DisplaySongCard = ({
       }
     }
   };
-
-  const onYouTubeIframeAPIReady = () => {
-    playerRef.current = new YT.Player(`yt-player-${songData.videoId}`, {
-      videoId: songData.videoId,
-      events: {
-        onReady: () => {
-          setIsPlayerReady(true);
-        },
-        onStateChange: onPlayerStateChange,
-      },
-    });
-  };
-
-  /*useEffect(() => {
-    // Wait for global YT to be defined
-    if (window.YT && window.YT.Player) {
-      onYouTubeIframeAPIReady();
-    } else {
-      (window as any).onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-    }
-  }, []);*/
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -90,39 +81,15 @@ export const DisplaySongCard = ({
   };
   const pauseSong = () => playerRef.current.pauseVideo();
 
-  /*const playSong = async () => {
-    const allIframes = document.querySelectorAll('iframe[id^="yt-player-"]');
+  const handleAddClick = () => setShowToolbar((prev) => !prev);
 
-    // Pause all other players
-    allIframes.forEach((iframe) => {
-      const id = iframe.getAttribute('id');
-      if (id !== `yt-player-${songData.videoId}`) {
-        (iframe as HTMLIFrameElement).contentWindow?.postMessage(
-          '{"event":"command","func":"pauseVideo","args":""}',
-          '*'
-        );
-      }
+  const handleSelectPlaylist = async (playlistId: string) => {
+    addSong({
+      playlistId,
+      song: songData,
     });
-
-    // Play this player
-    const current = document.getElementById(`yt-player-${songData.videoId}`) as HTMLIFrameElement;
-    current?.contentWindow?.postMessage(
-      '{"event":"command","func":"playVideo","args":""}',
-      '*'
-    );
-  }*/
-
-  const addSongToPlaylist = async (song: Song) => {
-    const playlistId = prompt("Enter playlist ID to add to:"); // or use modal
-    if (!playlistId) return;
-
-    await fetch(`https:/localhost:3000/api/playlists/${playlistId}/add`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(song),
-    });
-
-    alert("Added!");
+    setShowToolbar(false);
+    // Optional: Update local store to reflect change
   };
 
   return (
@@ -152,7 +119,6 @@ export const DisplaySongCard = ({
             </div>
 
             {/* Progress Bar */}
-            <div>isPlaying is {isPlaying}</div>
             {isPlaying && (
               <div
                 className="h-2 bg-gray-600 rounded mt-2 cursor-pointer border-red-700 border-2"
@@ -176,7 +142,7 @@ export const DisplaySongCard = ({
         </div>
         <div className={"flex gap-4"}>
           <div
-            onClick={() => addSongToPlaylist(songData)}
+            onClick={handleAddClick}
             className={
               "bg-[#B059F6] rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
             }
@@ -192,6 +158,14 @@ export const DisplaySongCard = ({
                 <Check className={"text-black"} />
               )}
             </div>
+            {showToolbar && (
+              <AddSongToolBar
+                playlists={playlists}
+                songId={songData.videoId}
+                onSelect={handleSelectPlaylist}
+                onClose={() => setShowToolbar(false)}
+              />
+            )}
           </div>
           <div
             onClick={isPlaying ? pauseSong : playSong}
@@ -211,38 +185,8 @@ export const DisplaySongCard = ({
               )}
             </div>
           </div>
-
-          {/*<div className="flex gap-2">
-            <button onClick={playSong} className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition">▶</button>
-            <button onClick={pauseSong} className="px-4 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition">⏸</button>
-          </div>*/}
         </div>
-
-        {/* Controls */}
-        {/*<div className="flex gap-2">
-          <button
-            onClick={playSong}
-            className="px-4 py-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition"
-          >
-            ▶ Play
-          </button>
-
-          <button
-            onClick={() => {
-              const player = document.getElementById(`yt-player-${songData.videoId}`) as HTMLIFrameElement;
-              player?.contentWindow?.postMessage(
-                '{"event":"command","func":"pauseVideo","args":""}',
-                '*'
-              );
-            }}
-            className="px-4 py-2 bg-yellow-500 text-white rounded-full hover:bg-yellow-600 transition"
-          >
-            ⏸ Pause
-          </button>
-        </div>*/}
-        {/* Controls */}
       </div>
-      {/* Thumbnail */}
 
       {/* Hidden YouTube Player */}
       <div className="hidden">

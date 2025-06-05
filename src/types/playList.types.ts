@@ -5,8 +5,8 @@ export interface Song {
 }
 
 export interface Playlist {
-  _id?: string;
-  name: string;
+  _id: string;
+  title: string;
   creatorPubKey: string;
   songs: Song[];
   createdAt?: string;
