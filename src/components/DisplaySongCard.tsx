@@ -2,19 +2,13 @@ import { useEffect, useRef, useState } from "react";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
 import Add from "../assets/icons/add.svg?react";
-import Check from "../assets/icons/check.svg?react";
-import { Playlist, Song } from "../types/playList.types.ts";
 
 import { AddSongToolBar } from "./AddSongToolBar.tsx";
-import axios from "axios";
 import {
   usePlaylists,
   useAddSongToPlaylist,
+  useAllUserSongIds,
 } from "../hooks/query/playlist.queries.ts";
-
-const { data: playlists } = usePlaylists("test_address");
-
-const { mutate: addSong } = useAddSongToPlaylist();
 
 export const DisplaySongCard = ({
   songData,
@@ -24,17 +18,31 @@ export const DisplaySongCard = ({
   idx: number;
 }) => {
   const playerRef = useRef<any>(null);
+
+  // player ref
+  const containerRef = useRef<HTMLDivElement | null>(null);
+
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const intervalRef = useRef<number | null>(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
 
+  // react-query hooks
+  const { data: playlists } = usePlaylists("test_address");
+  const { data: allSongsIds } = useAllUserSongIds("test_address");
+  const { mutate: addSong } = useAddSongToPlaylist();
+
   const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
+    console.log("Player state changed:", event.data);
     if (event.data === YT.PlayerState.PLAYING) {
+      console.log("Player is playing");
       setIsPlaying(true);
       intervalRef.current = window.setInterval(() => {
+        console.log("Player ref?:", playerRef.current);
         const current = playerRef.current.getCurrentTime();
+        console.log("Current time:", current);
+        // Uncaught TypeError: playerRef.current.getCurrentTime is not a function
         const total = playerRef.current.getDuration();
         setProgress((current / total) * 100);
       }, 500);
@@ -47,13 +55,16 @@ export const DisplaySongCard = ({
   };
 
   useEffect(() => {
+    if (!containerRef.current) return;
+
     const interval = setInterval(() => {
-      const playerDiv = document.getElementById(
+      /*const playerDiv = document.getElementById(
         `yt-player-${songData.videoId}`,
-      );
-      if (window.YT?.Player && playerDiv && !playerRef.current) {
+      );*/
+      if (window.YT?.Player && containerRef.current && !playerRef.current) {
         clearInterval(interval);
-        playerRef.current = new YT.Player(`yt-player-${songData.videoId}`, {
+        console.log("creating new player");
+        playerRef.current = new YT.Player(containerRef.current, {
           videoId: songData.videoId,
           events: {
             onReady: () => setIsPlayerReady(true),
@@ -63,7 +74,13 @@ export const DisplaySongCard = ({
       }
     }, 200);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      // Optionally clean up the player
+      if (playerRef.current?.destroy) {
+        playerRef.current.destroy();
+      }
+    };
   }, []);
 
   const seekTo = (percentage: number) => {
@@ -93,12 +110,9 @@ export const DisplaySongCard = ({
   };
 
   return (
-    <div className={"px-4 py-0"}>
-      <div
-        key={idx}
-        className="border-1 border-blue-400 flex items-center justify-between gap-4 p-4 px-12 rounded-xl  bg-transparent hover:shadow-lg transition"
-      >
-        <div>
+    <div key={idx} className={"px-4 py-0"}>
+      <div className="relative border-2 border-purple-700 flex items-center justify-between gap-4 p-4 px-12 rounded-xl  bg-transparent hover:shadow-lg transition">
+        <div className={"flex items-center justify-start gap-4 w-full"}>
           <img
             src={`https://i.ytimg.com/vi/${songData.videoId}/mqdefault.jpg`}
             alt={songData.title}
@@ -108,20 +122,12 @@ export const DisplaySongCard = ({
             {/* Song Info */}
             <div className="flex flex-col flex-grow">
               <div className="text-lg font-semibold">{songData.title}</div>
-              <div className="text-sm text-gray-500 flex items-center gap-1">
-                <img
-                  src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg"
-                  alt="YouTube"
-                  className="w-12 h-auto"
-                />
-                <span className="text-xs text-gray-400">YouTube Music</span>
-              </div>
             </div>
 
             {/* Progress Bar */}
             {isPlaying && (
               <div
-                className="h-2 bg-gray-600 rounded mt-2 cursor-pointer border-red-700 border-2"
+                className="absolute w-100 top-18 h-2 bg-gray-600 rounded mt-2 cursor-pointer border-red-700 border-2"
                 onClick={(e) => {
                   const rect = (
                     e.target as HTMLDivElement
@@ -140,6 +146,7 @@ export const DisplaySongCard = ({
             )}
           </div>
         </div>
+
         <div className={"flex gap-4"}>
           <div
             onClick={handleAddClick}
@@ -152,14 +159,11 @@ export const DisplaySongCard = ({
                 "bg-white rounded-full w-6 h-6 flex items-center justify-center"
               }
             >
-              {!isPlaying ? (
-                <Add className={"text-black"} />
-              ) : (
-                <Check className={"text-black"} />
-              )}
+              <Add className={"text-black"} />
             </div>
             {showToolbar && (
               <AddSongToolBar
+                allSongsIds={allSongsIds}
                 playlists={playlists}
                 songId={songData.videoId}
                 onSelect={handleSelectPlaylist}
@@ -190,7 +194,8 @@ export const DisplaySongCard = ({
 
       {/* Hidden YouTube Player */}
       <div className="hidden">
-        <div id={`yt-player-${songData.videoId}`}></div>
+        {/*  <div id={`yt-player-${songData.videoId}`}></div> */}
+        <div ref={containerRef} />
       </div>
     </div>
   );

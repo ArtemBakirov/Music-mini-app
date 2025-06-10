@@ -1,15 +1,18 @@
 import { useEffect, useRef } from "react";
-import { Playlist } from "../types/playList.types";
+import { PlaylistSongsIds, Playlist } from "../types/playList.types";
+import Check from "../assets/icons/check.svg?react";
 
 type Props = {
   playlists: Playlist[];
   songId: string;
   onSelect: (playlistId: string) => void;
   onClose: () => void;
+  allSongsIds?: PlaylistSongsIds[];
 };
 
 export const AddSongToolBar = ({
   playlists,
+  allSongsIds,
   songId,
   onSelect,
   onClose,
@@ -34,15 +37,27 @@ export const AddSongToolBar = ({
     >
       <p className="font-semibold mb-2">Add to Playlist:</p>
       <ul className="space-y-2">
-        {playlists.map((playlist) => (
-          <li
-            key={playlist._id}
-            className="cursor-pointer hover:bg-gray-100 px-3 py-1 rounded text-black"
-            onClick={() => onSelect(playlist._id)}
-          >
-            {playlist.title}
-          </li>
-        ))}
+        {playlists.map((playlist) => {
+          const songsIds =
+            allSongsIds?.find((p) => p._id === playlist._id)?.videoIds || [];
+          const included = songsIds.includes(songId);
+          return (
+            <li
+              key={playlist._id}
+              className="cursor-pointer hover:bg-gray-100 px-3 py-1 rounded text-black"
+              onClick={() => {
+                if (included) {
+                  alert("Song already in this playlist");
+                } else {
+                  onSelect(playlist._id);
+                }
+              }}
+            >
+              {playlist.title}
+              {included && <Check className={"text-black"} />}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

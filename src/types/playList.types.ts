@@ -11,3 +11,8 @@ export interface Playlist {
   songs: Song[];
   createdAt?: string;
 }
+
+export type PlaylistSongsIds = {
+  _id: string;
+  videoIds: string[];
+};
