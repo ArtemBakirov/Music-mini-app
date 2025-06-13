@@ -89,7 +89,7 @@ export const DisplaySongCard = ({
   };
 
   const playSong = () => {
-    console.log("Player ref:", playerRef.current);
+    // console.log("Player ref:", playerRef.current);
     if (isPlayerReady && playerRef.current?.playVideo) {
       playerRef.current.playVideo();
     } else {
