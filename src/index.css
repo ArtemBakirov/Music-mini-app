@@ -1,5 +1,35 @@
 @import "tailwindcss";
 
+/* custom scrollbar the same theme as app */
+
+/* Apply to all scrollbars */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #b059f6; /* Custom purple thumb */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #2d0f3a; /* A darker background to fit your app */
+}
+
+/* Firefox-specific scrollbar styling */
+* {
+  scrollbar-width: auto;
+  scrollbar-color: #b059f6 #2d0f3a;
+}
+
+
+
+
+
+
+
+/* styles for images, maybe don't need anymore */
 .main-container {
   background-image: url('./assets/example-background.jpg');
   background-size: cover;            /* Scale image to cover container */

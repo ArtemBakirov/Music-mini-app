@@ -28,6 +28,9 @@ export const DisplaySongCard = ({
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
 
+  // is seeking state to show the progressbar while seeking to the another part of audio
+  const [isSeeking, setIsSeeking] = useState(false);
+
   // react-query hooks
   const { data: playlists } = usePlaylists("test_address");
   const { data: allSongsIds } = useAllUserSongIds("test_address");
@@ -37,6 +40,9 @@ export const DisplaySongCard = ({
     console.log("Player state changed:", event.data);
     if (event.data === YT.PlayerState.PLAYING) {
       console.log("Player is playing");
+      if (isSeeking) {
+        setIsSeeking(false); // Clear seeking when playback resumes
+      }
       setIsPlaying(true);
       intervalRef.current = window.setInterval(() => {
         console.log("Player ref?:", playerRef.current);
@@ -84,6 +90,7 @@ export const DisplaySongCard = ({
   }, []);
 
   const seekTo = (percentage: number) => {
+    setIsSeeking(true);
     const duration = playerRef.current.getDuration();
     playerRef.current.seekTo((percentage / 100) * duration, true);
   };
@@ -125,9 +132,9 @@ export const DisplaySongCard = ({
             </div>
 
             {/* Progress Bar */}
-            {isPlaying && (
+            {(isPlaying || isSeeking) && (
               <div
-                className="absolute w-100 top-18 h-2 bg-gray-600 rounded mt-2 cursor-pointer border-red-700 border-2"
+                className="absolute w-100 top-18 h-2 bg-[#2D0F3AFF] rounded mt-2 cursor-pointer"
                 onClick={(e) => {
                   const rect = (
                     e.target as HTMLDivElement
@@ -139,7 +146,7 @@ export const DisplaySongCard = ({
                 }}
               >
                 <div
-                  className="h-full bg-green-400 rounded"
+                  className="h-full bg-[#B059F6FF] rounded"
                   style={{ width: `${progress}%` }}
                 ></div>
               </div>

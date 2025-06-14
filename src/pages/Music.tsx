@@ -15,21 +15,11 @@ export default function Music() {
   const [query, setQuery] = useState(""); // User typing
   const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
 
-  /* const search = async () => {
-    const res = await fetch(
-      `http://localhost:3000/api/music/youtubeSearch?q=${encodeURIComponent(query)}&nextPageToken=${nextPageToken}`,
-    );
-    const data = await res.json();
-    console.log("sogs are", data.items);
-    setResults(data.items);
-    const token = data.nextPageToken;
-    console.log("next page token ui", nextPageToken);
-    setNextPageToken(token);
-  }; */
-
-  // react-query hook for infinite search
+  // react-query hooks
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteYoutubeSearch(searchQuery);
+ //
+
   console.log("data is", data);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useRef<HTMLDivElement | null>(null);
@@ -49,26 +39,6 @@ export default function Music() {
       lastElementRef.current = node;
     }
   };
-  // infinite scroll trigger
-  /*useEffect(() => {
-    console.log("observerRef.current", observerRef.current, hasNextPage);
-    if (!observerRef.current || !hasNextPage) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting && hasNextPage) {
-          fetchNextPage();
-        }
-      },
-      { threshold: 1 },
-    );
-
-    observer.observe(observerRef.current);
-
-    return () => observer.disconnect();
-  }, [observerRef.current, hasNextPage, fetchNextPage]);*/
-  // if (status === "pending") return <div>Loading...</div>;
-  //if (status === "error") return <div>Error loading songs</div>;
 
   const handleSearch = () => {
     if (query.trim()) {
@@ -79,7 +49,7 @@ export default function Music() {
   return (
     <div
       className={
-        " bg-[#371A4D] h-screen p-4 pt-12 w-full flex flex-col gap-4 items-center"
+        " bg-[#371A4D] h-screen p-4 pt-12 w-full flex flex-col gap-4 items-center text-white"
       }
     >
       <h2>Search music</h2>
