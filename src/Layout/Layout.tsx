@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
+import {PlayerFooter} from "../components/PlayerFooter.tsx";
 
 export const Layout = () => {
   return (
@@ -11,6 +12,7 @@ export const Layout = () => {
       >
         <Navbar />
         <Outlet />
+        <PlayerFooter />
       </div>
       <div id={"modal-root"} />
     </div>

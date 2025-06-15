@@ -9,6 +9,12 @@ export const SearchInput = ({
   setQuery: (val: string) => void;
   onClick: () => void;
 }) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      onClick();
+    }
+  };
+
   return (
     <div className="relative w-full mb-4">
       <div
@@ -23,6 +29,7 @@ export const SearchInput = ({
         type="text"
         placeholder="Search music..."
         value={query}
+        onKeyDown={handleKeyDown}
         onChange={(e) => setQuery(e.target.value)}
         className="bg-[#55356B] text-white pl-12 pr-4 py-2 rounded-3xl w-full placeholder-white/60 focus:outline-none"
       />

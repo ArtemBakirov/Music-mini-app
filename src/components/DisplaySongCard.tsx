@@ -9,6 +9,7 @@ import {
   useAddSongToPlaylist,
   useAllUserSongIds,
 } from "../hooks/query/playlist.queries.ts";
+import { usePlayerStore } from "../hooks/stores/usePlayerStore.ts";
 
 export const DisplaySongCard = ({
   songData,
@@ -22,8 +23,8 @@ export const DisplaySongCard = ({
   // player ref
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [progress, setProgress] = useState(0);
   const intervalRef = useRef<number | null>(null);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
@@ -35,6 +36,19 @@ export const DisplaySongCard = ({
   const { data: playlists } = usePlaylists("test_address");
   const { data: allSongsIds } = useAllUserSongIds("test_address");
   const { mutate: addSong } = useAddSongToPlaylist();
+
+  // zustand state of the current playing song
+  const {
+    currentSong,
+    isPlaying,
+    progress,
+    setCurrentSong,
+    setIsPlaying,
+    setProgress,
+    setPlayer,
+    player,
+  } = usePlayerStore();
+  const isActive = currentSong?.videoId === songData.videoId;
 
   const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
     console.log("Player state changed:", event.data);
@@ -61,7 +75,7 @@ export const DisplaySongCard = ({
   };
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || currentSong?.videoId !== songData.videoId) return;
 
     const interval = setInterval(() => {
       /*const playerDiv = document.getElementById(
@@ -73,7 +87,10 @@ export const DisplaySongCard = ({
         playerRef.current = new YT.Player(containerRef.current, {
           videoId: songData.videoId,
           events: {
-            onReady: () => setIsPlayerReady(true),
+            onReady: () => {
+              setPlayer(playerRef.current);
+              setIsPlayerReady(true)
+            },
             onStateChange: onPlayerStateChange,
           },
         });
@@ -86,24 +103,39 @@ export const DisplaySongCard = ({
       if (playerRef.current?.destroy) {
         playerRef.current.destroy();
       }
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, []);
+  }, [currentSong]);
+
+  useEffect(() => {
+    // Auto-pause this song if it's no longer the current
+    if (currentSong?.videoId !== songData.videoId && isPlaying) {
+      pauseSong();
+    }
+  }, [currentSong]);
 
   const seekTo = (percentage: number) => {
     setIsSeeking(true);
-    const duration = playerRef.current.getDuration();
-    playerRef.current.seekTo((percentage / 100) * duration, true);
+    const duration = player.current.getDuration();
+    player.seekTo((percentage / 100) * duration, true);
   };
 
   const playSong = () => {
     // console.log("Player ref:", playerRef.current);
+    // update global stored current song id
+    if (!isActive && (currentSong?.videoId !== songData.videoId)) {
+      setCurrentSong(songData); // this updates the footer and pauses others
+    } else{
+      player?.playVideo();
+    }
+
     if (isPlayerReady && playerRef.current?.playVideo) {
       playerRef.current.playVideo();
     } else {
       console.warn("Player not ready yet");
     }
   };
-  const pauseSong = () => playerRef.current.pauseVideo();
+  const pauseSong = () => player.pauseVideo();
 
   const handleAddClick = () => setShowToolbar((prev) => !prev);
 
