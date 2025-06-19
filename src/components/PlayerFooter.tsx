@@ -5,15 +5,28 @@ import { usePlayerStore } from "../hooks/stores/usePlayerStore";
 
 export const PlayerFooter = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const playerRef = useRef<any>(null);
+
   const intervalRef = useRef<number | null>(null);
 
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [progress, setProgress] = useState(0);
+
+  // const [isPlaying, setIsPlaying] = useState(false);
+  // const [progress, setProgress] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [isSeeking, setIsSeeking] = useState(false);
 
-  const { currentSong, clearSong } = usePlayerStore();
+  const {
+    currentSong,
+    isPlaying,
+    progress,
+    // setCurrentSong,
+    setIsPlaying,
+    setProgress,
+    // setPlayer,
+    // player,
+    clearSong,
+  } = usePlayerStore();
+  // player reference
+  const playerRef = useRef<any>(null);
 
   const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
     if (event.data === YT.PlayerState.PLAYING) {
@@ -50,6 +63,7 @@ export const PlayerFooter = () => {
 
   const play = () => {
     if (isPlayerReady && playerRef.current?.playVideo) {
+      // setCurrentSong(songData)
       playerRef.current.playVideo();
     }
   };

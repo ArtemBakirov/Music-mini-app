@@ -18,9 +18,9 @@ export const DisplaySongCard = ({
   songData: any;
   idx: number;
 }) => {
+  // player reference
   const playerRef = useRef<any>(null);
 
-  // player ref
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   // const [isPlaying, setIsPlaying] = useState(false);
@@ -45,8 +45,8 @@ export const DisplaySongCard = ({
     setCurrentSong,
     setIsPlaying,
     setProgress,
-    setPlayer,
-    player,
+    // setPlayer,
+    // player,
   } = usePlayerStore();
   const isActive = currentSong?.videoId === songData.videoId;
 
@@ -88,8 +88,11 @@ export const DisplaySongCard = ({
           videoId: songData.videoId,
           events: {
             onReady: () => {
-              setPlayer(playerRef.current);
-              setIsPlayerReady(true)
+              setIsPlayerReady(true);
+              // Auto-play only if this is the current active song
+              if (isActive && playerRef.current?.playVideo) {
+                playerRef.current.playVideo();
+              }
             },
             onStateChange: onPlayerStateChange,
           },
@@ -116,26 +119,20 @@ export const DisplaySongCard = ({
 
   const seekTo = (percentage: number) => {
     setIsSeeking(true);
-    const duration = player.current.getDuration();
-    player.seekTo((percentage / 100) * duration, true);
+    const duration = playerRef.current.getDuration();
+    playerRef.current.seekTo((percentage / 100) * duration, true);
   };
 
   const playSong = () => {
-    // console.log("Player ref:", playerRef.current);
-    // update global stored current song id
-    if (!isActive && (currentSong?.videoId !== songData.videoId)) {
-      setCurrentSong(songData); // this updates the footer and pauses others
-    } else{
-      player?.playVideo();
-    }
-
-    if (isPlayerReady && playerRef.current?.playVideo) {
+    if (!isActive) {
+      setCurrentSong(songData); // this will cause the component to re-render and init player
+    } else if (isPlayerReady && playerRef.current?.playVideo) {
       playerRef.current.playVideo();
     } else {
       console.warn("Player not ready yet");
     }
   };
-  const pauseSong = () => player.pauseVideo();
+  const pauseSong = () => playerRef.current.pauseVideo();
 
   const handleAddClick = () => setShowToolbar((prev) => !prev);
 

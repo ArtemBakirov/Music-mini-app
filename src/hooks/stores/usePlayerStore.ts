@@ -9,8 +9,8 @@ interface PlayerState {
 
   isPlaying: boolean;
   progress: number;
-  player: YT.Player | null;
-  setPlayer: (player: YT.Player) => void;
+  // player: YT.Player | null;
+  // setPlayer: (player: YT.Player) => void;
   setIsPlaying: (playing: boolean) => void;
   setProgress: (progress: number) => void;
 
@@ -25,13 +25,18 @@ export const usePlayerStore = create<PlayerState>()(
 
       isPlaying: false,
       progress: 0,
-      player: null,
-      setPlayer: (player) => set({ player }),
+      // player: null,
+      // setPlayer: (player) => set({ player }),
       setIsPlaying: (isPlaying) => set({ isPlaying }),
       setProgress: (progress) => set({ progress }),
     }),
     {
-      name: 'player-storage', // localStorage key
+      name: "player-store",
+      partialize: (state) => ({
+        currentSong: state.currentSong,
+        isPlaying: state.isPlaying,
+        progress: state.progress,
+      }),
     }
   )
 );
