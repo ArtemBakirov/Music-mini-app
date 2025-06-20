@@ -11,6 +11,9 @@ import {
 } from "../hooks/query/playlist.queries.ts";
 import { usePlayerStore } from "../hooks/stores/usePlayerStore.ts";
 
+// global player manager
+import { youtubePlayerManager } from "../utils/YoutubePlayerManager";
+
 export const DisplaySongCard = ({
   songData,
   idx,
@@ -51,20 +54,22 @@ export const DisplaySongCard = ({
   const isActive = currentSong?.videoId === songData.videoId;
 
   const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
-    console.log("Player state changed:", event.data);
+    //console.log("Player state changed:", event.data);
     if (event.data === YT.PlayerState.PLAYING) {
-      console.log("Player is playing");
+      //console.log("Player is playing");
       if (isSeeking) {
         setIsSeeking(false); // Clear seeking when playback resumes
       }
       setIsPlaying(true);
       intervalRef.current = window.setInterval(() => {
-        console.log("Player ref?:", playerRef.current);
+        //console.log("Player ref?:", playerRef.current);
         const current = playerRef.current.getCurrentTime();
-        console.log("Current time:", current);
+        //console.log("Current time:", current);
         // Uncaught TypeError: playerRef.current.getCurrentTime is not a function
         const total = playerRef.current.getDuration();
-        setProgress((current / total) * 100);
+        if(isActive){
+          setProgress((current / total) * 100);
+        }
       }, 500);
     } else {
       setIsPlaying(false);
@@ -83,19 +88,30 @@ export const DisplaySongCard = ({
       );*/
       if (window.YT?.Player && containerRef.current && !playerRef.current) {
         clearInterval(interval);
-        console.log("creating new player");
-        playerRef.current = new YT.Player(containerRef.current, {
+        // console.log("creating new player");
+        /* playerRef.current = new YT.Player(containerRef.current, {
           videoId: songData.videoId,
           events: {
             onReady: () => {
               setIsPlayerReady(true);
-              // Auto-play only if this is the current active song
+
               if (isActive && playerRef.current?.playVideo) {
                 playerRef.current.playVideo();
               }
             },
             onStateChange: onPlayerStateChange,
           },
+        });*/
+        youtubePlayerManager.initPlayer(containerRef.current, songData.videoId, (event) => {
+          if (event.data === YT.PlayerState.PLAYING) {
+            setIsPlaying(true);
+            const interval = setInterval(() => {
+              setProgress(youtubePlayerManager.getProgress());
+            }, 500);
+            return () => clearInterval(interval);
+          } else {
+            setIsPlaying(false);
+          }
         });
       }
     }, 200);
@@ -104,7 +120,7 @@ export const DisplaySongCard = ({
       clearInterval(interval);
       // Optionally clean up the player
       if (playerRef.current?.destroy) {
-        playerRef.current.destroy();
+        youtubePlayerManager.destroy();
       }
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
@@ -119,20 +135,22 @@ export const DisplaySongCard = ({
 
   const seekTo = (percentage: number) => {
     setIsSeeking(true);
-    const duration = playerRef.current.getDuration();
-    playerRef.current.seekTo((percentage / 100) * duration, true);
+    // const duration = playerRef.current.getDuration();
+    youtubePlayerManager.seekTo(percentage);
   };
 
   const playSong = () => {
+    console.log("")
     if (!isActive) {
       setCurrentSong(songData); // this will cause the component to re-render and init player
-    } else if (isPlayerReady && playerRef.current?.playVideo) {
-      playerRef.current.playVideo();
+    } else if (youtubePlayerManager.play) {
+      console.log("play")
+      youtubePlayerManager.play();
     } else {
       console.warn("Player not ready yet");
     }
   };
-  const pauseSong = () => playerRef.current.pauseVideo();
+  const pauseSong = () => youtubePlayerManager.pause();
 
   const handleAddClick = () => setShowToolbar((prev) => !prev);
 
@@ -161,7 +179,7 @@ export const DisplaySongCard = ({
             </div>
 
             {/* Progress Bar */}
-            {(isPlaying || isSeeking) && (
+            {isActive && (isPlaying || isSeeking) && (
               <div
                 className="absolute w-100 top-18 h-2 bg-[#2D0F3AFF] rounded mt-2 cursor-pointer"
                 onClick={(e) => {
@@ -208,7 +226,7 @@ export const DisplaySongCard = ({
             )}
           </div>
           <div
-            onClick={isPlaying ? pauseSong : playSong}
+            onClick={isActive && isPlaying ? pauseSong : playSong}
             className={
               "bg-[#B059F6] rounded-full w-12 h-12 flex items-center justify-center cursor-pointer"
             }
@@ -218,7 +236,7 @@ export const DisplaySongCard = ({
                 "bg-white rounded-full w-6 h-6 flex items-center justify-center"
               }
             >
-              {isPlaying ? (
+              {isActive && isPlaying ? (
                 <Pause className={"text-black"} />
               ) : (
                 <Play className={"text-black"} />

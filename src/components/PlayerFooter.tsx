@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
 import { usePlayerStore } from "../hooks/stores/usePlayerStore";
+import { youtubePlayerManager } from "../utils/YoutubePlayerManager";
 
 export const PlayerFooter = () => {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -47,35 +48,49 @@ export const PlayerFooter = () => {
   useEffect(() => {
     if (!currentSong || !containerRef.current || !window.YT?.Player) return;
 
-    playerRef.current = new window.YT.Player(containerRef.current, {
+    /*playerRef.current = new window.YT.Player(containerRef.current, {
       videoId: currentSong.videoId,
       events: {
         onReady: () => setIsPlayerReady(true),
         onStateChange: onPlayerStateChange,
       },
+    });*/
+    youtubePlayerManager.initPlayer(containerRef.current, currentSong.videoId, (event) => {
+      if (event.data === YT.PlayerState.PLAYING) {
+        setIsPlaying(true);
+        const interval = setInterval(() => {
+          setProgress(youtubePlayerManager.getProgress());
+        }, 500);
+        return () => clearInterval(interval);
+      } else {
+        setIsPlaying(false);
+      }
     });
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
-      playerRef.current?.destroy?.();
+      youtubePlayerManager.destroy?.();
     };
   }, [currentSong]);
 
   const play = () => {
-    if (isPlayerReady && playerRef.current?.playVideo) {
+    if (youtubePlayerManager.play) {
+      console.log("play")
       // setCurrentSong(songData)
-      playerRef.current.playVideo();
+      youtubePlayerManager.play();
     }
   };
 
   const pause = () => {
-    playerRef.current?.pauseVideo?.();
+    console.log("Pause")
+    console.log("player ref", playerRef.current);
+    youtubePlayerManager.pause();
   };
 
   const seekTo = (percentage: number) => {
     setIsSeeking(true);
-    const duration = playerRef.current?.getDuration?.() || 1;
-    playerRef.current?.seekTo?.((percentage / 100) * duration, true);
+    // const duration = playerRef.current?.getDuration?.() || 1;
+    youtubePlayerManager.seekTo?.(percentage);
   };
 
   if (!currentSong) return null;
@@ -112,7 +127,7 @@ export const PlayerFooter = () => {
       <div className="flex items-center gap-4">
         <button
           onClick={isPlaying ? pause : play}
-          className="bg-white rounded-full w-8 h-8 flex items-center justify-center"
+          className="bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
         >
           {isPlaying ? <Pause className="text-black" /> : <Play className="text-black" />}
         </button>
