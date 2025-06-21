@@ -2,10 +2,13 @@ import { useEffect, useState, useRef } from "react";
 import { SearchInput } from "../components/SearchInput.tsx";
 import { DisplaySongCard } from "../components/DisplaySongCard.tsx";
 import { SdkService } from "../bastyon-sdk/sdkService.ts";
-import {useInfiniteYoutubeSearch, usePlaylistSongs} from "../hooks/query/playlist.queries.ts";
+import {
+  useInfiniteYoutubeSearch,
+  usePlaylistSongs,
+} from "../hooks/query/playlist.queries.ts";
 
 // zustand store for selected playList
-import { useViewStore } from "../hooks/stores/useViewStore";
+import { useViewStateStore } from "../hooks/stores/useViewStateStore";
 
 export default function Music() {
   useEffect(() => {
@@ -16,19 +19,33 @@ export default function Music() {
   }, []);
 
   const [query, setQuery] = useState(""); // User typing
-  const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
-// zustand
-  const { viewMode, searchQuery, selectedPlaylistId } = useViewStore();
+  // const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
+
+  // zustand for switch between search music and show playList
+  const {
+    viewMode,
+    searchQuery,
+    selectedPlaylistId,
+    setSearchQuery,
+    showSearchResults,
+  } = useViewStateStore();
 
   // react-query hooks
-  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
-    useInfiniteYoutubeSearch(searchQuery);
+  const {
+    data: searchResults,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteYoutubeSearch(searchQuery);
 
-  const { data: playlistSongs } = usePlaylistSongs(selectedPlaylistId);
- //
+  const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
+  console.log("playlistResults", playlistResults);
+  //
+  /*const songsDataToShow = viewMode === "search"
+    ? searchResults : playlistResult || []; */
 
-
-  console.log("data is", data);
+  // console.log("data is", data);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useRef<HTMLDivElement | null>(null);
   const observerRef = (node: HTMLDivElement | null) => {
@@ -49,6 +66,7 @@ export default function Music() {
   };
 
   const handleSearch = () => {
+    showSearchResults();
     if (query.trim()) {
       setSearchQuery(query); // Triggers the query hook
     }
@@ -67,11 +85,12 @@ export default function Music() {
 
       <button onClick={handleSearch}>Search</button>
       <div className={"flex flex-col gap-4 padding-2 overflow-y-scroll"}>
-        {data &&
-          data?.pages.map((page, i) =>
-            page.items.map((item, idx) => {
+        {viewMode === "search" && searchResults ? (
+          searchResults?.pages.map((page, i) =>
+            page.items.map((item: any, idx: any) => {
               const isLastItem =
-                i === data.pages.length - 1 && idx === page.items.length - 1;
+                i === searchResults.pages.length - 1 &&
+                idx === page.items.length - 1;
               return (
                 <>
                   <DisplaySongCard
@@ -88,7 +107,30 @@ export default function Music() {
                 </>
               );
             }),
-          )}
+          )
+        ) : (
+          <>
+            {playlistResults &&
+              playlistResults?.songs &&
+              playlistResults.songs.map((item: any, idx: any) => {
+                return (
+                  <>
+                    <DisplaySongCard
+                      songData={item}
+                      idx={idx}
+                      key={item.videoId || idx}
+                    />
+                    {/*isLastItem && (
+                  <div
+                    ref={observerRef}
+                    className="h-6 border-2 border-purple-700"
+                  />
+                )*/}
+                  </>
+                );
+              })}
+          </>
+        )}
       </div>
 
       {/* <div ref={observerRef} className="h-10" /> */}

@@ -28,8 +28,9 @@ export const DisplaySongCard = ({
 
   // const [isPlaying, setIsPlaying] = useState(false);
   // const [progress, setProgress] = useState(0);
+  // const [isPlayerReady, setIsPlayerReady] = useState(false);
+
   const intervalRef = useRef<number | null>(null);
-  const [isPlayerReady, setIsPlayerReady] = useState(false);
   const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
 
   // is seeking state to show the progressbar while seeking to the another part of audio
@@ -53,7 +54,7 @@ export const DisplaySongCard = ({
   } = usePlayerStore();
   const isActive = currentSong?.videoId === songData.videoId;
 
-  const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
+  /*const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
     //console.log("Player state changed:", event.data);
     if (event.data === YT.PlayerState.PLAYING) {
       //console.log("Player is playing");
@@ -77,10 +78,11 @@ export const DisplaySongCard = ({
         clearInterval(intervalRef.current);
       }
     }
-  };
+  };*/
 
   useEffect(() => {
-    if (!containerRef.current || currentSong?.videoId !== songData.videoId) return;
+    if (!containerRef.current || currentSong?.videoId !== songData.videoId)
+      return;
 
     const interval = setInterval(() => {
       /*const playerDiv = document.getElementById(
@@ -102,17 +104,21 @@ export const DisplaySongCard = ({
             onStateChange: onPlayerStateChange,
           },
         });*/
-        youtubePlayerManager.initPlayer(containerRef.current, songData.videoId, (event) => {
-          if (event.data === YT.PlayerState.PLAYING) {
-            setIsPlaying(true);
-            const interval = setInterval(() => {
-              setProgress(youtubePlayerManager.getProgress());
-            }, 500);
-            return () => clearInterval(interval);
-          } else {
-            setIsPlaying(false);
-          }
-        });
+        youtubePlayerManager.initPlayer(
+          containerRef.current,
+          songData.videoId,
+          (event) => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              setIsPlaying(true);
+              const interval = setInterval(() => {
+                setProgress(youtubePlayerManager.getProgress());
+              }, 500);
+              return () => clearInterval(interval);
+            } else {
+              setIsPlaying(false);
+            }
+          },
+        );
       }
     }, 200);
 
@@ -140,11 +146,11 @@ export const DisplaySongCard = ({
   };
 
   const playSong = () => {
-    console.log("")
     if (!isActive) {
       setCurrentSong(songData); // this will cause the component to re-render and init player
+      youtubePlayerManager.play();
     } else if (youtubePlayerManager.play) {
-      console.log("play")
+      console.log("play");
       youtubePlayerManager.play();
     } else {
       console.warn("Player not ready yet");
@@ -158,6 +164,7 @@ export const DisplaySongCard = ({
     addSong({
       playlistId,
       song: songData,
+      ownerId: "test_address",
     });
     setShowToolbar(false);
     // Optional: Update local store to reflect change

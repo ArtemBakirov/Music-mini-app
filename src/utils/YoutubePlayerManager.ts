@@ -6,6 +6,7 @@ class YoutubePlayerManager {
   private player: YT.Player | null = null;
   private container: HTMLDivElement | null = null;
   private onStateChangeCallback: PlayerEventCallback | null = null;
+  private isPlayerReady: boolean = false;
 
   private constructor() {}
 
@@ -31,7 +32,10 @@ class YoutubePlayerManager {
     this.player = new YT.Player(container, {
       videoId,
       events: {
-        onReady: () => this.play(),
+        onReady: () => {
+          this.setReady();
+          // this.play();
+        },
         onStateChange: (e) => {
           if (this.onStateChangeCallback) this.onStateChangeCallback(e);
         },
@@ -40,6 +44,7 @@ class YoutubePlayerManager {
   }
 
   public play() {
+    console.log("play");
     this.player?.playVideo();
   }
 
@@ -64,6 +69,13 @@ class YoutubePlayerManager {
     this.player?.destroy?.();
     this.player = null;
     this.container = null;
+  }
+
+  public isReady(): boolean {
+    return this.isPlayerReady;
+  }
+  private setReady() {
+    this.isPlayerReady = true;
   }
 }
 

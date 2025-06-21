@@ -9,7 +9,6 @@ export const PlayerFooter = () => {
 
   const intervalRef = useRef<number | null>(null);
 
-
   // const [isPlaying, setIsPlaying] = useState(false);
   // const [progress, setProgress] = useState(0);
   const [isPlayerReady, setIsPlayerReady] = useState(false);
@@ -29,7 +28,7 @@ export const PlayerFooter = () => {
   // player reference
   const playerRef = useRef<any>(null);
 
-  const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
+  /*const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
     if (event.data === YT.PlayerState.PLAYING) {
       setIsPlaying(true);
       if (isSeeking) setIsSeeking(false);
@@ -43,7 +42,7 @@ export const PlayerFooter = () => {
       setIsPlaying(false);
       if (intervalRef.current) clearInterval(intervalRef.current);
     }
-  };
+  };*/
 
   useEffect(() => {
     if (!currentSong || !containerRef.current || !window.YT?.Player) return;
@@ -55,17 +54,21 @@ export const PlayerFooter = () => {
         onStateChange: onPlayerStateChange,
       },
     });*/
-    youtubePlayerManager.initPlayer(containerRef.current, currentSong.videoId, (event) => {
-      if (event.data === YT.PlayerState.PLAYING) {
-        setIsPlaying(true);
-        const interval = setInterval(() => {
-          setProgress(youtubePlayerManager.getProgress());
-        }, 500);
-        return () => clearInterval(interval);
-      } else {
-        setIsPlaying(false);
-      }
-    });
+    youtubePlayerManager.initPlayer(
+      containerRef.current,
+      currentSong.videoId,
+      (event) => {
+        if (event.data === YT.PlayerState.PLAYING) {
+          setIsPlaying(true);
+          const interval = setInterval(() => {
+            setProgress(youtubePlayerManager.getProgress());
+          }, 500);
+          return () => clearInterval(interval);
+        } else {
+          setIsPlaying(false);
+        }
+      },
+    );
 
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
@@ -75,14 +78,14 @@ export const PlayerFooter = () => {
 
   const play = () => {
     if (youtubePlayerManager.play) {
-      console.log("play")
+      console.log("play");
       // setCurrentSong(songData)
       youtubePlayerManager.play();
     }
   };
 
   const pause = () => {
-    console.log("Pause")
+    console.log("Pause");
     console.log("player ref", playerRef.current);
     youtubePlayerManager.pause();
   };
@@ -129,7 +132,11 @@ export const PlayerFooter = () => {
           onClick={isPlaying ? pause : play}
           className="bg-white rounded-full w-8 h-8 flex items-center justify-center cursor-pointer"
         >
-          {isPlaying ? <Pause className="text-black" /> : <Play className="text-black" />}
+          {isPlaying ? (
+            <Pause className="text-black" />
+          ) : (
+            <Play className="text-black" />
+          )}
         </button>
         <button
           onClick={clearSong}

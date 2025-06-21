@@ -26,6 +26,7 @@ export const useAddSongToPlaylist = () => {
     }: {
       playlistId: string;
       song: Song;
+      ownerId: string;
     }) => {
       const { data } = await apiInstance.post(
         `/playlists/${playlistId}/add`,
@@ -33,9 +34,10 @@ export const useAddSongToPlaylist = () => {
       );
       return data;
     },
-    onSuccess: (_, { playlistId }) => {
+    onSuccess: (_, { playlistId, ownerId }) => {
       queryClient.invalidateQueries({ queryKey: ["playlists"] });
       queryClient.invalidateQueries({ queryKey: ["playlist", playlistId] });
+      queryClient.invalidateQueries({ queryKey: ["allSongIds", ownerId] });
     },
   });
 };
@@ -59,7 +61,7 @@ export const usePlaylistById = (playlistId: string) => {
   });
 };
 
-export const usePlaylistSongs = (playlistId: string) => {
+export const usePlaylistSongs = (playlistId: string | null) => {
   return useQuery({
     queryKey: ["playlist", playlistId],
     queryFn: async () => {
@@ -70,7 +72,7 @@ export const usePlaylistSongs = (playlistId: string) => {
     },
     enabled: !!playlistId,
   });
-}
+};
 
 // infinite scroll query for playlists
 
