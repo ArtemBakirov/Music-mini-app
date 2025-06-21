@@ -59,6 +59,19 @@ export const usePlaylistById = (playlistId: string) => {
   });
 };
 
+export const usePlaylistSongs = (playlistId: string) => {
+  return useQuery({
+    queryKey: ["playlist", playlistId],
+    queryFn: async () => {
+      const res = await apiInstance.get(
+        `/playlists/single/683d18f57501160e6503c0cd`,
+      );
+      return res.data;
+    },
+    enabled: !!playlistId,
+  });
+}
+
 // infinite scroll query for playlists
 
 export const useInfiniteYoutubeSearch = (query: string) => {

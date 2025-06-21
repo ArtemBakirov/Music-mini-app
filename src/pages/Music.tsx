@@ -2,7 +2,10 @@ import { useEffect, useState, useRef } from "react";
 import { SearchInput } from "../components/SearchInput.tsx";
 import { DisplaySongCard } from "../components/DisplaySongCard.tsx";
 import { SdkService } from "../bastyon-sdk/sdkService.ts";
-import { useInfiniteYoutubeSearch } from "../hooks/query/playlist.queries.ts";
+import {useInfiniteYoutubeSearch, usePlaylistSongs} from "../hooks/query/playlist.queries.ts";
+
+// zustand store for selected playList
+import { useViewStore } from "../hooks/stores/useViewStore";
 
 export default function Music() {
   useEffect(() => {
@@ -14,11 +17,16 @@ export default function Music() {
 
   const [query, setQuery] = useState(""); // User typing
   const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
+// zustand
+  const { viewMode, searchQuery, selectedPlaylistId } = useViewStore();
 
   // react-query hooks
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, status } =
     useInfiniteYoutubeSearch(searchQuery);
+
+  const { data: playlistSongs } = usePlaylistSongs(selectedPlaylistId);
  //
+
 
   console.log("data is", data);
   const observer = useRef<IntersectionObserver | null>(null);
