@@ -90,21 +90,7 @@ export const DisplaySongCard = ({
       );*/
       if (window.YT?.Player && containerRef.current && !playerRef.current) {
         clearInterval(interval);
-        // console.log("creating new player");
-        /* playerRef.current = new YT.Player(containerRef.current, {
-          videoId: songData.videoId,
-          events: {
-            onReady: () => {
-              setIsPlayerReady(true);
-
-              if (isActive && playerRef.current?.playVideo) {
-                playerRef.current.playVideo();
-              }
-            },
-            onStateChange: onPlayerStateChange,
-          },
-        });*/
-        youtubePlayerManager.initPlayer(
+        /*youtubePlayerManager.initPlayer(
           containerRef.current,
           songData.videoId,
           (event) => {
@@ -118,7 +104,7 @@ export const DisplaySongCard = ({
               setIsPlaying(false);
             }
           },
-        );
+        );*/
       }
     }, 200);
 
@@ -147,8 +133,29 @@ export const DisplaySongCard = ({
 
   const playSong = () => {
     if (!isActive) {
-      setCurrentSong(songData); // this will cause the component to re-render and init player
-      youtubePlayerManager.play();
+      setCurrentSong(songData);
+      setTimeout(async () => {
+        if (!containerRef.current) return;
+
+        await youtubePlayerManager.initPlayer(
+          containerRef.current,
+          songData.videoId,
+          (event) => {
+            if (event.data === YT.PlayerState.PLAYING) {
+              setIsPlaying(true);
+              const interval = setInterval(() => {
+                setProgress(youtubePlayerManager.getProgress());
+              }, 500);
+              return () => clearInterval(interval);
+            } else {
+              setIsPlaying(false);
+            }
+          },
+        );
+
+        youtubePlayerManager.play(); // ✅ now the player is ready
+      }, 0);
+      // youtubePlayerManager.play();
     } else if (youtubePlayerManager.play) {
       console.log("play");
       youtubePlayerManager.play();

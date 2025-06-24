@@ -21,25 +21,30 @@ class YoutubePlayerManager {
     container: HTMLDivElement,
     videoId: string,
     onStateChange: PlayerEventCallback,
-  ) {
-    if (this.player) {
-      this.player.destroy();
-    }
+  ): Promise<void> {
+    // reset the player before creating a new one
+    this.isPlayerReady = false;
+    return new Promise<void>((resolve) => {
+      if (this.player) {
+        this.player.destroy();
+      }
 
-    this.container = container;
-    this.onStateChangeCallback = onStateChange;
+      this.container = container;
+      this.onStateChangeCallback = onStateChange;
 
-    this.player = new YT.Player(container, {
-      videoId,
-      events: {
-        onReady: () => {
-          this.setReady();
-          // this.play();
+      this.player = new YT.Player(container, {
+        videoId,
+        events: {
+          onReady: () => {
+            this.setReady();
+            resolve();
+            // this.play();
+          },
+          onStateChange: (e) => {
+            if (this.onStateChangeCallback) this.onStateChangeCallback(e);
+          },
         },
-        onStateChange: (e) => {
-          if (this.onStateChangeCallback) this.onStateChangeCallback(e);
-        },
-      },
+      });
     });
   }
 
