@@ -21,6 +21,7 @@ class YoutubePlayerManager {
     container: HTMLDivElement,
     videoId: string,
     onStateChange: PlayerEventCallback,
+    initialProgressPercent?: number,
   ): Promise<void> {
     // reset the player before creating a new one
     this.isPlayerReady = false;
@@ -39,6 +40,14 @@ class YoutubePlayerManager {
             this.setReady();
             resolve();
             // this.play();
+            // 🟣 Seek to saved progress
+            if (
+              typeof initialProgressPercent === "number" &&
+              initialProgressPercent > 0
+            ) {
+              const duration = this.player?.getDuration?.() || 0;
+              this.player?.seekTo?.((initialProgressPercent / 100) * duration, true);
+            }
           },
           onStateChange: (e) => {
             if (this.onStateChangeCallback) this.onStateChangeCallback(e);

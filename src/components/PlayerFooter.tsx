@@ -61,13 +61,15 @@ export const PlayerFooter = () => {
         if (event.data === YT.PlayerState.PLAYING) {
           setIsPlaying(true);
           const interval = setInterval(() => {
-            setProgress(youtubePlayerManager.getProgress());
+           // setProgress(youtubePlayerManager.getProgress());
+           setProgress(youtubePlayerManager.getProgress());
           }, 500);
           return () => clearInterval(interval);
         } else {
           setIsPlaying(false);
         }
       },
+      progress
     );
 
     return () => {
