@@ -1,7 +1,8 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
-import {PlayerFooter} from "../components/PlayerFooter.tsx";
+import { PlayerFooter } from "../components/PlayerFooter.tsx";
 import { Sidebar } from "./Sidebar.tsx";
+import { Infobar } from "./Infobar.tsx";
 
 export const Layout = () => {
   return (
@@ -18,9 +19,7 @@ export const Layout = () => {
         <PlayerFooter />
       </main>
       {/* Right Sidebar */}
-      <aside className="w-100 border-l-2 border-black p-4">
-        Sidebar Right
-      </aside>
+      <Infobar />
       <div id={"modal-root"} />
     </div>
   );

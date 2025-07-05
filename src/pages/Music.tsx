@@ -92,7 +92,7 @@ export default function Music() {
                 i === searchResults.pages.length - 1 &&
                 idx === page.items.length - 1;
               return (
-                <>
+                <div key={idx}>
                   <DisplaySongCard
                     songData={item}
                     idx={idx}
@@ -104,7 +104,7 @@ export default function Music() {
                       className="h-6 border-2 border-purple-700"
                     />
                   )}
-                </>
+                </div>
               );
             }),
           )
