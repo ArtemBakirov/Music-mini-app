@@ -11,8 +11,9 @@ export const usePlaylists = (ownerId: string) =>
   useQuery<Playlist[]>({
     queryKey: ["playlists", ownerId],
     queryFn: async () => {
-      const { data } = await apiInstance.get(`/playlists/${ownerId}`);
-      return data;
+      // const { data } = await apiInstance.get(`/playlists/${ownerId}`);
+      // add later real user id from bastyon
+      return [];
     },
   });
 
