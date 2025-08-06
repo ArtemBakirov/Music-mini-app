@@ -35,6 +35,7 @@ class YoutubePlayerManager {
 
       this.player = new YT.Player(container, {
         videoId,
+        host: "https://www.youtube-nocookie.com",
         events: {
           onReady: () => {
             this.setReady();
@@ -46,7 +47,10 @@ class YoutubePlayerManager {
               initialProgressPercent > 0
             ) {
               const duration = this.player?.getDuration?.() || 0;
-              this.player?.seekTo?.((initialProgressPercent / 100) * duration, true);
+              this.player?.seekTo?.(
+                (initialProgressPercent / 100) * duration,
+                true,
+              );
             }
           },
           onStateChange: (e) => {
