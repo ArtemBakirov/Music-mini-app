@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const apiInstance = axios.create({
-  baseURL: "http://bastyonmusicback.netlify.app/api",
+  baseURL: "https://bastyonmusicback.netlify.app/api",
   headers: {
     "Content-Type": "application/json",
   },
