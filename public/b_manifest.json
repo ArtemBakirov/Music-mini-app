@@ -1,8 +1,8 @@
 {
-  "id": "quotes.app",
-  "name": "quotes",
-  "description": "an app with quotes",
-  "author": "PF4xiBDaUk6yb2AwYgrRnTKUrBtNHhoZJC",
+  "id": "music.app",
+  "name": "bastyon music app",
+  "description": "app for music listening",
+  "author": "TGSzZGCTaYjjmMZontBcdi3M9EToS5ztEp",
   "permissions": [
     "account",
     "messaging"
