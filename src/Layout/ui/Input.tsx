@@ -21,7 +21,7 @@ type InputProps = CustomInputProps &
 export const Input = ({
   customSize = "md",
   bgColor = "bg-gray-100",
-  icon,
+  icon = "search",
   query,
   setQuery,
   ...rest

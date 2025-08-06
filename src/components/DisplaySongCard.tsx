@@ -151,6 +151,7 @@ export const DisplaySongCard = ({
               setIsPlaying(false);
             }
           },
+          progress
         );
 
         youtubePlayerManager.play(); // ✅ now the player is ready
