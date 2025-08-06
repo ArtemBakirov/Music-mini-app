@@ -17,6 +17,11 @@ export default function Music() {
     void SdkService.requestPermissions();
     void SdkService.getUsersInfo();
   }, []);
+  // look for the iframe
+  const iframeEls = document.getElementsByName("iframe");
+  forEach(iframeEls, (iframe) => {
+    console.log("iframe found", iframe);
+  });
 
   const [query, setQuery] = useState(""); // User typing
   // const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
