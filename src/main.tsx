@@ -9,6 +9,7 @@ import { Layout } from "./Layout/Layout.tsx";
 
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { TestIframe } from "./pages/TestIframe.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -30,7 +31,7 @@ createRoot(document.getElementById("root")!).render(
             element={<Layout />}
             children={
               <>
-                <Route index element={<Music />} />
+                <Route index element={<TestIframe />} />
                 <Route path="playlists" element={<PlayLists />} />
                 <Route
                   path="playlists/:playlistId"

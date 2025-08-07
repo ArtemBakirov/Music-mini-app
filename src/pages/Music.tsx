@@ -23,9 +23,6 @@ export default function Music() {
     console.log("iframe found", iframe);
   });
 
-  const [videoId, setVideoId] = useState("8mGBaXPlri8");
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0`;
-
   const [query, setQuery] = useState(""); // User typing
   // const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
 
@@ -141,15 +138,6 @@ export default function Music() {
       </div>
 
       {/* <div ref={observerRef} className="h-10" /> */}
-      <iframe
-        width="100%"
-        height="200"
-        src={embedUrl}
-        allow="autoplay; encrypted-media"
-        title="YouTube video player"
-        frameBorder="0"
-        allowFullScreen
-      />
       {isFetchingNextPage && <div>Loading more...</div>}
     </div>
   );
