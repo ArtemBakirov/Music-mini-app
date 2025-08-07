@@ -19,7 +19,7 @@ export default function Music() {
   }, []);
   // look for the iframe
   const iframeEls = document.getElementsByName("iframe");
-  forEach(iframeEls, (iframe) => {
+  iframeEls.forEach((iframe) => {
     console.log("iframe found", iframe);
   });
 
