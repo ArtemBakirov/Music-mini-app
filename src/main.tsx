@@ -31,7 +31,7 @@ createRoot(document.getElementById("root")!).render(
             element={<Layout />}
             children={
               <>
-                <Route index element={<TestIframe />} />
+                <Route index element={<Music />} />
                 <Route path="playlists" element={<PlayLists />} />
                 <Route
                   path="playlists/:playlistId"
