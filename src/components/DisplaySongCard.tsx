@@ -26,10 +26,6 @@ export const DisplaySongCard = ({
 
   const containerRef = useRef<HTMLDivElement | null>(null);
 
-  // const [isPlaying, setIsPlaying] = useState(false);
-  // const [progress, setProgress] = useState(0);
-  // const [isPlayerReady, setIsPlayerReady] = useState(false);
-
   const intervalRef = useRef<number | null>(null);
   const [showToolbar, setShowToolbar] = useState(false); // fetched playlists
 
@@ -40,6 +36,9 @@ export const DisplaySongCard = ({
   const { data: playlists } = usePlaylists("test_address");
   const { data: allSongsIds } = useAllUserSongIds("test_address");
   const { mutate: addSong } = useAddSongToPlaylist();
+
+  const [videoId, setVideoId] = useState("8mGBaXPlri8");
+  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0`;
 
   // zustand state of the current playing song
   const {
@@ -54,57 +53,13 @@ export const DisplaySongCard = ({
   } = usePlayerStore();
   const isActive = currentSong?.videoId === songData.videoId;
 
-  /*const onPlayerStateChange = (event: YT.OnStateChangeEvent) => {
-    //console.log("Player state changed:", event.data);
-    if (event.data === YT.PlayerState.PLAYING) {
-      //console.log("Player is playing");
-      if (isSeeking) {
-        setIsSeeking(false); // Clear seeking when playback resumes
-      }
-      setIsPlaying(true);
-      intervalRef.current = window.setInterval(() => {
-        //console.log("Player ref?:", playerRef.current);
-        const current = playerRef.current.getCurrentTime();
-        //console.log("Current time:", current);
-        // Uncaught TypeError: playerRef.current.getCurrentTime is not a function
-        const total = playerRef.current.getDuration();
-        if(isActive){
-          setProgress((current / total) * 100);
-        }
-      }, 500);
-    } else {
-      setIsPlaying(false);
-      if (intervalRef.current) {
-        clearInterval(intervalRef.current);
-      }
-    }
-  };*/
-
   useEffect(() => {
     if (!containerRef.current || currentSong?.videoId !== songData.videoId)
       return;
 
     const interval = setInterval(() => {
-      /*const playerDiv = document.getElementById(
-        `yt-player-${songData.videoId}`,
-      );*/
       if (window.YT?.Player && containerRef.current && !playerRef.current) {
         clearInterval(interval);
-        /*youtubePlayerManager.initPlayer(
-          containerRef.current,
-          songData.videoId,
-          (event) => {
-            if (event.data === YT.PlayerState.PLAYING) {
-              setIsPlaying(true);
-              const interval = setInterval(() => {
-                setProgress(youtubePlayerManager.getProgress());
-              }, 500);
-              return () => clearInterval(interval);
-            } else {
-              setIsPlaying(false);
-            }
-          },
-        );*/
       }
     }, 200);
 
@@ -131,7 +86,7 @@ export const DisplaySongCard = ({
     youtubePlayerManager.seekTo(percentage);
   };
 
-  const playSong = () => {
+  /* const playSong = () => {
     if (!isActive) {
       setCurrentSong(songData);
       setTimeout(async () => {
@@ -151,7 +106,7 @@ export const DisplaySongCard = ({
               setIsPlaying(false);
             }
           },
-          progress
+          progress,
         );
 
         youtubePlayerManager.play(); // ✅ now the player is ready
@@ -163,7 +118,12 @@ export const DisplaySongCard = ({
     } else {
       console.warn("Player not ready yet");
     }
+  }; */
+
+  const playSong = () => {
+    setIsPlaying(true);
   };
+
   const pauseSong = () => youtubePlayerManager.pause();
 
   const handleAddClick = () => setShowToolbar((prev) => !prev);
@@ -264,7 +224,23 @@ export const DisplaySongCard = ({
       {/* Hidden YouTube Player */}
       <div className="hidden">
         {/*  <div id={`yt-player-${songData.videoId}`}></div> */}
-        <div ref={containerRef} />
+        {/* Bastyon currently block the youtube player, I suppose because of the iframe's sandbox - it must have allow-presentation flag */}
+        {/* SecurityError: The document is sandboxed and lacks the 'allow-presentation' flag. That is why it is not possible to use the official player currently */}
+        {isPlaying && (
+          <div className="border-2 border-black text-black">
+            Here is the hidden player
+            <iframe
+              width="100%"
+              height="100"
+              src={embedUrl}
+              allow="autoplay; encrypted-media"
+              title="YouTube video player"
+              frameBorder="0"
+              allowFullScreen
+            />
+          </div>
+        )}
+        {/* <div ref={containerRef} /> */}
       </div>
     </div>
   );

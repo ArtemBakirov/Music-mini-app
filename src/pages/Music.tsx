@@ -41,7 +41,6 @@ export default function Music() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-    status,
   } = useInfiniteYoutubeSearch(searchQuery);
 
   const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
