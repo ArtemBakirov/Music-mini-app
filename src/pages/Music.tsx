@@ -45,7 +45,7 @@ export default function Music() {
   } = useInfiniteYoutubeSearch(searchQuery);
 
   const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
-  console.log("playlistResults", playlistResults);
+  console.log("search results", searchResults);
   //
   /*const songsDataToShow = viewMode === "search"
     ? searchResults : playlistResult || []; */
