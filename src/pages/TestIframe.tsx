@@ -1,10 +1,10 @@
 // import { useEffect, useRef, useState } from "react";
 
 export const TestIframe = () => {
-  /*const videoId = "8mGBaXPlri8";
+  const videoId = "8mGBaXPlri8";
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0`;
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  /*const [isPlaying, setIsPlaying] = useState(false);
   const [isPaused, setIsPaused] = useState(false);
   const [passedTime, setPassedTime] = useState(0); // in seconds
   const [startTime, setStartTime] = useState(0);
@@ -73,6 +73,17 @@ export const TestIframe = () => {
         Approx. current time: {Math.floor(passedTime)} seconds
       </p>
     </div>*/
-    <div>Test works</div>
+    <div>
+      Test works
+      <iframe
+        width="100%"
+        height="100"
+        src={embedUrl}
+        allow="autoplay; encrypted-media"
+        title="YouTube video player"
+        frameBorder="0"
+        allowFullScreen
+      />
+    </div>
   );
 };
