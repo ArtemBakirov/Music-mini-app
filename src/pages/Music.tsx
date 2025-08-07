@@ -80,16 +80,16 @@ export default function Music() {
 
   const [isPlaying, setIsPlaying] = useState(false);
   // const [isPaused, setIsPaused] = useState(false);
-  const [passedTime, setPassedTime] = useState(0); // in seconds
-  const [startTime, setStartTime] = useState(0);
+  //const [passedTime, setPassedTime] = useState(0); // in seconds
+  /*const [startTime, setStartTime] = useState(0);
   const playbackTimer = useRef<number | null>(null);
   const playbackStartTimestamp = useRef<number | null>(null); // in ms*/
 
-  const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0&start=${Math.floor(
+  /*const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0&start=${Math.floor(
     startTime,
-  )}`;
+  )}`;*/
 
-  useEffect(() => {
+  /*useEffect(() => {
     if (isPlaying) {
       playbackStartTimestamp.current = Date.now();
 
@@ -107,21 +107,21 @@ export default function Music() {
         playbackTimer.current = null;
       }
     };
-  }, [isPlaying]);
+  }, [isPlaying]);*/
 
   const play = () => {
     setIsPlaying(true);
   };
   const stop = () => {
     setIsPlaying(false);
-    setStartTime(0);
+    // setStartTime(0);
   };
 
-  const pause = () => {
+  /*const pause = () => {
     setIsPlaying(false);
     // setIsPaused(true);
     setStartTime(passedTime);
-  };
+  };*/
 
   return (
     <div
@@ -136,7 +136,7 @@ export default function Music() {
           <iframe
             width="100%"
             height="100"
-            src={iframeSrc}
+            src={embedUrl}
             allow="autoplay; encrypted-media"
             title="YouTube video player"
             frameBorder="0"
@@ -146,11 +146,11 @@ export default function Music() {
         <div className="flex gap-4">
           <button onClick={play}>Play Iframe</button>
           <button onClick={stop}>Stop Iframe</button>
-          <button onClick={pause}>Pause Iframe</button>
+          {/* <button onClick={pause}>Pause Iframe</button> */}
         </div>
-        <p className="text-sm text-gray-400 border-1 border- black mt-6">
+        {/* <p className="text-sm text-gray-400 border-1 border- black mt-6">
           Approx. current time: {Math.floor(passedTime)} seconds
-        </p>
+        </p> */}
       </div>
     </div>
   );
