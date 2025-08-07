@@ -50,7 +50,7 @@ export const TestIframe = () => {
   };
 
   return (
-    <div>
+    /*<div>
       <p>This is a component for testing the iframe from youtube</p>
 
       {isPlaying && (
@@ -72,6 +72,7 @@ export const TestIframe = () => {
       <p className="text-sm text-gray-400 border-1 border- black mt-6">
         Approx. current time: {Math.floor(passedTime)} seconds
       </p>
-    </div>
+    </div>*/
+    <div>Test works</div>
   );
 };
