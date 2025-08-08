@@ -1,157 +1,103 @@
 import { useEffect, useState, useRef } from "react";
-import "./Music.css";
-import { SdkService } from "../bastyon-sdk/sdkService.ts";
-import {
-  useInfiniteYoutubeSearch,
-  usePlaylistSongs,
-} from "../hooks/query/playlist.queries.ts";
-
-// zustand store for selected playList
+import { SdkService } from "../bastyon-sdk/sdkService";
 import { useViewStateStore } from "../hooks/stores/useViewStateStore";
+import { DisplayJamendoSongCard } from "../components/DisplayJamendoSongCard";
+import { SearchInput } from "../components/SearchInput";
 
 export default function Music() {
   useEffect(() => {
     void SdkService.init();
-    console.log("testing sending notifications");
     void SdkService.requestPermissions();
     void SdkService.getUsersInfo();
   }, []);
-  // look for the iframe
-  const iframeEls = document.getElementsByName("iframe");
-  iframeEls.forEach((iframe) => {
-    console.log("iframe found", iframe);
-  });
 
-  const [query, setQuery] = useState(""); // User typing
-  const {
-    viewMode,
-    searchQuery,
-    selectedPlaylistId,
-    setSearchQuery,
-    showSearchResults,
-  } = useViewStateStore();
+  const [query, setQuery] = useState("");
+  const [tracks, setTracks] = useState<any[]>([]);
+  const [page, setPage] = useState(1); // logical page for offset calc
+  const [hasMore, setHasMore] = useState(true);
+  const [loading, setLoading] = useState(false);
 
-  // react-query hooks
-  const {
-    data: searchResults,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteYoutubeSearch(searchQuery);
+  const { setSearchQuery, searchQuery, showSearchResults } =
+    useViewStateStore();
 
-  const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
-  console.log("search results", searchResults);
-  //
   const observer = useRef<IntersectionObserver | null>(null);
-  const lastElementRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = (node: HTMLDivElement | null) => {
-    if (isFetchingNextPage) return;
 
+  const observerRef = (node: HTMLDivElement | null) => {
+    if (loading) return;
     if (observer.current) observer.current.disconnect();
 
     observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasNextPage) {
-        fetchNextPage();
+      if (entries[0].isIntersecting && hasMore) {
+        setPage((prev) => prev + 1);
       }
     });
 
-    if (node) {
-      observer.current.observe(node);
-      lastElementRef.current = node;
+    if (node) observer.current.observe(node);
+  };
+
+  const fetchTracks = async (searchText: string, currentPage = 1) => {
+    setLoading(true);
+    const limit = 10;
+    const offset = (currentPage - 1) * limit;
+
+    const response = await fetch(
+      `https://api.jamendo.com/v3.0/tracks/?client_id=17ed92bf&format=json&limit=${limit}&offset=${offset}&search=${searchText}`,
+    );
+
+    const data = await response.json();
+    console.log("Fetched Jamendo data:", data);
+
+    setHasMore(data.results.length === limit);
+
+    if (currentPage === 1) {
+      setTracks(data.results);
+    } else {
+      setTracks((prev) => [...prev, ...data.results]);
     }
+
+    setLoading(false);
   };
 
   const handleSearch = () => {
-    showSearchResults();
     if (query.trim()) {
-      setSearchQuery(query); // Triggers the query hook
+      showSearchResults();
+      setSearchQuery(query);
+      setPage(1);
+      fetchTracks(query, 1);
     }
   };
-  const videoId = "8mGBaXPlri8";
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&controls=1&rel=0`;
-
-  // const [isPlaying, setIsPlaying] = useState(false);
-  const [tracks, setTracks] = useState([]);
-
-  const [currentTrack, setCurrentTrack] = useState(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-
-  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    const fetchTracks = async () => {
-      const res = await fetch(
-        "https://api.jamendo.com/v3.0/tracks/?client_id=17ed92bf&format=json&limit=10&fuzzytags=chill",
-      );
-      const data = await res.json();
-      console.log(data);
-      setTracks(data.results);
-    };
-    fetchTracks();
-  }, []);
-
-  const handlePlay = (track: any) => {
-    if (currentTrack?.id !== track.id) {
-      setCurrentTrack(track);
-      setIsPlaying(false);
-      setTimeout(() => {
-        if (audioRef.current) {
-          audioRef.current.src = track.audio;
-          audioRef.current.play();
-          setIsPlaying(true);
-        }
-      }, 0);
-    } else {
-      // Toggle playback
-      if (isPlaying) {
-        audioRef.current?.pause();
-        setIsPlaying(false);
-      } else {
-        audioRef.current?.play();
-        setIsPlaying(true);
-      }
+    if (page > 1 && searchQuery) {
+      fetchTracks(searchQuery, page);
     }
-  };
+  }, [page]);
 
   return (
-    <div className="p-4 max-w-2xl mx-auto">
-      <h2 className="text-2xl font-bold mb-4">🎧 Chill Tracks (Jamendo)</h2>
+    <div className="bg-[#371A4D] text-white h-screen w-full overflow-y-auto p-4 pt-16">
+      <h2 className="text-2xl font-bold mb-4 text-center">
+        🎶 Jamendo Music Search
+      </h2>
 
-      <ul className="space-y-4">
-        {tracks.map((track) => (
-          <li
-            key={track.id}
-            className={`border p-4 rounded-lg flex items-center gap-4 ${
-              currentTrack?.id === track.id ? "bg-purple-50" : ""
-            }`}
-          >
-            <img
-              src={track.album_image}
-              alt={track.name}
-              className="w-16 h-16 object-cover rounded-md"
-            />
-            <div className="flex-grow">
-              <div className="font-semibold">{track.name}</div>
-              <div className="text-sm text-gray-500">{track.artist_name}</div>
+      <div className="w-full max-w-lg mx-auto mb-4">
+        <SearchInput query={query} setQuery={setQuery} onClick={handleSearch} />
+      </div>
+
+      <div className="flex flex-col gap-4">
+        {tracks.map((track, idx) => {
+          const isLast = idx === tracks.length - 1;
+          return (
+            <div key={track.id} ref={isLast ? observerRef : null}>
+              <DisplayJamendoSongCard songData={track} idx={idx} />
             </div>
-            <button
-              onClick={() => handlePlay(track)}
-              className="bg-purple-600 text-white px-3 py-1 rounded"
-            >
-              {currentTrack?.id === track.id && isPlaying
-                ? "⏸ Pause"
-                : "▶️ Play"}
-            </button>
-          </li>
-        ))}
-      </ul>
+          );
+        })}
+      </div>
 
-      {/* 🔇 Hidden or styleable audio element */}
-      <audio
-        ref={audioRef}
-        onEnded={() => setIsPlaying(false)}
-        style={{ display: "none" }} // or use your custom player UI
-      />
+      {loading && <div className="text-center mt-4">Loading more songs...</div>}
+      {!hasMore && tracks.length > 0 && (
+        <div className="text-center mt-4">No more results</div>
+      )}
     </div>
   );
 }

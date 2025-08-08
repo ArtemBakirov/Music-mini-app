@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom";
 import { Navbar } from "./Navbar";
-import { PlayerFooter } from "../components/PlayerFooter.tsx";
+import { JamendoPlayerFooter } from "../components/JamendoPlayerFooter.tsx";
 import { Sidebar } from "./Sidebar.tsx";
 import { Infobar } from "./Infobar.tsx";
 
@@ -16,7 +16,7 @@ export const Layout = () => {
       >
         {/*<Navbar /> */}
         <Outlet />
-        <PlayerFooter />
+        <JamendoPlayerFooter />
       </main>
       {/* Right Sidebar */}
       <Infobar />

@@ -47,7 +47,7 @@ export const playerStore = createStore<PlayerState>()(
 
 // ✅ Hook to use the store in React components
 export const usePlayerStore = <T>(
-  selector: (state: PlayerState) => T,
+  selector?: (state: PlayerState) => T,
   equalityFn?: (a: T, b: T) => boolean,
 ) => useStore(playerStore, selector, equalityFn);
 

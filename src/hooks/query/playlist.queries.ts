@@ -7,6 +7,8 @@ import {
 } from "@tanstack/react-query";
 import { Playlist, Song } from "../../types/playList.types";
 
+const CLIENT_ID = import.meta.env.VITE_JAMENDO_CLIENT_ID;
+
 export const usePlaylists = (ownerId: string) =>
   useQuery<Playlist[]>({
     queryKey: ["playlists", ownerId],
@@ -90,5 +92,31 @@ export const useInfiniteYoutubeSearch = (query: string) => {
     getNextPageParam: (lastPage) => lastPage.nextPageToken ?? undefined,
     initialPageParam: "",
     enabled: !!query, // avoid firing when query is empty
+  });
+};
+
+export const useInfiniteJamendoSearch = (query: string) => {
+  return useInfiniteQuery({
+    queryKey: ["jamendo", query],
+    enabled: !!query,
+    getNextPageParam: (lastPage) => {
+      if (lastPage?.headers?.total >= lastPage?.meta?.next_start) {
+        return lastPage?.meta?.next_start;
+      }
+      return undefined;
+    },
+    initialPageParam: "",
+    queryFn: async ({ pageParam = 0 }) => {
+      const url = `https://api.jamendo.com/v3.0/tracks/?client_id=${CLIENT_ID}&format=json&limit=10&fuzzytags=${query}&offset=${pageParam}`;
+      const res = await fetch(url);
+      const json = await res.json();
+      return {
+        items: json.results,
+        meta: { next_start: pageParam + 10 },
+        headers: {
+          total: json.headers.results_count,
+        },
+      };
+    },
   });
 };

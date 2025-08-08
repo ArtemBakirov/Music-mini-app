@@ -4,6 +4,14 @@ export interface Song {
   thumbnailUrl: string;
 }
 
+export interface JamendoSong {
+  id: string;
+  name: string;
+  artist_name: string;
+  audio: string;
+  album_image: string;
+}
+
 export interface Playlist {
   _id: string;
   title: string;
