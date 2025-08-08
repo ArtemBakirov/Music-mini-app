@@ -70,7 +70,7 @@ export default function Music() {
   const videoId = "8mGBaXPlri8";
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&controls=1&rel=0`;
 
-  const [isPlaying, setIsPlaying] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
   const [tracks, setTracks] = useState([]);
 
   const [currentTrack, setCurrentTrack] = useState(null);
