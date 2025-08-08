@@ -108,16 +108,19 @@ export default function Music() {
               allowFullScreen
             />
           )}
-          {tracks.length > 0 && (
-            <audio
-              // ref={audioRef}
-              src={tracks[0].audio}
-              onEnded={() => setIsPlaying(false)}
-              // autoPlay
-              className="w-full mt-4"
-              controls
-            />
-          )}
+          {tracks.length > 0 &&
+            tracks.map((track) => {
+              return (
+                <audio
+                  // ref={audioRef}
+                  src={tracks[0].audio}
+                  onEnded={() => setIsPlaying(false)}
+                  // autoPlay
+                  className="w-full mt-4"
+                  controls
+                />
+              );
+            })}
         </div>
       </div>
     </>
