@@ -71,6 +71,7 @@ export default function Music() {
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&controls=1&rel=0`;
 
   const [isPlaying, setIsPlaying] = useState(false);
+  const [tracks, setTracks] = useState([]);
 
   useEffect(() => {
     const fetchTracks = async () => {
@@ -79,6 +80,7 @@ export default function Music() {
       );
       const data = await res.json();
       console.log(data);
+      setTracks(data.results);
     };
     fetchTracks();
   }, []);
