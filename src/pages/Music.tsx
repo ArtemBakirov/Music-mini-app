@@ -73,6 +73,11 @@ export default function Music() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [tracks, setTracks] = useState([]);
 
+  const [currentTrack, setCurrentTrack] = useState(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
   useEffect(() => {
     const fetchTracks = async () => {
       const res = await fetch(
@@ -85,44 +90,68 @@ export default function Music() {
     fetchTracks();
   }, []);
 
-  return (
-    <>
-      <div
-        className={
-          " bg-[#371A4D] h-screen p-4 pt-12 w-full flex flex-col gap-4 items-center text-white"
+  const handlePlay = (track: any) => {
+    if (currentTrack?.id !== track.id) {
+      setCurrentTrack(track);
+      setIsPlaying(false);
+      setTimeout(() => {
+        if (audioRef.current) {
+          audioRef.current.src = track.audio;
+          audioRef.current.play();
+          setIsPlaying(true);
         }
-      >
-        <div>
-          <p className={"testing-iframe"}>
-            This is a component for testing the iframe from youtube
-          </p>
-          IT SHOULD WORK LIKE THIS
-          {isPlaying && (
-            <iframe
-              width="100%"
-              height="100"
-              src={embedUrl}
-              allow="autoplay; encrypted-media"
-              title="YouTube video player"
-              frameBorder="0"
-              allowFullScreen
+      }, 0);
+    } else {
+      // Toggle playback
+      if (isPlaying) {
+        audioRef.current?.pause();
+        setIsPlaying(false);
+      } else {
+        audioRef.current?.play();
+        setIsPlaying(true);
+      }
+    }
+  };
+
+  return (
+    <div className="p-4 max-w-2xl mx-auto">
+      <h2 className="text-2xl font-bold mb-4">🎧 Chill Tracks (Jamendo)</h2>
+
+      <ul className="space-y-4">
+        {tracks.map((track) => (
+          <li
+            key={track.id}
+            className={`border p-4 rounded-lg flex items-center gap-4 ${
+              currentTrack?.id === track.id ? "bg-purple-50" : ""
+            }`}
+          >
+            <img
+              src={track.album_image}
+              alt={track.name}
+              className="w-16 h-16 object-cover rounded-md"
             />
-          )}
-          {tracks.length > 0 &&
-            tracks.map((track) => {
-              return (
-                <audio
-                  // ref={audioRef}
-                  src={tracks[0].audio}
-                  onEnded={() => setIsPlaying(false)}
-                  // autoPlay
-                  className="w-full mt-4"
-                  controls
-                />
-              );
-            })}
-        </div>
-      </div>
-    </>
+            <div className="flex-grow">
+              <div className="font-semibold">{track.name}</div>
+              <div className="text-sm text-gray-500">{track.artist_name}</div>
+            </div>
+            <button
+              onClick={() => handlePlay(track)}
+              className="bg-purple-600 text-white px-3 py-1 rounded"
+            >
+              {currentTrack?.id === track.id && isPlaying
+                ? "⏸ Pause"
+                : "▶️ Play"}
+            </button>
+          </li>
+        ))}
+      </ul>
+
+      {/* 🔇 Hidden or styleable audio element */}
+      <audio
+        ref={audioRef}
+        onEnded={() => setIsPlaying(false)}
+        style={{ display: "none" }} // or use your custom player UI
+      />
+    </div>
   );
 }
