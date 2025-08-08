@@ -9,7 +9,7 @@ import { Layout } from "./Layout/Layout.tsx";
 
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TestIframe } from "./pages/TestIframe.tsx";
+// import { TestIframe } from "./pages/TestIframe.tsx";
 
 const queryClient = new QueryClient({
   defaultOptions: {

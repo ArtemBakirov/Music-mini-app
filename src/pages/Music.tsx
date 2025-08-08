@@ -1,157 +1,130 @@
-import { useEffect, useState, useRef } from "react";
-import { SearchInput } from "../components/SearchInput.tsx";
-import { DisplaySongCard } from "../components/DisplaySongCard.tsx";
-import { SdkService } from "../bastyon-sdk/sdkService.ts";
-import {
-  useInfiniteYoutubeSearch,
-  usePlaylistSongs,
-} from "../hooks/query/playlist.queries.ts";
+import React, { useEffect, useState, useRef } from "react";
 
-// zustand store for selected playList
-import { useViewStateStore } from "../hooks/stores/useViewStateStore";
+type JamendoTrack = {
+  id: string;
+  name: string;
+  artist_name: string;
+  audio: string;
+  album_image: string;
+};
 
 export default function Music() {
-  useEffect(() => {
-    void SdkService.init();
-    console.log("testing sending notifications");
-    void SdkService.requestPermissions();
-    void SdkService.getUsersInfo();
-  }, []);
-  // look for the iframe
-  const iframeEls = document.getElementsByName("iframe");
-  iframeEls.forEach((iframe) => {
-    console.log("iframe found", iframe);
-  });
-
-  const [query, setQuery] = useState(""); // User typing
-  // const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
-
-  // zustand for switch between search music and show playList
-  const {
-    viewMode,
-    searchQuery,
-    selectedPlaylistId,
-    setSearchQuery,
-    showSearchResults,
-  } = useViewStateStore();
-
-  // react-query hooks
-  const {
-    data: searchResults,
-    fetchNextPage,
-    hasNextPage,
-    isFetchingNextPage,
-  } = useInfiniteYoutubeSearch(searchQuery);
-
-  const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
-  console.log("search results", searchResults);
-  //
-  /*const songsDataToShow = viewMode === "search"
-    ? searchResults : playlistResult || []; */
-
-  // console.log("data is", data);
-  const observer = useRef<IntersectionObserver | null>(null);
-  const lastElementRef = useRef<HTMLDivElement | null>(null);
-  const observerRef = (node: HTMLDivElement | null) => {
-    if (isFetchingNextPage) return;
-
-    if (observer.current) observer.current.disconnect();
-
-    observer.current = new IntersectionObserver((entries) => {
-      if (entries[0].isIntersecting && hasNextPage) {
-        fetchNextPage();
-      }
-    });
-
-    if (node) {
-      observer.current.observe(node);
-      lastElementRef.current = node;
-    }
-  };
-
-  const handleSearch = () => {
-    showSearchResults();
-    if (query.trim()) {
-      setSearchQuery(query); // Triggers the query hook
-    }
-  };
-  const videoId = "8mGBaXPlri8";
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0`;
-
+  const [tracks, setTracks] = useState([]);
+  const [currentTrack, setCurrentTrack] = useState(null);
   const [isPlaying, setIsPlaying] = useState(false);
-  // const [isPaused, setIsPaused] = useState(false);
-  //const [passedTime, setPassedTime] = useState(0); // in seconds
-  /*const [startTime, setStartTime] = useState(0);
-  const playbackTimer = useRef<number | null>(null);
-  const playbackStartTimestamp = useRef<number | null>(null); // in ms*/
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  /*const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0&start=${Math.floor(
-    startTime,
-  )}`;*/
-
-  /*useEffect(() => {
-    if (isPlaying) {
-      playbackStartTimestamp.current = Date.now();
-
-      playbackTimer.current = window.setInterval(() => {
-        const now = Date.now();
-        const elapsedSeconds =
-          (now - (playbackStartTimestamp.current || now)) / 1000;
-        setPassedTime((prevTime) => prevTime + elapsedSeconds);
-        playbackStartTimestamp.current = now;
-      }, 1000);
-    }
-    return () => {
-      if (playbackTimer.current) {
-        clearInterval(playbackTimer.current);
-        playbackTimer.current = null;
-      }
+  // Fetch chill tracks from Jamendo
+  useEffect(() => {
+    const fetchTracks = async () => {
+      const res = await fetch(
+        "https://api.jamendo.com/v3.0/tracks/?client_id=17ed92bf&format=json&limit=10&fuzzytags=chill",
+      );
+      const data = await res.json();
+      setTracks(data.results);
     };
-  }, [isPlaying]);*/
+    fetchTracks();
+  }, []);
 
-  const play = () => {
+  const playTrack = (track: any) => {
+    setCurrentTrack(track);
     setIsPlaying(true);
-  };
-  const stop = () => {
-    setIsPlaying(false);
-    // setStartTime(0);
+    setTimeout(() => {
+      audioRef.current?.play();
+    }, 0);
   };
 
-  /*const pause = () => {
+  const pauseTrack = () => {
+    audioRef.current?.pause();
     setIsPlaying(false);
-    // setIsPaused(true);
-    setStartTime(passedTime);
-  };*/
+  };
+
+  const togglePlayback = () => {
+    if (isPlaying) {
+      pauseTrack();
+    } else {
+      audioRef.current?.play();
+      setIsPlaying(true);
+    }
+  };
 
   return (
-    <div
-      className={
-        " bg-[#371A4D] h-screen p-4 pt-12 w-full flex flex-col gap-4 items-center text-white"
-      }
-    >
-      <div>
-        <p>This is a component for testing the iframe from youtube</p>
-
-        {isPlaying && (
-          <iframe
-            width="100%"
-            height="100"
-            src={embedUrl}
-            allow="autoplay; encrypted-media"
-            title="YouTube video player"
-            frameBorder="0"
-            allowFullScreen
-          />
-        )}
-        <div className="flex gap-4">
-          <button onClick={play}>Play Iframe</button>
-          <button onClick={stop}>Stop Iframe</button>
-          {/* <button onClick={pause}>Pause Iframe</button> */}
+    <>
+      <div
+        className={
+          " bg-[#371A4D] h-screen p-4 pt-12 w-full flex flex-col gap-4 items-center text-white"
+        }
+      >
+        <div>
+          <p className={"testing-iframe"}>
+            This is a component for testing the iframe from youtube
+          </p>
         </div>
-        {/* <p className="text-sm text-gray-400 border-1 border- black mt-6">
-          Approx. current time: {Math.floor(passedTime)} seconds
-        </p> */}
+        <div className="p-4 max-w-2xl mx-auto">
+          <h2 className="text-2xl font-bold mb-4">🎧 Jamendo Chill Tracks</h2>
+
+          <ul className="space-y-4">
+            {tracks.map((track) => (
+              <li
+                key={track.id}
+                className="border p-4 rounded-lg hover:shadow-lg flex items-center gap-4"
+              >
+                <img
+                  src={track.album_image}
+                  alt={track.name}
+                  className="w-16 h-16 object-cover rounded-md"
+                />
+                <div className="flex-grow">
+                  <div className="font-semibold">{track.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {track.artist_name}
+                  </div>
+                </div>
+                <button
+                  onClick={() => playTrack(track)}
+                  className="bg-purple-600 text-white px-3 py-1 rounded"
+                >
+                  ▶️ Play
+                </button>
+              </li>
+            ))}
+          </ul>
+
+          {currentTrack && (
+            <div className="mt-6 p-4 border-t">
+              <h3 className="text-lg font-bold mb-2">Now Playing</h3>
+              <div className="flex items-center gap-4">
+                <img
+                  src={currentTrack.album_image}
+                  alt={currentTrack.name}
+                  className="w-16 h-16 object-cover rounded-md"
+                />
+                <div className="flex-grow">
+                  <div className="font-semibold">{currentTrack.name}</div>
+                  <div className="text-sm text-gray-500">
+                    {currentTrack.artist_name}
+                  </div>
+                </div>
+                <button
+                  onClick={togglePlayback}
+                  className="bg-purple-500 text-white px-4 py-1 rounded"
+                >
+                  {isPlaying ? "⏸ Pause" : "▶️ Resume"}
+                </button>
+              </div>
+
+              <audio
+                ref={audioRef}
+                src={currentTrack.audio}
+                onEnded={() => setIsPlaying(false)}
+                autoPlay
+                className="w-full mt-4"
+                controls
+              />
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+    </>
   );
 }
