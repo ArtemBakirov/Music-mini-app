@@ -1,7 +1,5 @@
 import { useEffect, useState, useRef } from "react";
 import "./Music.css";
-import { SearchInput } from "../components/SearchInput.tsx";
-import { DisplaySongCard } from "../components/DisplaySongCard.tsx";
 import { SdkService } from "../bastyon-sdk/sdkService.ts";
 import {
   useInfiniteYoutubeSearch,
@@ -10,7 +8,6 @@ import {
 
 // zustand store for selected playList
 import { useViewStateStore } from "../hooks/stores/useViewStateStore";
-import YouTube from "react-youtube";
 
 export default function Music() {
   useEffect(() => {
@@ -26,9 +23,6 @@ export default function Music() {
   });
 
   const [query, setQuery] = useState(""); // User typing
-  // const [searchQuery, setSearchQuery] = useState(""); // Final submitted query
-
-  // zustand for switch between search music and show playList
   const {
     viewMode,
     searchQuery,
@@ -48,10 +42,6 @@ export default function Music() {
   const { data: playlistResults } = usePlaylistSongs(selectedPlaylistId);
   console.log("search results", searchResults);
   //
-  /*const songsDataToShow = viewMode === "search"
-    ? searchResults : playlistResult || []; */
-
-  // console.log("data is", data);
   const observer = useRef<IntersectionObserver | null>(null);
   const lastElementRef = useRef<HTMLDivElement | null>(null);
   const observerRef = (node: HTMLDivElement | null) => {
@@ -81,49 +71,17 @@ export default function Music() {
   const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=0&controls=1&rel=0`;
 
   const [isPlaying, setIsPlaying] = useState(false);
-  // const [isPaused, setIsPaused] = useState(false);
-  //const [passedTime, setPassedTime] = useState(0); // in seconds
-  /*const [startTime, setStartTime] = useState(0);
-  const playbackTimer = useRef<number | null>(null);
-  const playbackStartTimestamp = useRef<number | null>(null); // in ms*/
 
-  /*const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0&start=${Math.floor(
-    startTime,
-  )}`;*/
-
-  /*useEffect(() => {
-    if (isPlaying) {
-      playbackStartTimestamp.current = Date.now();
-
-      playbackTimer.current = window.setInterval(() => {
-        const now = Date.now();
-        const elapsedSeconds =
-          (now - (playbackStartTimestamp.current || now)) / 1000;
-        setPassedTime((prevTime) => prevTime + elapsedSeconds);
-        playbackStartTimestamp.current = now;
-      }, 1000);
-    }
-    return () => {
-      if (playbackTimer.current) {
-        clearInterval(playbackTimer.current);
-        playbackTimer.current = null;
-      }
+  useEffect(() => {
+    const fetchTracks = async () => {
+      const res = await fetch(
+        "https://api.jamendo.com/v3.0/tracks/?client_id=17ed92bf&format=json&limit=10&fuzzytags=chill",
+      );
+      const data = await res.json();
+      console.log(data);
     };
-  }, [isPlaying]);*/
-
-  const play = () => {
-    setIsPlaying(true);
-  };
-  const stop = () => {
-    setIsPlaying(false);
-    // setStartTime(0);
-  };
-
-  /*const pause = () => {
-    setIsPlaying(false);
-    // setIsPaused(true);
-    setStartTime(passedTime);
-  };*/
+    fetchTracks();
+  }, []);
 
   return (
     <>
@@ -148,14 +106,6 @@ export default function Music() {
               allowFullScreen
             />
           )}
-          {/*<div className="flex gap-4">
-          <button onClick={play}>Play Iframe</button>
-          <button onClick={stop}>Stop Iframe</button>
-           <button onClick={pause}>Pause Iframe</button>
-        </div>*/}
-          {/* <p className="text-sm text-gray-400 border-1 border- black mt-6">
-          Approx. current time: {Math.floor(passedTime)} seconds
-        </p> */}
         </div>
       </div>
     </>
