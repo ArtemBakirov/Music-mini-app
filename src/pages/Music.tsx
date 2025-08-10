@@ -80,10 +80,6 @@ export default function Music() {
 
   return (
     <div className="flex flex-col bg-[#371A4D] text-white h-screen w-full p-4 pt-16">
-      <h2 className="text-2xl font-bold mb-4 text-center">
-        🎶 Jamendo Music Search
-      </h2>
-
       {/*<p>{t("WELCOME_MESSAGE")}</p> */}
 
       <div className="w-full max-w-lg mx-auto mb-4">
