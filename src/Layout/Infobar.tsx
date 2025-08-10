@@ -1,45 +1,41 @@
-// import {usePlaylists} from "../hooks/query/playlist.queries.ts";
-// import { useViewStateStore } from "../hooks/stores/useViewStateStore.ts";
-
-// import { usePlayerSelector } from "../hooks/stores/usePlayerStore.ts";
 import { useJamendoPlayerSelector } from "../hooks/stores/useJamendoPlayerStore.ts";
 import { memo } from "react";
 import { useArtistInfo } from "../hooks/useArtistInfo.ts";
 
-export const Infobar = memo(() => {
+export const InfoBar = memo(() => {
   console.log("RENDERED");
 
-  // react - query
-  // const { data: playlists } = usePlaylists("test_address");
-
   const currentSong = useJamendoPlayerSelector((state) => state.currentSong);
+  const artist_id = useJamendoPlayerSelector(
+    (state) => state.currentSong.artist_id,
+  );
   const isPlaying = useJamendoPlayerSelector((state) => state.isPlaying);
   const videoTitle = currentSong?.title ?? null;
 
-  const { data, isLoading, error } = useArtistInfo(videoTitle);
-  console.log("data artist", data);
+  const { data, isLoading, error } = useArtistInfo(artist_id);
+  const info = data?.results[0];
+  console.log("current song", currentSong);
+  console.log("artist info", data?.results[0]);
 
   return (
     <aside className="w-100 border-r-2 border-black p-4 flex flex-col bg-[#502B6C] text-gray-300">
-      {currentSong && isPlaying && (
+      {currentSong && (
         <div className="flex flex-col items-center gap-4 p-4">
           <h2> Now is playing: </h2>
-          {/*<img
-            src={`https://i.ytimg.com/vi/${currentSong.videoId}/mqdefault.jpg`}
-            alt={currentSong.title}
-            className="w-44 h-44 object-cover rounded"
-          /> */}
-          <h3>{currentSong.title}</h3>
+          <img
+            src={`https://usercontent.jamendo.com/?cid=1652438404&type=artist&id=${artist_id}&width=300`}
+            alt=""
+          />
+          <h3>{currentSong.name}</h3>
         </div>
       )}
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
-      {currentSong && isPlaying && data && (
+      {currentSong && info && (
         <div className="flex flex-col items-center gap-4 p-4">
-          <p
-            className="text-sm"
-            dangerouslySetInnerHTML={{ __html: data.bio?.summary || "" }}
-          />
+          <a target="_blank" href={`${info.shareurl}`}>
+            Artist on Jamendo
+          </a>
         </div>
       )}
     </aside>

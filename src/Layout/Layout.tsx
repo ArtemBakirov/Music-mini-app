@@ -1,8 +1,8 @@
 import { Outlet } from "react-router-dom";
-import { Navbar } from "./Navbar";
+// import { Navbar } from "./Navbar";
 import { JamendoPlayerFooter } from "../components/JamendoPlayerFooter.tsx";
 import { Sidebar } from "./Sidebar.tsx";
-import { Infobar } from "./Infobar.tsx";
+import { InfoBar } from "./Infobar.tsx";
 
 export const Layout = () => {
   return (
@@ -19,7 +19,7 @@ export const Layout = () => {
         <JamendoPlayerFooter />
       </main>
       {/* Right Sidebar */}
-      <Infobar />
+      <InfoBar />
       <div id={"modal-root"} />
     </div>
   );

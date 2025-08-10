@@ -11,14 +11,6 @@ export const DisplayJamendoSongCard = ({
   songData: any;
   idx: number;
 }) => {
-  /*const { currentSong, isPlaying, setCurrentSong, setIsPlaying } =
-    useJamendoPlayerStore((s) => ({
-      currentSong: s.currentSong,
-      isPlaying: s.isPlaying,
-      setCurrentSong: s.setCurrentSong,
-      setIsPlaying: s.setIsPlaying,
-    }));*/
-
   const currentSong = useJamendoPlayerStore((s) => s.currentSong);
   const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
   const setCurrentSong = useJamendoPlayerStore((s) => s.setCurrentSong);
@@ -42,38 +34,6 @@ export const DisplayJamendoSongCard = ({
     }
   };
 
-  /*useEffect(() => {
-    const audio = audioRef.current;
-    if (!audio || !isCurrent) return;
-
-    audio.src = songData.audio;
-
-    if (isPlaying) {
-      audio.play().catch(console.error);
-    } else {
-      audio.pause();
-    }
-
-    const updateProgress = () => {
-      if (!audio.duration) return;
-      const percent = (audio.currentTime / audio.duration) * 100;
-      setCurrentTime(audio.currentTime);
-      setProgress(percent);
-    };
-
-    const onMetadata = () => {
-      setDuration(audio.duration);
-    };
-
-    audio.addEventListener("timeupdate", updateProgress);
-    audio.addEventListener("loadedmetadata", onMetadata);
-
-    return () => {
-      audio.removeEventListener("timeupdate", updateProgress);
-      audio.removeEventListener("loadedmetadata", onMetadata);
-    };
-  }, [isCurrent, isPlaying, songData.audio]);*/
-
   return (
     <div key={idx} className={"border p-4 rounded-lg flex items-center gap-4"}>
       <img
@@ -94,12 +54,6 @@ export const DisplayJamendoSongCard = ({
 
       {/* Show progress bar only for the current playing song */}
       {isCurrent && <ProgressBar />}
-
-      {/* <audio
-        ref={audioRef}
-        onEnded={() => setIsPlaying(false)}
-        style={{ display: "none" }}
-      /> */}
     </div>
   );
 };
