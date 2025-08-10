@@ -74,7 +74,7 @@ export default function Music() {
   }, [page]);
 
   return (
-    <div className="bg-[#371A4D] text-white h-screen w-full overflow-y-auto p-4 pt-16">
+    <div className="flex flex-col bg-[#371A4D] text-white h-screen w-full p-4 pt-16">
       <h2 className="text-2xl font-bold mb-4 text-center">
         🎶 Jamendo Music Search
       </h2>
@@ -83,7 +83,7 @@ export default function Music() {
         <SearchInput query={query} setQuery={setQuery} onClick={handleSearch} />
       </div>
 
-      <div className="flex flex-col gap-4">
+      <div className="flex flex-col gap-4 h-full overflow-y-auto">
         {tracks.map((track, idx) => {
           const isLast = idx === tracks.length - 1;
           return (

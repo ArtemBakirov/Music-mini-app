@@ -8,7 +8,10 @@ interface PlayerState {
   currentSong: any | null;
   setCurrentSong: (song: any) => void;
   clearSong: () => void;
-
+  duration: number;
+  currentTime: number;
+  setDuration: (duration: number) => void;
+  setCurrentTime: (time: number) => void;
   isPlaying: boolean;
   progress: number;
   setIsPlaying: (playing: boolean) => void;
@@ -19,6 +22,10 @@ export const jamendoPlayerStore = createStore<PlayerState>()(
   persist(
     (set) => ({
       currentSong: null,
+      currentTime: 0,
+      duration: 0,
+      setCurrentTime: (currentTime) => set({ currentTime }),
+      setDuration: (duration) => set({ duration }),
       setCurrentSong: (song) => set({ currentSong: song }),
       clearSong: () =>
         set({ currentSong: null, isPlaying: false, progress: 0 }),
@@ -34,6 +41,8 @@ export const jamendoPlayerStore = createStore<PlayerState>()(
         currentSong: state.currentSong,
         isPlaying: state.isPlaying,
         progress: state.progress,
+        duration: state.duration,
+        currentTime: state.currentTime,
       }),
     },
   ),

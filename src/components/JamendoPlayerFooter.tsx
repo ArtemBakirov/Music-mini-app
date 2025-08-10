@@ -1,16 +1,38 @@
 import { useEffect, useRef } from "react";
-import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
-// import { usePlayerStore } from "../hooks/stores/usePlayerStore";
 import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
-import Pause from "../assets/icons/pause.svg?react";
-import Play from "../assets/icons/play.svg?react";
+import { ProgressBar } from "./ProgressBar.tsx";
+import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
-  const { currentSong, isPlaying, setIsPlaying, clearSong } =
-    useJamendoPlayerStore();
+  /*const { currentSong, isPlaying, setIsPlaying, clearSong } =
+    useJamendoPlayerStore((s) => ({
+      currentSong: s.currentSong,
+      isPlaying: s.isPlaying,
+      setIsPlaying: s.setIsPlaying,
+      clearSong: s.clearSong,
+    }));*/
 
+  const currentSong = useJamendoPlayerStore((s) => s.currentSong);
+  const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
+  const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
+  const clearSong = useJamendoPlayerStore((s) => s.clearSong);
+
+  // mount the ONE audio element
   useEffect(() => {
+    if (audioRef.current) {
+      JamendoPlayerManager.init(audioRef.current);
+    }
+  }, []);
+
+  /*useEffect(() => {
+    console.log("sync to state");
+    void JamendoPlayerManager.syncToState();
+  }, [currentSong, isPlaying]);*/
+
+  // if (!currentSong) return null;
+
+  /* useEffect(() => {
     const audio = audioRef.current;
     if (!audio || !currentSong) return;
 
@@ -23,26 +45,45 @@ export const JamendoPlayerFooter = () => {
     } else {
       audio.pause();
     }
-  }, [currentSong, isPlaying]);
+    void JamendoPlayerManager.syncToState();
+
+    const updateProgress = () => {
+      if (!audio.duration) return;
+      const percent = (audio.currentTime / audio.duration) * 100;
+      setCurrentTime(audio.currentTime);
+      setProgress(percent);
+    };
+
+    audio.addEventListener("timeupdate", updateProgress);
+    audio.addEventListener("loadedmetadata", () => {
+      setDuration(audio.duration);
+    });
+
+    return () => {
+      audio.removeEventListener("timeupdate", updateProgress);
+    };
+  }, [currentSong, isPlaying]);*/
 
   const handleEnded = () => {
     setIsPlaying(false);
   };
 
-  if (!currentSong) return null;
-
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between items-center z-50">
+    <div
+      className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
+    items-center z-50 ${isPlaying ? "" : "hidden"}`}
+    >
       <div>
-        <div className="font-bold">{currentSong.name}</div>
-        <div className="text-sm">{currentSong.artist_name}</div>
+        <div className="font-bold">{currentSong?.name}</div>
+        <div className="text-sm">{currentSong?.artist_name}</div>
       </div>
       <button
         className="bg-red-600 text-white px-3 py-1 rounded"
-        onClick={clearSong}
+        onClick={() => clearSong()}
       >
         Stop
       </button>
+      <ProgressBar />
       <audio ref={audioRef} onEnded={handleEnded} style={{ display: "none" }} />
     </div>
   );
