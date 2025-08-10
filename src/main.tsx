@@ -7,6 +7,8 @@ import { PlayLists } from "./pages/PlayLists.tsx";
 import { PlaylistDetail } from "./pages/Playlistdetail.tsx";
 import { Layout } from "./Layout/Layout.tsx";
 
+import "./utils/i18n.ts";
+
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { TestIframe } from "./pages/TestIframe.tsx";

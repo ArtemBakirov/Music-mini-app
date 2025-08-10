@@ -4,7 +4,12 @@ import { useViewStateStore } from "../hooks/stores/useViewStateStore";
 import { DisplayJamendoSongCard } from "../components/DisplayJamendoSongCard";
 import { SearchInput } from "../components/SearchInput";
 
+// i18n
+import { useTranslation } from "../utils/i18n.ts";
+
 export default function Music() {
+  const { t } = useTranslation();
+
   useEffect(() => {
     void SdkService.init();
     void SdkService.requestPermissions();
@@ -78,6 +83,8 @@ export default function Music() {
       <h2 className="text-2xl font-bold mb-4 text-center">
         🎶 Jamendo Music Search
       </h2>
+
+      {/*<p>{t("WELCOME_MESSAGE")}</p> */}
 
       <div className="w-full max-w-lg mx-auto mb-4">
         <SearchInput query={query} setQuery={setQuery} onClick={handleSearch} />

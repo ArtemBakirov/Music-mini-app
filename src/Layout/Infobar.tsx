@@ -1,6 +1,7 @@
 import { useJamendoPlayerSelector } from "../hooks/stores/useJamendoPlayerStore.ts";
 import { memo } from "react";
 import { useArtistInfo } from "../hooks/useArtistInfo.ts";
+import FullScreen from "../assets/icons/full_screen.svg?react";
 
 export const InfoBar = memo(() => {
   console.log("RENDERED");
@@ -19,6 +20,7 @@ export const InfoBar = memo(() => {
 
   return (
     <aside className="w-100 border-r-2 border-black p-4 flex flex-col bg-[#502B6C] text-gray-300">
+      <FullScreen className="w-8 h-8 text-white hover:text-gray-300 cursor-pointer" />
       {currentSong && (
         <div className="flex flex-col items-center gap-4 p-4">
           <h2> Now is playing: </h2>
