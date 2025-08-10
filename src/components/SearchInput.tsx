@@ -27,7 +27,7 @@ export const SearchInput = ({
       </div>
       <input
         type="text"
-        placeholder="Search music..."
+        placeholder="Search anything..."
         value={query}
         onKeyDown={handleKeyDown}
         onChange={(e) => setQuery(e.target.value)}
