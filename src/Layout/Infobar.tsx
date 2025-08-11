@@ -8,7 +8,7 @@ export const InfoBar = memo(() => {
 
   const currentSong = useJamendoPlayerSelector((state) => state.currentSong);
   const artist_id = useJamendoPlayerSelector(
-    (state) => state.currentSong.artist_id,
+    (state) => state.currentSong?.artist_id,
   );
   const isPlaying = useJamendoPlayerSelector((state) => state.isPlaying);
   const videoTitle = currentSong?.title ?? null;
@@ -20,16 +20,18 @@ export const InfoBar = memo(() => {
 
   return (
     <aside className="w-100 border-r-2 border-black p-4 flex flex-col bg-[#502B6C] text-gray-300">
-      <FullScreen className="w-8 h-8 text-white hover:text-gray-300 cursor-pointer" />
       {currentSong && (
-        <div className="flex flex-col items-center gap-4 p-4">
-          <h2> Now is playing: </h2>
-          <img
-            src={`https://usercontent.jamendo.com/?cid=1652438404&type=artist&id=${artist_id}&width=300`}
-            alt=""
-          />
-          <h3>{currentSong.name}</h3>
-        </div>
+        <>
+          <FullScreen className="w-8 h-8 text-white hover:text-gray-300 cursor-pointer" />
+          <div className="flex flex-col items-center gap-4 p-4">
+            <h2> Now is playing: </h2>
+            <img
+              src={`https://usercontent.jamendo.com/?cid=1652438404&type=artist&id=${artist_id}&width=300`}
+              alt=""
+            />
+            <h3>{currentSong.name}</h3>
+          </div>
+        </>
       )}
       {isLoading && <p>Loading...</p>}
       {error && <p>Error: {error.message}</p>}
