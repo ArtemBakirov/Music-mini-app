@@ -11,7 +11,7 @@ export const ProgressBar = () => {
   };
 
   return (
-    <div className="w-full flex flex-col items-start">
+    <div className="w-[80%] flex flex-col items-start">
       <div
         className="w-full h-2 bg-gray-500 rounded cursor-pointer"
         onClick={handleSeek}
