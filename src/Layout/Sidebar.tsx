@@ -22,7 +22,6 @@ export const SideBar = () => {
   const mainMenu: MenuItem[] = [
     { key: "home", label: "Startseite", Icon: Home },
     { key: "new", label: "Neu", Icon: NewReleases },
-    { key: "radio", label: "Radio", Icon: Radio },
   ];
 
   const libraryMenu: MenuItem[] = [
@@ -30,7 +29,6 @@ export const SideBar = () => {
     { key: "artists", label: "Künstler", Icon: Artists },
     { key: "albums", label: "Alben", Icon: Albums },
     { key: "tracks", label: "Titel", Icon: Tracks },
-    { key: "foryou", label: "Für dich zusammengestellt", Icon: ForYou },
   ];
 
   const playlistsMenu: MenuItem[] = [
@@ -67,7 +65,7 @@ export const SideBar = () => {
   return (
     <aside className="bg-[#502B6C] w-60 h-screen text-white flex flex-col py-4 pt-16">
       {renderMenu("", mainMenu)}
-      {renderMenu("Mediathek", libraryMenu)}
+      {renderMenu("Meine Mediathek", libraryMenu)}
       {renderMenu("Playlists", playlistsMenu)}
     </aside>
   );

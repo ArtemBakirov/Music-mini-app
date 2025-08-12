@@ -4,6 +4,7 @@ import { ProgressBar } from "./ProgressBar.tsx";
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
+import { FooterController } from "./FooterController.tsx";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -46,25 +47,31 @@ export const JamendoPlayerFooter = () => {
   return (
     <div
       className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
-    items-center z-50`}
+    items-center z-50 px-32`}
     >
       <div className="flex items-center gap-4 w-full">
         <div>
-          <div className="font-bold">{currentSong?.name}</div>
-          <div className="text-sm">{currentSong?.artist_name}</div>
-        </div>
-        <div>
-          <button
+          {/*<button
             onClick={handleClick}
             className="bg-purple-600 text-white px-3 py-1 rounded"
           >
             {isPlaying ? <Pause /> : <Play />}
-          </button>
-          <div className="text-xs text-gray-300 mt-1">
-            {formatTime(currentTime)} / {formatTime(duration)}
-          </div>
+          </button> */}
+          <FooterController
+            onPlayPauseClick={handleClick}
+            isPlaying={isPlaying}
+          />
         </div>
-        <ProgressBar />
+        <div className={"flex flex-col items-center w-full"}>
+          <div className={"flex gap-4 justify-center mb-2"}>
+            <div className="font-bold">{currentSong?.name}</div>
+            <div className="font-bold">{currentSong?.artist_name}</div>
+          </div>
+          <ProgressBar />
+        </div>
+        <div className="text-xs text-gray-300 mt-1">
+          {formatTime(currentTime)} / {formatTime(duration)}
+        </div>
       </div>
       <audio ref={audioRef} onEnded={handleEnded} style={{ display: "none" }} />
     </div>

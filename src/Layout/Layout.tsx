@@ -6,7 +6,7 @@ import { InfoBar } from "./Infobar.tsx";
 
 export const Layout = () => {
   return (
-    <div className={"flex bg-[#F1F6F9] h-screen text-black"}>
+    <div className={"flex bg-[#371A4D] h-screen text-black"}>
       {/* Left Sidebar */}
       <SideBar />
       <main
