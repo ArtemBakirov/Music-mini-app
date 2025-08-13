@@ -1,7 +1,6 @@
 import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { SdkService } from "./bastyon-sdk/sdkService.ts";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Music from "./pages/Music.tsx";
 import { PlayLists } from "./pages/PlayLists.tsx";
@@ -12,6 +11,7 @@ import "./utils/i18n.ts";
 
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { BastyonSDKProvider } from "./Layout/Providers/BastyonSDKProvider.tsx";
 // import { TestIframe } from "./pages/TestIframe.tsx";
 
 const queryClient = new QueryClient({
@@ -24,34 +24,29 @@ const queryClient = new QueryClient({
   },
 });
 
-console.log("SDK init");
-useEffect(() => {
-  void SdkService.init();
-  void SdkService.requestPermissions();
-  void SdkService.getUsersInfo();
-}, []);
-
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={<Layout />}
-            children={
-              <>
-                <Route index element={<Music />} />
-                <Route path="playlists" element={<PlayLists />} />
-                <Route
-                  path="playlists/:playlistId"
-                  element={<PlaylistDetail />}
-                />
-              </>
-            }
-          />
-        </Routes>
-      </BrowserRouter>
+      <BastyonSDKProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={<Layout />}
+              children={
+                <>
+                  <Route index element={<Music />} />
+                  <Route path="playlists" element={<PlayLists />} />
+                  <Route
+                    path="playlists/:playlistId"
+                    element={<PlaylistDetail />}
+                  />
+                </>
+              }
+            />
+          </Routes>
+        </BrowserRouter>
+      </BastyonSDKProvider>
     </QueryClientProvider>
   </StrictMode>,
 );
