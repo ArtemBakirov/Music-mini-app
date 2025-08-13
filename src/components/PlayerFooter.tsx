@@ -61,15 +61,15 @@ export const PlayerFooter = () => {
         if (event.data === YT.PlayerState.PLAYING) {
           setIsPlaying(true);
           const interval = setInterval(() => {
-           // setProgress(youtubePlayerManager.getProgress());
-           setProgress(youtubePlayerManager.getProgress());
+            // setProgress(youtubePlayerManager.getProgress());
+            setProgress(youtubePlayerManager.getProgress());
           }, 500);
           return () => clearInterval(interval);
         } else {
           setIsPlaying(false);
         }
       },
-      progress
+      progress,
     );
 
     return () => {
@@ -80,15 +80,12 @@ export const PlayerFooter = () => {
 
   const play = () => {
     if (youtubePlayerManager.play) {
-      console.log("play");
       // setCurrentSong(songData)
       youtubePlayerManager.play();
     }
   };
 
   const pause = () => {
-    console.log("Pause");
-    console.log("player ref", playerRef.current);
     youtubePlayerManager.pause();
   };
 

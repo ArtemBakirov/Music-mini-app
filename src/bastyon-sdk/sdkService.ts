@@ -56,7 +56,6 @@ export class SdkService {
       console.error("Ошибка запроса:", error);
       return null;
     }
-    // const usersInfo = this.sdk!.get.account();
   }
 
   /**

@@ -4,8 +4,6 @@ import { useArtistInfo } from "../hooks/useArtistInfo.ts";
 import FullScreen from "../assets/icons/full_screen.svg?react";
 
 export const InfoBar = memo(() => {
-  console.log("RENDERED");
-
   const currentSong = useJamendoPlayerSelector((state) => state.currentSong);
   const artist_id = useJamendoPlayerSelector(
     (state) => state.currentSong?.artist_id,
@@ -15,8 +13,6 @@ export const InfoBar = memo(() => {
 
   const { data, isLoading, error } = useArtistInfo(artist_id);
   const info = data?.results[0];
-  console.log("current song", currentSong);
-  console.log("artist info", data?.results[0]);
 
   return (
     <aside className="w-100 border-r-2 border-black p-4 flex flex-col bg-[#502B6C] text-gray-300">
