@@ -2,8 +2,6 @@ import { useEffect, useRef } from "react";
 import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
 import { ProgressBar } from "./ProgressBar.tsx";
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
-import Play from "../assets/icons/play.svg?react";
-import Pause from "../assets/icons/pause.svg?react";
 import { FooterController } from "./FooterController.tsx";
 
 export const JamendoPlayerFooter = () => {
@@ -12,7 +10,6 @@ export const JamendoPlayerFooter = () => {
   const currentSong = useJamendoPlayerStore((s) => s.currentSong);
   const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
-  const clearSong = useJamendoPlayerStore((s) => s.clearSong);
   const duration = useJamendoPlayerStore((s) => s.duration);
   const currentTime = useJamendoPlayerStore((s) => s.currentTime);
 

@@ -10,11 +10,11 @@ import { useTranslation } from "../utils/i18n.ts";
 export default function Music() {
   const { t } = useTranslation();
 
-  useEffect(() => {
+  /*useEffect(() => {
     void SdkService.init();
     void SdkService.requestPermissions();
     void SdkService.getUsersInfo();
-  }, []);
+  }, []);*/
 
   function buildUrl(
     resource: "tracks" | "albums" | "artists" | "playlists",
@@ -31,7 +31,7 @@ export default function Music() {
     });
     const url = `${import.meta.env.VITE_JAMENDO_BASE_URL}/${resource}/?${search.toString()}`;
     if (resource === "artists") {
-      console.log("built url", url);
+      // console.log("built url", url);
     }
     return url;
   }
@@ -115,7 +115,7 @@ export default function Music() {
     );
 
     const data = await response.json();
-    console.log("Fetched Jamendo data:", data);
+    // console.log("Fetched Jamendo data:", data);
 
     setHasMore(data.results.length === limit);
 
@@ -159,7 +159,7 @@ export default function Music() {
     const artistsJson = await artistsRes.json();
     const playlistsJson = await playlistsRes.json();
 
-    console.log("artists, playlists", artistsJson, playlistsJson);
+    // console.log("artists, playlists", artistsJson, playlistsJson);
 
     setAlbums(
       (albumsJson.results || []).map((a: any) => ({

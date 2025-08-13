@@ -1,6 +1,7 @@
-import { StrictMode } from "react";
+import { StrictMode, useEffect } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
+import { SdkService } from "./bastyon-sdk/sdkService.ts";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Music from "./pages/Music.tsx";
 import { PlayLists } from "./pages/PlayLists.tsx";
@@ -22,6 +23,13 @@ const queryClient = new QueryClient({
     },
   },
 });
+
+console.log("SDK init");
+useEffect(() => {
+  void SdkService.init();
+  void SdkService.requestPermissions();
+  void SdkService.getUsersInfo();
+}, []);
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
