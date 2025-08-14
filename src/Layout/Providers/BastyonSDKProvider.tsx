@@ -9,6 +9,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
 
   const init = async () => {
     const sdkInfo = await SdkService.init();
+
     console.log("sdk info", sdkInfo);
   };
 
