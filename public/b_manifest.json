@@ -5,6 +5,14 @@
   "author": "TGSzZGCTaYjjmMZontBcdi3M9EToS5ztEp",
   "permissions": [
     "account",
-    "messaging"
+    "zaddress",
+    "geolocation",
+    "sign",
+    "payment",
+    "messaging",
+    "mobilecamera",
+    "externallink",
+    "authFetch",
+    "chat"
   ]
 }
