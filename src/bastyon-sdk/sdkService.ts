@@ -41,7 +41,6 @@ export class SdkService {
       "account",
       "zaddress",
       "geolocation",
-      "sign",
       "payment",
       "messaging",
       "mobilecamera",
