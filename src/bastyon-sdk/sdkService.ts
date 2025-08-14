@@ -17,19 +17,18 @@ export class SdkService {
    * @example
    * await SdkService.init();
    */
-  public static async init(): Promise<void> {
+  public static async init(): Promise<ApplicationInfo | null> {
     if (this.sdk) {
       console.warn("Bastyon SDK is already initialized.");
-      return;
+      return null;
     }
 
     try {
       this.sdk = new window.BastyonSdk();
-      await this.sdk.init().then(async () => {
-        this.sdk!.emit("loaded"); // Notify the platform that the app is ready
-      });
-
+      const sdkInfo = await this.sdk.init();
+      this.sdk!.emit("loaded");
       console.log("Bastyon SDK successfully initialized.");
+      return sdkInfo;
     } catch (error) {
       console.error("Error initializing Bastyon SDK:", error);
       throw error; // Re-throw error for handling at a higher level

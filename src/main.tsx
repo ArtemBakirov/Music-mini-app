@@ -1,10 +1,9 @@
-import { StrictMode, useEffect } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Music from "./pages/Music.tsx";
-import { PlayLists } from "./pages/PlayLists.tsx";
-import { PlaylistDetail } from "./pages/Playlistdetail.tsx";
+import Account from "./pages/Account.tsx";
 import { Layout } from "./Layout/Layout.tsx";
 
 import "./utils/i18n.ts";
@@ -12,6 +11,7 @@ import "./utils/i18n.ts";
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BastyonSDKProvider } from "./Layout/Providers/BastyonSDKProvider.tsx";
+
 // import { TestIframe } from "./pages/TestIframe.tsx";
 
 const queryClient = new QueryClient({
@@ -36,11 +36,7 @@ createRoot(document.getElementById("root")!).render(
               children={
                 <>
                   <Route index element={<Music />} />
-                  <Route path="playlists" element={<PlayLists />} />
-                  <Route
-                    path="playlists/:playlistId"
-                    element={<PlaylistDetail />}
-                  />
+                  <Route path="account" element={<Account />} />
                 </>
               }
             />

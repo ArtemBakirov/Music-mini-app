@@ -1,5 +1,4 @@
 import { useEffect, useState, useRef } from "react";
-import { SdkService } from "../bastyon-sdk/sdkService";
 import { useViewStateStore } from "../hooks/stores/useViewStateStore";
 import { DisplayJamendoSongCard } from "../components/DisplayJamendoSongCard";
 import { SearchInput } from "../components/SearchInput";
@@ -9,12 +8,6 @@ import { useTranslation } from "../utils/i18n.ts";
 
 export default function Music() {
   const { t } = useTranslation();
-
-  /*useEffect(() => {
-    void SdkService.init();
-    void SdkService.requestPermissions();
-    void SdkService.getUsersInfo();
-  }, []);*/
 
   function buildUrl(
     resource: "tracks" | "albums" | "artists" | "playlists",
@@ -29,11 +22,7 @@ export default function Music() {
     Object.entries(params).forEach(([k, v]) => {
       if (v !== undefined && v !== null) search.set(k, String(v));
     });
-    const url = `${import.meta.env.VITE_JAMENDO_BASE_URL}/${resource}/?${search.toString()}`;
-    if (resource === "artists") {
-      // console.log("built url", url);
-    }
-    return url;
+    return `${import.meta.env.VITE_JAMENDO_BASE_URL}/${resource}/?${search.toString()}`;
   }
 
   type JamendoTrack = {
