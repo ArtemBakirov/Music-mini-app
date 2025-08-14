@@ -37,13 +37,30 @@ export class SdkService {
   }
 
   public static async requestPermissions() {
+    const permissions = [
+      "account",
+      "zaddress",
+      "geolocation",
+      "sign",
+      "payment",
+      "messaging",
+      "mobilecamera",
+      "externallink",
+      "authFetch",
+      "chat",
+    ];
     this.ensureInitialized();
-    const granted = await this.sdk!.permissions.check({
-      permission: "account",
-    });
-    if (!granted) {
-      await this.sdk!.permissions.request(["account"]);
-    }
+    await this.checkAndRequestPermissions(permissions);
+
+    /*await Promise.all(
+      permissions.map(async (permission) => {
+        const granted = await this.sdk!.permissions.check({ permission });
+
+        if (!granted) {
+          await this.sdk!.permissions.request([permission]);
+        }
+      })
+    );*/
   }
 
   public static async getUsersInfo(): Promise<AccountInfo | null> {
@@ -147,9 +164,68 @@ export class SdkService {
     this.ensureInitialized();
     try {
       const info = await this.sdk!.get.appinfo();
+      console.log("app info", info);
       return info;
     } catch (error) {
       console.error("Error fetching application information:", error);
+      throw error;
+    }
+  }
+
+  public static async getBalance(): Promise<unknown> {
+    this.ensureInitialized();
+    try {
+      const info = await this.sdk!.get.balance();
+      console.log("balance info", info);
+      return info;
+    } catch (error) {
+      console.error("Error fetching balance information:", error);
+      throw error;
+    }
+  }
+
+  public static async getZaddress() {
+    this.ensureInitialized();
+    try {
+      const address = await this.sdk!.get.zaddress();
+      console.log("balance info", address);
+      return address;
+    } catch (error) {
+      console.error("Error fetching zaddress", error);
+      throw error;
+    }
+  }
+
+  public static async getLocation() {
+    this.ensureInitialized();
+    try {
+      const info = await this.sdk!.get.geolocation();
+      console.log("geolocation info", info);
+      return info;
+    } catch (error) {
+      console.error("Error fetching geo info", error);
+      throw error;
+    }
+  }
+
+  public static async showHelperMessage(message: string) {
+    this.ensureInitialized();
+    try {
+      await this.sdk!.helpers.alert(message);
+      // console.log("geolocation info", info);
+    } catch (error) {
+      console.error("Error helpers message", error);
+      throw error;
+    }
+  }
+
+  public static async getUserState() {
+    this.ensureInitialized();
+    try {
+      const info = await this.sdk!.helpers.userstate();
+      console.log("user state info", info);
+    } catch (error) {
+      console.error("Error helpers userState", error);
       throw error;
     }
   }
