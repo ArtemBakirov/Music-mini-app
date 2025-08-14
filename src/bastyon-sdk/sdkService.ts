@@ -44,7 +44,6 @@ export class SdkService {
       "messaging",
       "mobilecamera",
       "externallink",
-      "authFetch",
       "chat",
     ];
     this.ensureInitialized();
