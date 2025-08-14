@@ -19,6 +19,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
     void getUserInfo();
     void SdkService.getAppInfo();
     void SdkService.showHelperMessage("test helper message");
+    void SdkService.getUserState();
   }, []);
 
   return <>{children}</>;

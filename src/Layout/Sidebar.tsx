@@ -1,13 +1,12 @@
 import { useState } from "react";
 import Home from "../assets/icons/home.svg?react";
 import NewReleases from "../assets/icons/new.svg?react";
-import Radio from "../assets/icons/radio.svg?react";
 import RecentlyAdded from "../assets/icons/recent.svg?react";
 import Artists from "../assets/icons/artist.svg?react";
 import Albums from "../assets/icons/albums.svg?react";
 import Tracks from "../assets/icons/tracks.svg?react";
-import ForYou from "../assets/icons/foryou.svg?react";
 import Playlists from "../assets/icons/playlists.svg?react";
+import Account from "../assets/icons/account.svg?react";
 
 interface MenuItem {
   key: string;
@@ -20,6 +19,7 @@ export const SideBar = () => {
   const [active, setActive] = useState<string>("home");
 
   const mainMenu: MenuItem[] = [
+    { key: "account", label: "Account", Icon: Account },
     { key: "home", label: "Startseite", Icon: Home },
     { key: "new", label: "Neu", Icon: NewReleases },
   ];
@@ -44,7 +44,7 @@ export const SideBar = () => {
           return (
             <li
               key={key}
-              className={`flex items-center gap-3 px-4 py-2 cursor-pointer rounded-md truncate
+              className={`${key === "account" ? "text-lg" : ""} flex items-center gap-3 px-4 py-2 cursor-pointer rounded-md truncate
                 ${isActive ? "bg-gray-700 text-white" : "text-gray-300 hover:bg-gray-800 hover:text-white"}`}
               onClick={() => {
                 setActive(key);
@@ -52,7 +52,7 @@ export const SideBar = () => {
               }}
             >
               <Icon
-                className={`w-5 h-5 ${isActive ? "text-red-400" : "text-red-500"}`}
+                className={`${key === "account" ? "w-6 h-6" : "w-5 h-5"}  ${isActive ? "text-red-400" : "text-red-500"}`}
               />
               <span className="truncate">{label}</span>
             </li>
