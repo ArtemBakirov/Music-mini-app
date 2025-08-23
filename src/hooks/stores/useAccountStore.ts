@@ -1,10 +1,10 @@
 // src/hooks/stores/useAccountStore.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 
 // Shape of what the SDK can return (adjust if your SdkService differs)
 export type SdkUserInfo = {
-  address: string;
+  address: string | null;
   status?: string;
   signature?: {
     nonce: string;
@@ -20,9 +20,11 @@ export type SdkUserInfo = {
 };
 
 export type Profile = {
-  username: string;
-  bio: string;
+  address: string | null;
+  username?: string;
+  bio?: string;
   avatarUrl?: string;
+  avatarFile?: File | null;
 };
 
 type AccountState = {
@@ -35,6 +37,12 @@ type AccountState = {
   // ui flags
   loading: boolean;
   error?: string | null;
+  isDirty: {
+    username: boolean;
+    bio: boolean;
+    avatar: boolean;
+  };
+  serverSnapshot: Partial<Profile> | null;
 
   // actions
   setLoading: (loading: boolean) => void;
@@ -46,9 +54,11 @@ type AccountState = {
 
   setProfile: (p: Profile) => void;
   patchProfile: (p: Partial<Profile>) => void;
+  setFromServer: (p: Partial<Profile>) => void;
+  resetToServer: () => void;
 
   /** One-shot: map SDK user info into the store */
-  setFromSdk: (sdk: SdkUserInfo) => void;
+  // setFromSdk: (sdk: SdkUserInfo) => void;
 
   /** Clear everything (e.g., on logout) */
   clear: () => void;
@@ -66,7 +76,9 @@ export const useAccountStore = create<AccountState>()(
       profile: initialProfile,
       loading: false,
       error: null,
-
+      //
+      isDirty: { username: false, bio: false, avatar: false },
+      serverSnapshot: null,
       // ui flags
       setLoading: (loading) => set({ loading }),
       setError: (error) => set({ error }),
@@ -77,21 +89,33 @@ export const useAccountStore = create<AccountState>()(
       setStatus: (status) => set({ status }),
 
       // profile setters
-      setProfile: (profile) => set({ profile }),
-      patchProfile: (patch) => set({ profile: { ...get().profile, ...patch } }),
+      setFromServer: (p: Partial<Profile>) => {
+        const { isDirty, profile } = get();
+        // Only overwrite fields that are NOT dirty
+        const merged: Profile = {
+          ...(profile ?? {}),
+          ...p,
+          username: isDirty.username ? profile?.username : p.username,
+          bio: isDirty.bio ? profile?.bio : p.bio,
+          avatarUrl: isDirty.avatar ? profile?.avatarUrl : p.avatarUrl,
+        };
+        set({ profile: merged, serverSnapshot: p });
+      },
 
-      // map SDK to store
-      setFromSdk: (sdk) => {
-        set({
-          address: sdk.address ?? null,
-          status: sdk.status,
-          signature: sdk.signature,
-          profile: {
-            username: sdk.username ?? get().profile.username ?? "",
-            bio: sdk.bio ?? get().profile.bio ?? "",
-            avatarUrl: sdk.avatarUrl ?? get().profile.avatarUrl,
-          },
-        });
+      resetToServer: () => {
+        const snap = get().serverSnapshot;
+        if (snap) {
+          set({
+            profile: { ...snap, avatarFile: null } as Profile,
+            isDirty: { username: false, bio: false, avatar: false },
+          });
+        }
+      },
+
+      setProfile: (profile) => set({ profile }),
+      patchProfile: (patch) => {
+        // console.log("patch profile", patch);
+        set({ profile: { ...get().profile, ...patch } });
       },
 
       clear: () =>
@@ -102,16 +126,21 @@ export const useAccountStore = create<AccountState>()(
           profile: initialProfile,
           loading: false,
           error: null,
+          serverSnapshot: null,
+          isDirty: { username: false, bio: false, avatar: false },
         }),
     }),
     {
       name: "account-store", // localStorage key
+      storage: createJSONStorage(() => sessionStorage),
       // Persist only what you actually need between reloads
       partialize: (state) => ({
         address: state.address,
         status: state.status,
         signature: state.signature,
         profile: state.profile,
+        serverSnapshot: state.serverSnapshot,
+        isDirty: state.isDirty,
       }),
     },
   ),

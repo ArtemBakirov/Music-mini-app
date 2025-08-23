@@ -9,6 +9,11 @@
 export class SdkService {
   private static sdk: BastyonSdk | null = null;
 
+  public static inBastyon() {
+    this.ensureInitialized();
+    return this.sdk?.inbastyon();
+  }
+
   /**
    * Initializes the Bastyon SDK at the very start of the application lifecycle.
    * Must be called before any other SDK interactions.
