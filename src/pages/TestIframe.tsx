@@ -41,6 +41,7 @@ export default function TestIframe({
     playerRef.current?.playVideo();
     playerRef.current?.playVideo();
     playerRef.current?.playVideo();
+    console.log("tried to play");
   };
   const pause = () => playerRef.current?.pauseVideo();
 
