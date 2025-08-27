@@ -1,6 +1,6 @@
 import YouTube, { YouTubeProps } from "react-youtube";
 import "./TestIframe.css";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 
 type Props = {
   videoId: string | null;
@@ -45,14 +45,14 @@ export default function TestIframe({
   };
   const pause = () => playerRef.current?.pauseVideo();
 
-  const remove = () => {
-    const el = document.querySelector(".html5-video-container");
-    console.log("el", el);
-    if (el) {
-      console.log("element found", el);
-    }
-  };
-  remove();
+  useEffect(() => {
+    // Example: auto-play muted after mount (safer for autoplay policies)
+    const id = setTimeout(() => {
+      playerRef.current?.mute();
+      playerRef.current?.playVideo();
+    }, 500);
+    return () => clearTimeout(id);
+  }, []);
 
   return (
     <div style={{ position: "relative", width: "100%" }}>
