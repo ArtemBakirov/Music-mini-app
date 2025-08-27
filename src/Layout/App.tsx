@@ -4,7 +4,7 @@ import { JamendoPlayerFooter } from "../components/JamendoPlayerFooter.tsx";
 import { SideBar } from "./Sidebar.tsx";
 import { InfoBar } from "./Infobar.tsx";
 
-export const Layout = () => {
+export const App = () => {
   return (
     <div className={"flex bg-[#371A4D] h-screen text-black"}>
       {/* Left Sidebar */}

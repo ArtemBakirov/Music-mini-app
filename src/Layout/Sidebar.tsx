@@ -7,6 +7,8 @@ import Albums from "../assets/icons/albums.svg?react";
 import Tracks from "../assets/icons/tracks.svg?react";
 import Playlists from "../assets/icons/playlists.svg?react";
 import Account from "../assets/icons/account.svg?react";
+import Upload from "../assets/icons/upload.svg?react";
+import MyUploads from "../assets/icons/my_uploads.svg?react";
 
 // router
 import { Link } from "react-router-dom";
@@ -36,6 +38,11 @@ export const SideBar = () => {
 
   const playlistsMenu: MenuItem[] = [
     { key: "all-playlists", label: "Alle Playlists", Icon: Playlists },
+  ];
+
+  const uploadsMenu: MenuItem[] = [
+    { key: "create", label: "Create Upload", Icon: Upload },
+    { key: "myUploads", label: "My Uploads", Icon: MyUploads },
   ];
 
   const renderMenu = (title: string, items: MenuItem[]) => (
@@ -72,6 +79,7 @@ export const SideBar = () => {
       {renderMenu("", mainMenu)}
       {renderMenu("Meine Mediathek", libraryMenu)}
       {renderMenu("Playlists", playlistsMenu)}
+      {renderMenu("Meine Uploads", uploadsMenu)}
     </aside>
   );
 };

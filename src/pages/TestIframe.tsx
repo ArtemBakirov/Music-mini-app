@@ -1,89 +1,64 @@
-// import { useEffect, useRef, useState } from "react";
+import YouTube, { YouTubeProps } from "react-youtube";
+import "./TestIframe.css";
+import { useRef } from "react";
 
-export const TestIframe = () => {
-  const videoId = "8mGBaXPlri8";
-  const embedUrl = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0`;
+type Props = {
+  videoId: string | null;
+  //onReady?: YouTubeProps["onReady"];
+  //onStateChange?: YouTubeProps["onStateChange"];
+  //autoplay?: boolean;
+  //startSeconds?: number;
+};
 
-  /*const [isPlaying, setIsPlaying] = useState(false);
-  const [isPaused, setIsPaused] = useState(false);
-  const [passedTime, setPassedTime] = useState(0); // in seconds
-  const [startTime, setStartTime] = useState(0);
-  const playbackTimer = useRef<number | null>(null);
-  const playbackStartTimestamp = useRef<number | null>(null); // in ms*/
+export default function TestIframe({
+  videoId,
+  // onReady, onStateChange, autoplay, startSeconds,
+}: Props) {
+  if (!videoId) return null;
+  const playerRef = useRef<any>(null);
+  const onReady: YouTubeProps["onReady"] = (e) => {
+    playerRef.current = e.target; // YT.Player instance
+    // Optional: e.target.mute(); e.target.playVideo();
+  };
 
-  /*const iframeSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&controls=1&rel=0&start=${Math.floor(
-    startTime,
-  )}`;
+  const opts: YouTubeProps["opts"] = {
+    width: "100%",
+    height: "100%",
+    playerVars: {
+      rel: 0,
+      modestbranding: 1,
+      playsinline: 1,
+      // autoplay: autoplay ? 1 : 0,
+      // start: startSeconds ?? 0,
+      origin: window.location.origin,
+    },
+  };
 
-  useEffect(() => {
-    if (isPlaying) {
-      playbackStartTimestamp.current = Date.now();
+  const play = () => playerRef.current?.playVideo();
+  const pause = () => playerRef.current?.pauseVideo();
 
-      playbackTimer.current = window.setInterval(() => {
-        const now = Date.now();
-        const elapsedSeconds =
-          (now - (playbackStartTimestamp.current || now)) / 1000;
-        setPassedTime((prevTime) => prevTime + elapsedSeconds);
-        playbackStartTimestamp.current = now;
-      }, 1000);
+  const remove = () => {
+    const el = document.querySelector(".html5-video-container");
+    console.log("el", el);
+    if (el) {
+      console.log("element found", el);
     }
-    return () => {
-      if (playbackTimer.current) {
-        clearInterval(playbackTimer.current);
-        playbackTimer.current = null;
-      }
-    };
-  }, [isPlaying]);
-
-  const play = () => {
-    setIsPlaying(true);
   };
-  const stop = () => {
-    setIsPlaying(false);
-    setStartTime(0);
-  };
-
-  const pause = () => {
-    setIsPlaying(false);
-    // setIsPaused(true);
-    setStartTime(passedTime);
-  };*/
+  remove();
 
   return (
-    /*<div>
-      <p>This is a component for testing the iframe from youtube</p>
-
-      {isPlaying && (
-        <iframe
-          width="100%"
-          height="100"
-          src={iframeSrc}
-          allow="autoplay; encrypted-media"
-          title="YouTube video player"
-          frameBorder="0"
-          allowFullScreen
+    <div style={{ position: "relative", width: "100%" }}>
+      <div className={"player"}>
+        <YouTube
+          className={"border-1 border-white styled-player"}
+          videoId={videoId}
+          opts={opts}
+          onReady={onReady}
+          // onStateChange={onStateChange}
         />
-      )}
-      <div className="flex gap-4">
-        <button onClick={play}>Play Iframe</button>
-        <button onClick={stop}>Stop Iframe</button>
-        <button onClick={pause}>Pause Iframe</button>
       </div>
-      <p className="text-sm text-gray-400 border-1 border- black mt-6">
-        Approx. current time: {Math.floor(passedTime)} seconds
-      </p>
-    </div>*/
-    <div>
-      Test works
-      <iframe
-        width="100%"
-        height="100"
-        src={embedUrl}
-        allow="autoplay; encrypted-media"
-        title="YouTube video player"
-        frameBorder="0"
-        allowFullScreen
-      />
+      <button onClick={play}>Play</button>
+      <button onClick={pause}>Pause</button>
     </div>
   );
-};
+}

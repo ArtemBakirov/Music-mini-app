@@ -1,5 +1,5 @@
 // src/hooks/query/users.queries.ts
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import apiInstance from "../../utils/axios.ts";
 import {
   QueryClient,
@@ -65,7 +65,7 @@ async function upsertUser(input: UpsertInput): Promise<UserDto> {
   } else {
     const fd = new FormData();
     fd.append("address", input.address);
-    fd.append("username", input.username);
+    fd.append("username", input.username!);
     if (input.bio) fd.append("bio", input.bio);
     if (input.avatarFile) fd.append("avatar", input.avatarFile);
     body = fd;
@@ -142,24 +142,37 @@ export function useUserAvatar(address?: string) {
     queryKey: address ? userKeys.avatar(address) : userKeys.all,
     queryFn: async () => {
       if (!address) throw new Error("Address is required");
-      const blob = await fetchUserAvatarBlob(address);
+      return fetchUserAvatarBlob(address);
+      // const blob = await fetchUserAvatarBlob(address);
 
-      const addressUrl = URL.createObjectURL(blob);
+      // const addressUrl = URL.createObjectURL(blob);
 
-      return addressUrl;
+      // return addressUrl;
     },
     enabled: Boolean(address),
+    staleTime: 60_000,
   });
 
   // Revoke on unmount / change
-  useEffect(() => {
+  /*useEffect(() => {
     const url = query.data;
     return () => {
       if (url) URL.revokeObjectURL(url);
     };
-  }, [query.data]);
+  }, [query.data]);*/
 
   return query; // { data: string | undefined, ... }
+}
+
+export function useObjectUrl(blob?: Blob) {
+  const [url, setUrl] = useState<string>();
+  useEffect(() => {
+    if (!blob) { setUrl(undefined); return; }
+    const u = URL.createObjectURL(blob);
+    setUrl(u);
+    return () => URL.revokeObjectURL(u); // revoke THIS url when blob changes/unmounts
+  }, [blob]);
+  return url;
 }
 
 async function fetchUserAvatarBlob(address: string): Promise<Blob> {

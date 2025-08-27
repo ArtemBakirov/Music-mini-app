@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { useAccountStore } from "../hooks/stores/useAccountStore";
+import { useObjectUrl } from "../hooks/query/user.queries.ts";
 import {
   UpsertInput,
   useUpsertUser,
@@ -23,6 +24,9 @@ export default function Account() {
   const { data: avatar, isError: avatarIsError } = useUserAvatar(
     profile.address || "",
   );
+  const avatarUrl = useObjectUrl(avatar);
+
+  console.log("avatar", avatar);
 
   const onPickFile = () => fileInputRef.current?.click();
 
@@ -33,6 +37,7 @@ export default function Account() {
       const url = URL.createObjectURL(file);
       setAvatarPreview(url);
     } else {
+      console.log("no file", avatarPreview);
       if (avatarPreview) URL.revokeObjectURL(avatarPreview);
       setAvatarPreview(null);
     }
@@ -95,7 +100,7 @@ export default function Account() {
           <div className="relative">
             {!avatarIsError ? (
               <img
-                src={avatarPreview ?? avatar}
+                src={avatarPreview ?? avatarUrl}
                 alt="avatar"
                 className="w-36 h-36 rounded-full object-cover border border-white/10"
               />

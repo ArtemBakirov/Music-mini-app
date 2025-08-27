@@ -6,7 +6,7 @@ import { SearchInput } from "../components/SearchInput";
 // i18n
 import { useTranslation } from "../utils/i18n.ts";
 
-export default function Music() {
+export default function MusicMobile() {
   const { t } = useTranslation();
 
   function buildUrl(
@@ -197,6 +197,7 @@ export default function Music() {
 
   return (
     <div className="flex flex-col bg-[#371A4D] text-white h-screen w-full p-6 pt-16 mb-24 overflow-hidden">
+      Mobile Layout
       <div className="w-full max-w-2xl mx-auto mb-6">
         <SearchInput query={query} setQuery={setQuery} onClick={handleSearch} />
       </div>

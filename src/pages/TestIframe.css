@@ -1,0 +1,16 @@
+.styled-player{
+  video{
+    height: 0;
+  }
+}
+
+.player{
+  .video-stream{
+    height: 0 !important;
+    border: 2px solid red;
+  }
+  .html5-video-container{
+    height: 0 !important;
+    border: 2px solid blue;
+  }
+}

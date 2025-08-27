@@ -4,13 +4,14 @@ import "./index.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Music from "./pages/Music.tsx";
 import Account from "./pages/Account.tsx";
-import { Layout } from "./Layout/Layout.tsx";
+import { App } from "./Layout/App.tsx";
 
 import "./utils/i18n.ts";
 
 // query clinet
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BastyonSDKProvider } from "./Layout/Providers/BastyonSDKProvider.tsx";
+import { DesktopMobileProvider } from "./Layout/Providers/DesktopMobileProvider.tsx";
 
 // import { TestIframe } from "./pages/TestIframe.tsx";
 
@@ -28,11 +29,11 @@ createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <QueryClientProvider client={queryClient}>
       <BastyonSDKProvider>
-        <BrowserRouter>
+        {/*<BrowserRouter>
           <Routes>
             <Route
               path="/"
-              element={<Layout />}
+              element={<App />}
               children={
                 <>
                   <Route index element={<Music />} />
@@ -41,7 +42,8 @@ createRoot(document.getElementById("root")!).render(
               }
             />
           </Routes>
-        </BrowserRouter>
+        </BrowserRouter> */}
+        <DesktopMobileProvider />
       </BastyonSDKProvider>
     </QueryClientProvider>
   </StrictMode>,
