@@ -41,12 +41,8 @@ export default function TestIframe({
 
   const play = () => {
     console.log("play");
-    playerRef.current?.playVideo();
-    console.log("play again");
-    playerRef.current?.playVideo();
-    playerRef.current?.playVideo();
-    playerRef.current?.playVideo();
-    console.log("tried to play");
+    playerRef.current?.mute(); // safe
+    playerRef.current?.playVideo(); // must be in the user gesture
   };
   const pause = () => playerRef.current?.pauseVideo();
 
