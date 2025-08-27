@@ -34,7 +34,14 @@ export default function TestIframe({
     },
   };
 
-  const play = () => playerRef.current?.playVideo();
+  const play = () => {
+    console.log("play");
+    playerRef.current?.playVideo();
+    console.log("play again");
+    playerRef.current?.playVideo();
+    playerRef.current?.playVideo();
+    playerRef.current?.playVideo();
+  };
   const pause = () => playerRef.current?.pauseVideo();
 
   const remove = () => {
