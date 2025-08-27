@@ -18,6 +18,11 @@ export default function TestIframe({
   const playerRef = useRef<any>(null);
   const onReady: YouTubeProps["onReady"] = (e) => {
     playerRef.current = e.target; // YT.Player instance
+    const iframe = e.target.getIframe();
+    iframe.setAttribute(
+      "allow",
+      "autoplay; encrypted-media; picture-in-picture; fullscreen",
+    );
     // Optional: e.target.mute(); e.target.playVideo();
   };
 
