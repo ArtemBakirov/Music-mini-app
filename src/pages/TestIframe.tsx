@@ -43,6 +43,9 @@ export default function TestIframe({
     console.log("play");
     playerRef.current?.mute(); // safe
     playerRef.current?.playVideo(); // must be in the user gesture
+    console.log("unmute");
+    playerRef.current?.unMute();
+    playerRef.current?.setVolume(70);
   };
   const pause = () => playerRef.current?.pauseVideo();
 
