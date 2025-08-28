@@ -2,9 +2,11 @@ import { useEffect, useState, useRef } from "react";
 import { useViewStateStore } from "../hooks/stores/useViewStateStore";
 import { DisplayJamendoSongCard } from "../components/DisplayJamendoSongCard";
 import { SearchInput } from "../components/SearchInput";
+import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
 
 // i18n
 import { useTranslation } from "../utils/i18n.ts";
+import { Link } from "react-router-dom";
 
 export default function Music() {
   const { t } = useTranslation();
@@ -85,6 +87,8 @@ export default function Music() {
     if (node) observer.current.observe(node);
   };
 
+  const setQueue = useJamendoPlayerStore((s) => s.setQueue);
+
   const fetchTracks = async (searchText: string, currentPage = 1) => {
     setLoading(true);
     const limit = 12;
@@ -110,8 +114,13 @@ export default function Music() {
 
     if (currentPage === 1) {
       setTracks(data.results);
+      setQueue(data.results);
     } else {
-      setTracks((prev) => [...prev, ...data.results]);
+      setTracks((prev) => {
+        const next = [...prev, ...data.results];
+        setQueue(next); // keep queue in sync with list
+        return next;
+      });
     }
 
     setLoading(false);
@@ -205,7 +214,9 @@ export default function Music() {
         {tracks.length > 0 && (
           <section>
             <header className="flex items-center justify-between mb-3">
-              <h2 className="text-xl font-bold">Titel</h2>
+              <Link to={"/search/tracks"}>
+                <h2 className="text-xl font-bold">Titel</h2>
+              </Link>
             </header>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">

@@ -2,7 +2,7 @@ import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore.ts"
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
-import { ProgressBar } from "./ProgressBar.tsx";
+// import { ProgressBar } from "./ProgressBar.tsx";
 
 export const DisplayJamendoSongCard = ({
   songData,
@@ -15,14 +15,16 @@ export const DisplayJamendoSongCard = ({
   const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
   const setCurrentSong = useJamendoPlayerStore((s) => s.setCurrentSong);
   const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
-
+  const playAt = useJamendoPlayerStore((s) => s.playAt);
   const isCurrent = currentSong?.id === songData.id;
+  const isPlayingCurrent = isCurrent && isPlaying;
 
   const handleClick = async () => {
     if (!isCurrent) {
       JamendoPlayerManager.pause(); // pause whatever was playing
       setCurrentSong(songData); // switch song in store
       setIsPlaying(true); // footer effect will call syncToState()
+      playAt(idx);
     } else {
       if (isPlaying) {
         JamendoPlayerManager.pause();
@@ -35,25 +37,41 @@ export const DisplayJamendoSongCard = ({
   };
 
   return (
-    <div key={idx} className={"border p-4 rounded-lg flex items-center gap-4"}>
-      <img
-        src={songData.album_image}
-        alt={songData.name}
-        className="w-16 h-16 object-cover rounded-md"
-      />
+    <div
+      key={idx}
+      className={`p-2 px-0 mx-2 flex items-center gap-4
+        ${isCurrent ? "border-t-2 border-[#B065A0]" : "border-t-2 border-gray-500"}
+        ${isPlayingCurrent ? "animate-pulse" : ""}
+        `}
+    >
+      <div className={"relative border-1 border-red-500 rounded-md group"}>
+        <img
+          src={songData.album_image}
+          alt={songData.name}
+          className="w-12 h-12 object-cover rounded-md"
+        />
+        <button
+          onClick={handleClick}
+          className={`absolute top-1/2 left-1/2 transform -translate-x-1/2
+          -translate-y-1/2 text-white flex items-center justify-center
+          opacity-0 group-hover:opacity-100 transition-opacity
+          `}
+        >
+          {isCurrent && isPlaying ? (
+            <Pause className={"w-10 h-10"} />
+          ) : (
+            <Play className={"w-10 h-10"} />
+          )}
+        </button>
+      </div>
+
       <div className="flex-grow">
         <div className="font-semibold">{songData.name}</div>
         <div className="text-sm text-gray-300">{songData.artist_name}</div>
       </div>
-      <button
-        onClick={handleClick}
-        className="bg-purple-600 text-white px-3 py-1 rounded"
-      >
-        {isCurrent && isPlaying ? <Pause /> : <Play />}
-      </button>
 
       {/* Show progress bar only for the current playing song */}
-      {isCurrent && <ProgressBar />}
+      {/* isCurrent && <ProgressBar /> */}
     </div>
   );
 };

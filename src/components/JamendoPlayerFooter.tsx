@@ -13,6 +13,14 @@ export const JamendoPlayerFooter = () => {
   const duration = useJamendoPlayerStore((s) => s.duration);
   const currentTime = useJamendoPlayerStore((s) => s.currentTime);
 
+  // new state/selectors
+  const next = useJamendoPlayerStore((s) => s.next);
+  const prev = useJamendoPlayerStore((s) => s.prev);
+  const toggleShuffle = useJamendoPlayerStore((s) => s.toggleShuffle);
+  const cycleRepeat = useJamendoPlayerStore((s) => s.cycleRepeat);
+  const isShuffling = useJamendoPlayerStore((s) => s.isShuffling);
+  const repeatMode = useJamendoPlayerStore((s) => s.repeatMode);
+
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
     const m = Math.floor(seconds / 60);
@@ -40,7 +48,7 @@ export const JamendoPlayerFooter = () => {
       setIsPlaying(true);
     }
   };
-
+  // if (!currentSong) return null;
   return (
     <div
       className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
@@ -57,6 +65,12 @@ export const JamendoPlayerFooter = () => {
           <FooterController
             onPlayPauseClick={handleClick}
             isPlaying={isPlaying}
+            onPrevClick={prev}
+            onNextClick={next}
+            onShuffleClick={toggleShuffle}
+            onRepeatClick={cycleRepeat}
+            shuffleActive={isShuffling}
+            repeatMode={repeatMode}
           />
         </div>
         <div className={"flex flex-col items-center w-full"}>

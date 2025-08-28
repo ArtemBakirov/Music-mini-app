@@ -4,23 +4,48 @@ import Next from "../assets/icons/next.svg?react";
 import Prev from "../assets/icons/prev.svg?react";
 import Repeat from "../assets/icons/repeat.svg?react";
 import Shuffle from "../assets/icons/shuffle.svg?react";
+import { RepeatMode } from "../hooks/stores/useJamendoPlayerStore.ts";
 
 export const FooterController = ({
   isPlaying,
   onPlayPauseClick,
+  onNextClick,
+  onPrevClick,
+  onShuffleClick,
+  onRepeatClick,
+  shuffleActive,
+  repeatMode,
 }: {
   onPlayPauseClick: () => void;
   isPlaying: boolean;
+  onNextClick: () => void;
+  onPrevClick: () => void;
+  onShuffleClick: () => void;
+  onRepeatClick: () => void;
+  shuffleActive: boolean;
+  repeatMode: RepeatMode;
 }) => {
+  const repeatLabel =
+    repeatMode === "off" ? "" : repeatMode === "one" ? "1" : "∞";
+
   return (
     <div className="flex items-center justify-center gap-6">
       {/* Shuffle */}
-      <button className="p-2 rounded-full hover:bg-[#3a1a4d] transition">
+      <button
+        onClick={onShuffleClick}
+        className={`p-2 rounded-full hover:bg-[#3a1a4d] transition ${
+          shuffleActive ? "bg-[#3a1a4d]" : ""
+        }`}
+        title="Shuffle"
+      >
         <Shuffle /> {/* Replace with your SVG import */}
       </button>
 
       {/* Previous */}
-      <button className="p-2 rounded-full hover:bg-[#3a1a4d] transition">
+      <button
+        onClick={onPrevClick}
+        className="p-2 rounded-full hover:bg-[#3a1a4d] transition"
+      >
         <Prev /> {/* Replace with your SVG import */}
       </button>
 
@@ -33,13 +58,27 @@ export const FooterController = ({
       </button>
 
       {/* Next */}
-      <button className="p-2 rounded-full hover:bg-[#3a1a4d] transition">
+      <button
+        onClick={onNextClick}
+        className="p-2 rounded-full hover:bg-[#3a1a4d] transition"
+      >
         <Next /> {/* Replace with your SVG import */}
       </button>
 
       {/* Repeat */}
-      <button className="p-2 rounded-full hover:bg-[#3a1a4d] transition">
+      <button
+        onClick={onRepeatClick}
+        className={`relative p-2 rounded-full hover:bg-[#3a1a4d] transition ${
+          repeatMode !== "off" ? "bg-[#3a1a4d]" : ""
+        }`}
+        title={`Repeat: ${repeatMode}`}
+      >
         <Repeat /> {/* Replace with your SVG import */}
+        {repeatMode !== "off" && (
+          <span className="absolute -bottom-1 -right-1 text-[10px] bg-white text-black rounded px-1 leading-none">
+            {repeatLabel}
+          </span>
+        )}
       </button>
     </div>
   );

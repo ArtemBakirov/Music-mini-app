@@ -41,6 +41,7 @@ export class JamendoPlayerManager {
   private static attachListeners() {
     if (!this.audio) return;
     const set = jamendoPlayerStore.setState;
+    const get = jamendoPlayerStore.getState();
 
     this.audio.addEventListener("timeupdate", () => {
       if (!this.audio || !this.audio.duration) return;
@@ -61,6 +62,7 @@ export class JamendoPlayerManager {
         progress: 100,
         currentTime: jamendoPlayerStore.getState().duration,
       });
+      get.handleEnded();
     });
   }
 

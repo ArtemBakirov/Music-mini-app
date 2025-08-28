@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="#505356"><path d="M520-200v-560h240v560H520Zm-320 0v-560h240v560H200Zm400-80h80v-400h-80v400Zm-320 0h80v-400h-80v400Zm0-400v400-400Zm320 0v400-400Z"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" height="24px" width="24px" viewBox="0 -960 960 960" fill="currentColor">
+  <!-- Left bar -->
+  <rect x="200" y="-760" width="240" height="560" rx="48" ry="48"/>
+  <!-- Right bar -->
+  <rect x="520" y="-760" width="240" height="560" rx="48" ry="48"/>
+</svg>
