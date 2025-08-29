@@ -55,7 +55,7 @@ export const DesktopMobileProvider = ({
 
       const isMobile = media || uaDataMobile || touch;
       const platform = detectPlatform(ua);
-      console.log("device, is mobile?", isMobile, platform, width, height);
+      // console.log("device, is mobile?", isMobile, platform, width, height);
 
       set({ isMobile, platform, width, height });
     };

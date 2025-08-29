@@ -7,20 +7,26 @@ import Pause from "../assets/icons/pause.svg?react";
 export const DisplayJamendoSongCard = ({
   songData,
   idx,
+  allTracks,
 }: {
   songData: any;
   idx: number;
+  allTracks: Array<any>;
 }) => {
   const currentSong = useJamendoPlayerStore((s) => s.currentSong);
   const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
   const setCurrentSong = useJamendoPlayerStore((s) => s.setCurrentSong);
   const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
+  const setQueue = useJamendoPlayerStore((s) => s.setQueue);
   const playAt = useJamendoPlayerStore((s) => s.playAt);
   const isCurrent = currentSong?.id === songData.id;
   const isPlayingCurrent = isCurrent && isPlaying;
 
   const handleClick = async () => {
+    console.log("songData", songData);
+    console.log("is current", isCurrent);
     if (!isCurrent) {
+      setQueue(allTracks);
       JamendoPlayerManager.pause(); // pause whatever was playing
       setCurrentSong(songData); // switch song in store
       setIsPlaying(true); // footer effect will call syncToState()
@@ -44,7 +50,7 @@ export const DisplayJamendoSongCard = ({
         ${isPlayingCurrent ? "animate-pulse" : ""}
         `}
     >
-      <div className={"relative border-1 border-red-500 rounded-md group"}>
+      <div className={"relative rounded-md group flex-shrink-0"}>
         <img
           src={songData.album_image}
           alt={songData.name}

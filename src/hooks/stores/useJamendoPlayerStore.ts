@@ -77,6 +77,7 @@ export const jamendoPlayerStore = createStore<PlayerState>()(
         });
       },
       playAt: (index) => {
+        console.log("playAt", index);
         const { queue } = get();
         if (index < 0 || index >= queue.length) return;
         set({
@@ -86,7 +87,9 @@ export const jamendoPlayerStore = createStore<PlayerState>()(
         });
       },
       next: () => {
+        console.log("next");
         const { queue, currentIndex, isShuffling, repeatMode } = get();
+        console.log("queue", queue);
         if (!queue.length) return;
 
         // repeat one -> stay on same index
