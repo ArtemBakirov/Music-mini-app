@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
-import { Link, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { useJamendoAlbumsInfinite } from "../hooks/query/jamendo.queries";
+import { DisplayAlbum } from "../components/DisplayAlbum.tsx";
 
 export default function MusicAlbums() {
   const { query = "" } = useParams();
@@ -42,29 +43,7 @@ export default function MusicAlbums() {
           const isLast = idx === albums.length - 1;
           console.log("album", a);
           return (
-            <Link to={`/album/${a.id}`}>
-              <div
-                key={a.id}
-                ref={isLast ? lastRef : undefined}
-                className="group"
-              >
-                <div className="aspect-square overflow-hidden rounded-lg bg-[#222]">
-                  <img
-                    src={a.image}
-                    alt={a.name}
-                    className="w-full h-full object-cover group-hover:opacity-90 transition"
-                  />
-                </div>
-                <div className="mt-2 text-sm font-medium truncate">
-                  {a.name}
-                </div>
-                {a.artist_name && (
-                  <div className="text-xs text-gray-400 truncate">
-                    {a.artist_name}
-                  </div>
-                )}
-              </div>
-            </Link>
+            <DisplayAlbum album={a} lastRef={isLast ? lastRef : undefined} />
           );
         })}
       </div>

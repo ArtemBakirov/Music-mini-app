@@ -1,40 +1,51 @@
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
-import { useJamendoAlbum } from "../../hooks/query/jamendo.queries";
+import { useJamendoPlaylist } from "../../hooks/query/jamendo.queries";
 import { DisplayJamendoSongCard } from "../../components/DisplayJamendoSongCard";
 import { useJamendoPlayerStore } from "../../hooks/stores/useJamendoPlayerStore";
-import { getExistingImage } from "../../utils/albumsHelper";
 
-export default function AlbumDetailsPage() {
-  const { albumId } = useParams();
-  const { data: album, isLoading, isError, error } = useJamendoAlbum(albumId);
+export default function PlaylistDetailsPage() {
+  const { playlistId } = useParams();
+  const {
+    data: playlist,
+    isLoading,
+    isError,
+    error,
+  } = useJamendoPlaylist(playlistId);
 
-  // Optional: set the queue to this album's tracks when it loads
+  // When the playlist loads, push all its tracks into the global queue
   const setQueue = useJamendoPlayerStore((s) => s.setQueue);
   useEffect(() => {
-    if (album?.tracks?.length) {
-      setQueue(album.tracks);
+    if (playlist?.tracks?.length) {
+      setQueue(playlist.tracks);
     }
-  }, [album, setQueue]);
+  }, [playlist, setQueue]);
 
-  const tracks = useMemo(() => album?.tracks ?? [], [album]);
+  const tracks = useMemo(() => playlist?.tracks ?? [], [playlist]);
 
   if (isLoading) {
-    return <div className="p-6 mt-16 text-white">Loading album…</div>;
+    return (
+      <div className="p-6 mt-16 text-white bg-[#371A4D]">Loading playlist…</div>
+    );
   }
 
   if (isError) {
     return (
-      <div className="p-6 mt-16 text-red-300">
-        {(error as Error)?.message || "Failed to load album"}
+      <div className="p-6 mt-16 text-red-300 bg-[#371A4D]">
+        {(error as Error)?.message || "Failed to load playlist"}
       </div>
     );
   }
 
-  if (!album) {
-    return <div className="p-6 mt-16 text-white">Album not found.</div>;
+  if (!playlist) {
+    return (
+      <div className="p-6 mt-16 text-white bg-[#371A4D]">
+        Playlist not found.
+      </div>
+    );
   }
-  const imageSrc = getExistingImage(album);
+
+  const imageSrc = playlist.image || "/placeholder-playlist.png"; // optional fallback
 
   return (
     <div className="flex flex-col text-white h-screen w-full p-6 pt-16 mb-24 overflow-hidden bg-[#371A4D]">
@@ -43,24 +54,23 @@ export default function AlbumDetailsPage() {
         <div className="w-40 h-40 rounded-md overflow-hidden bg-[#222] shadow-lg">
           <img
             src={imageSrc}
-            alt={album.name}
+            alt={playlist.name}
             className="w-full h-full object-cover"
           />
         </div>
 
         <div className="flex flex-col">
           <div className="uppercase text-xs tracking-widest opacity-80">
-            Album
+            Playlist
           </div>
-          <h1 className="text-3xl font-extrabold mt-1">{album.name}</h1>
-          {album.artist_name && (
-            <div className="text-sm opacity-90 mt-1">{album.artist_name}</div>
+          <h1 className="text-3xl font-extrabold mt-1">{playlist.name}</h1>
+          {playlist.user_name && (
+            <div className="text-sm opacity-90 mt-1">
+              by {playlist.user_name}
+            </div>
           )}
           <div className="text-xs opacity-70 mt-1">
-            {album.release_date
-              ? new Date(album.release_date).getFullYear()
-              : ""}{" "}
-            • {tracks.length} {tracks.length === 1 ? "Titel" : "Titel"}
+            {tracks.length} {tracks.length === 1 ? "Titel" : "Titel"}
           </div>
         </div>
       </div>
@@ -70,8 +80,9 @@ export default function AlbumDetailsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
           {tracks.map((t, idx) => (
             <div key={t.id}>
+              {/* Ensure each card has a cover: prefer track.album_image, fallback to playlist image */}
               <DisplayJamendoSongCard
-                songData={{ ...t, album_image: imageSrc }}
+                songData={{ ...t, album_image: t.album_image || imageSrc }}
                 idx={idx}
                 allTracks={tracks}
               />

@@ -70,6 +70,14 @@ export type JamendoAlbumDetails = {
   tracks: JamendoTrack[];
 };
 
+export type JamendoPlaylistDetails = {
+  id: string;
+  name: string;
+  image?: string;
+  user_name?: string;
+  tracks: JamendoTrack[];
+};
+
 // ---------- Helpers ----------
 const CLIENT_ID = import.meta.env.VITE_JAMENDO_CLIENT_ID;
 
@@ -91,7 +99,6 @@ async function getJSON<T>(url: string): Promise<T> {
   //console.log("url getJSON", url);
   const res = await jamendoApiInstance.get(url);
   const data = res.data;
-  console.log("data getJSON", res);
   if (res.status !== 200) {
     const text = await data.text().catch(() => "");
     throw new Error(
@@ -144,10 +151,8 @@ export function useJamendoTracksInfinite(query: string, limit = 12) {
         include: "musicinfo",
         audioformat: "mp31",
       });
-      console.log("getting json", query);
       const json = await getJSON<JamendoResponse<any>>(url);
       // Normalize to JamendoTrack shape (some fields vary)
-      console.log("json is in query", json);
       const results: JamendoTrack[] = (json.results || []).map((t: any) => ({
         id: String(t.id),
         name: t.name,
@@ -402,6 +407,61 @@ export function useJamendoAlbum(albumId?: string) {
         artist_name: a.artist_name,
         image: a.image,
         release_date: a.releasedate,
+        tracks,
+      };
+
+      return details;
+    },
+    staleTime: 60_000,
+  });
+}
+
+/**
+ * Fetch one playlist (with tracks) by ID.
+ * Uses Jamendo endpoint: /playlists/tracks
+ */
+export function useJamendoPlaylist(playlistId?: string) {
+  return useQuery({
+    queryKey: [
+      ...jamendoKeys.playlists(String(playlistId ?? ""), 1),
+      "details",
+    ],
+    enabled: Boolean(playlistId),
+    queryFn: async (): Promise<JamendoPlaylistDetails> => {
+      if (!playlistId) throw new Error("playlistId is required");
+
+      // Jamendo docs: https://developer.jamendo.com/v3.0/playlists/tracks
+      const params = new URLSearchParams();
+      params.set("client_id", CLIENT_ID);
+      params.set("format", "json");
+      params.set("id", String(playlistId));
+      params.set("imagesize", "600");
+      params.set("audioformat", "mp31");
+      // Note: limit here is per request; playlist itself is 1 result with many tracks.
+      // You can also add order=track_position if you want explicit ordering:
+      // params.set("order", "track_position");
+
+      const url = `playlists/tracks/?${params.toString()}`;
+      const json = await getJSON<JamendoResponse<any>>(url);
+
+      const pl = (json.results || [])[0];
+      if (!pl) throw new Error("Playlist not found");
+
+      const tracks: JamendoTrack[] = (pl.tracks || []).map((t: any) => ({
+        id: String(t.id),
+        name: t.name,
+        artist_id: String(t.artist_id ?? ""),
+        artist_name: t.artist_name,
+        album_name: t.album_name,
+        album_image: t.album_image,
+        audio: t.audio,
+      }));
+
+      const details: JamendoPlaylistDetails = {
+        id: String(pl.id),
+        name: pl.name,
+        image: pl.image,
+        user_name: pl.user_name,
         tracks,
       };
 

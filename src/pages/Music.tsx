@@ -11,6 +11,9 @@ import {
   useJamendoArtists,
   useJamendoPlaylists,
 } from "../hooks/query/jamendo.queries.ts";
+import { DisplayAlbum } from "../components/DisplayAlbum.tsx";
+import { setArtistImage } from "../utils/artistHelper.ts";
+import { DisplayPlaylist } from "../components/DisplayPlaylist.tsx";
 
 export default function Music() {
   const [query, setQuery] = useState("");
@@ -60,15 +63,13 @@ export default function Music() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
               {tracks.map((track, idx) => {
                 return (
-                  <>
-                    <div key={track.id}>
-                      <DisplayJamendoSongCard
-                        songData={track}
-                        idx={idx}
-                        allTracks={tracks}
-                      />
-                    </div>
-                  </>
+                  <div key={track.id}>
+                    <DisplayJamendoSongCard
+                      songData={track}
+                      idx={idx}
+                      allTracks={tracks}
+                    />
+                  </div>
                 );
               })}
             </div>
@@ -86,26 +87,7 @@ export default function Music() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {albums &&
                 albums.length &&
-                albums.map((a) => (
-                  <Link to={`/album/${a.id}`}>
-                    <div key={a.id} className="group">
-                      <div className="aspect-square overflow-hidden rounded-lg bg-[#222]">
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={a.image}
-                          alt={a.name}
-                          className="w-full h-full object-cover group-hover:opacity-90 transition"
-                        />
-                      </div>
-                      <div className="mt-2 text-sm font-medium truncate">
-                        {a.name}
-                      </div>
-                      <div className="text-xs text-gray-400 truncate">
-                        {a.artist_name}
-                      </div>
-                    </div>
-                  </Link>
-                ))}
+                albums.map((a) => <DisplayAlbum key={a.id} album={a} />)}
               {isAlbumsLoading &&
                 Array.from({ length: 6 }).map((_, i) => (
                   <div
@@ -129,18 +111,21 @@ export default function Music() {
             <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
               {artists &&
                 artists.length &&
-                artists.map((ar) => (
-                  <div key={ar.id} className="flex flex-col items-center">
-                    <div className="w-28 h-28 rounded-full overflow-hidden bg-[#222]">
-                      <img
-                        src={ar.image}
-                        alt={ar.name}
-                        className="w-full h-full object-cover"
-                      />
+                artists.map((ar) => {
+                  const imageSrc = setArtistImage(ar);
+                  return (
+                    <div key={ar.id} className="flex flex-col items-center">
+                      <div className="w-28 h-28 rounded-lg overflow-hidden bg-black">
+                        <img
+                          src={imageSrc}
+                          alt={ar.name}
+                          className="w-full h-full object-scale-down"
+                        />
+                      </div>
+                      <div className="mt-2 text-sm">{ar.name}</div>
                     </div>
-                    <div className="mt-2 text-sm">{ar.name}</div>
-                  </div>
-                ))}
+                  );
+                })}
               {isArtistsLoading &&
                 Array.from({ length: 6 }).map((_, i) => (
                   <div
@@ -164,25 +149,9 @@ export default function Music() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
               {playlists &&
                 playlists.length &&
-                playlists.map((pl) => (
-                  <div key={pl.id} className="group">
-                    <div className="aspect-square overflow-hidden rounded-lg bg-[#222]">
-                      <img
-                        src={pl.image}
-                        alt={pl.name}
-                        className="w-full h-full object-cover group-hover:opacity-90 transition"
-                      />
-                    </div>
-                    <div className="mt-2 text-sm font-medium line-clamp-1">
-                      {pl.name}
-                    </div>
-                    {pl.user_name && (
-                      <div className="text-xs text-gray-400 line-clamp-1">
-                        {pl.user_name}
-                      </div>
-                    )}
-                  </div>
-                ))}
+                playlists.map((pl) => {
+                  return <DisplayPlaylist playlist={pl} />;
+                })}
               {isPlaylistsLoading &&
                 Array.from({ length: 6 }).map((_, i) => (
                   <div

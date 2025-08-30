@@ -23,8 +23,6 @@ export const DisplayJamendoSongCard = ({
   const isPlayingCurrent = isCurrent && isPlaying;
 
   const handleClick = async () => {
-    console.log("songData", songData);
-    console.log("is current", isCurrent);
     if (!isCurrent) {
       setQueue(allTracks);
       JamendoPlayerManager.pause(); // pause whatever was playing
