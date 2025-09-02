@@ -46,6 +46,7 @@ export default function TestIframe({
     console.log("unmute");
     playerRef.current?.unMute();
     setTimeout(() => {
+      console.log("play again");
       playerRef.current?.playVideo();
     }, 1000);
     playerRef.current?.setVolume(70);
