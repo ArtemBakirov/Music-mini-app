@@ -1,6 +1,7 @@
 import { useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useJamendoArtistsInfinite } from "../hooks/query/jamendo.queries";
+import { setArtistImage } from "../utils/artistHelper.ts";
 
 export default function MusicArtists() {
   const { query = "" } = useParams();
@@ -35,10 +36,11 @@ export default function MusicArtists() {
     );
 
   return (
-    <div className="h-screen w-full flex flex-col p-6 mt-16 gap-6">
+    <div className="h-screen overflow-hidden w-full flex flex-col p-6 mt-16 gap-6">
       <h1 className="text-xl font-bold">Künstler:innen</h1>
-      <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
+      <div className="overflow-y-auto grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
         {artists.map((ar, idx) => {
+          const imageSrc = setArtistImage(ar);
           const isLast = idx === artists.length - 1;
           return (
             <div
@@ -48,9 +50,9 @@ export default function MusicArtists() {
             >
               <div className="w-28 h-28 rounded-full overflow-hidden bg-[#222]">
                 <img
-                  src={ar.image}
+                  src={imageSrc}
                   alt={ar.name}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-fill"
                 />
               </div>
               <div className="mt-2 text-sm truncate max-w-28 text-center">

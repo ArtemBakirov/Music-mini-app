@@ -9,8 +9,7 @@ import MusicArtists from "../pages/MusicArtists.tsx";
 import MusicPlaylists from "../pages/MusicPlaylists.tsx";
 import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
-// import TestIframe from "../pages/TestIframe.tsx";
-// TestIframe can work also with youTube, I could try later to make this option
+import TestIframe from "../pages/TestIframe.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -21,7 +20,7 @@ export const DesktopTabletLayout = () => {
           element={<App />}
           children={
             <>
-              <Route index element={<Music />} />
+              <Route index element={<TestIframe />} />
               <Route path="search/tracks/:query" element={<MusicTracks />} />
               <Route path="search/albums/:query" element={<MusicAlbums />} />
               <Route path="search/artists/:query" element={<MusicArtists />} />

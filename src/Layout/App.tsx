@@ -1,5 +1,4 @@
 import { Outlet } from "react-router-dom";
-// import { Navbar } from "./Navbar";
 import { JamendoPlayerFooter } from "../components/JamendoPlayerFooter.tsx";
 import { SideBar } from "./Sidebar.tsx";
 import { InfoBar } from "./Infobar.tsx";

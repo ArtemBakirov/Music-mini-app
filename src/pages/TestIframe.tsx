@@ -3,7 +3,7 @@ import "./TestIframe.css";
 import { useEffect, useRef } from "react";
 
 type Props = {
-  videoId: string | null;
+  videoId?: string | null;
   //onReady?: YouTubeProps["onReady"];
   //onStateChange?: YouTubeProps["onStateChange"];
   //autoplay?: boolean;
@@ -11,7 +11,7 @@ type Props = {
 };
 
 export default function TestIframe({
-  videoId,
+  videoId = "FakWEAvZE4g",
   // onReady, onStateChange, autoplay, startSeconds,
 }: Props) {
   if (!videoId) return null;
@@ -45,6 +45,9 @@ export default function TestIframe({
     playerRef.current?.playVideo(); // must be in the user gesture
     console.log("unmute");
     playerRef.current?.unMute();
+    setTimeout(() => {
+      playerRef.current?.playVideo();
+    }, 1000);
     playerRef.current?.setVolume(70);
   };
   const pause = () => playerRef.current?.pauseVideo();
