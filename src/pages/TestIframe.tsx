@@ -127,7 +127,7 @@ export default function TestIframe({
           videoId={videoId}
           opts={opts}
           onReady={onReady}
-          onStateChange={onStateChange}
+          // onStateChange={onStateChange}
         />
       </div>
       <button onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
