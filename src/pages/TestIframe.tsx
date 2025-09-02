@@ -16,7 +16,7 @@ export default function TestIframe({
 }: Props) {
   if (!videoId) return null;
   const playerRef = useRef<any>(null);
-  const onReady: YouTubeProps["onReady"] = (e) => {
+  /*const onReady: YouTubeProps["onReady"] = (e) => {
     playerRef.current = e.target; // YT.Player instance
     const iframe = e.target.getIframe();
     iframe.setAttribute(
@@ -24,7 +24,7 @@ export default function TestIframe({
       "autoplay; encrypted-media; picture-in-picture; fullscreen",
     );
     // Optional: e.target.mute(); e.target.playVideo();
-  };
+  };*/
 
   const opts: YouTubeProps["opts"] = {
     width: "100%",
@@ -39,7 +39,7 @@ export default function TestIframe({
     },
   };
 
-  const play = () => {
+  /*const play = () => {
     console.log("play");
     playerRef.current?.mute(); // safe
     playerRef.current?.playVideo(); // must be in the user gesture
@@ -50,9 +50,9 @@ export default function TestIframe({
       playerRef.current?.playVideo();
     }, 1000);
     playerRef.current?.setVolume(70);
-  };
+  };*/
 
-  const pla = () => {
+  /*const pla = () => {
     console.log("pointer down, mute");
     playerRef.current?.mute();
     console.log("play");
@@ -64,12 +64,12 @@ export default function TestIframe({
       playerRef.current?.playVideo();
     }, 1000);
     playerRef.current?.setVolume(70);
-  };
+  };*/
 
-  const y = () => {
+  /*const y = () => {
     console.log("pointer up");
     playerRef.current?.playVideo();
-  };
+  };*/
 
   const pause = () => playerRef.current?.pauseVideo();
 
@@ -82,6 +82,31 @@ export default function TestIframe({
     return () => clearTimeout(id);
   }, []);*/
 
+  const onReady: YouTubeProps["onReady"] = (e) => {
+    playerRef.current = e.target;
+    e.target.mute(); // ensure muted state before any play
+    const iframe = e.target.getIframe();
+    iframe.setAttribute(
+      "allow",
+      "autoplay; encrypted-media; picture-in-picture; fullscreen",
+    );
+  };
+
+  const onPointerDown = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    p.mute(); // safe
+    p.playVideo(); // starts muted, allowed
+  };
+
+  const onPointerUp = () => {
+    const p = playerRef.current;
+    if (!p) return;
+    // same human gesture (press->release) still counts as a user action
+    p.unMute();
+    p.setVolume(70);
+  };
+
   return (
     <div style={{ position: "relative", width: "100%" }}>
       <div className={"player"}>
@@ -93,7 +118,7 @@ export default function TestIframe({
           // onStateChange={onStateChange}
         />
       </div>
-      <button onPointerDown={pla} onPointerUp={pla}>
+      <button onPointerDown={onPointerDown} onPointerUp={onPointerUp}>
         Play
       </button>
       <button onClick={pause}>Pause</button>
