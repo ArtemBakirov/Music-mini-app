@@ -53,9 +53,10 @@ export default function TestIframe({
   };
 
   const pla = () => {
-    console.log("play pointer down");
-    playerRef.current?.mute(); // safe
-    playerRef.current?.playVideo(); // must be in the user gesture
+    console.log("pointer down, mute");
+    playerRef.current?.mute();
+    console.log("play");
+    playerRef.current?.playVideo();
     console.log("unmute");
     playerRef.current?.unMute();
     setTimeout(() => {
@@ -92,7 +93,7 @@ export default function TestIframe({
           // onStateChange={onStateChange}
         />
       </div>
-      <button onPointerDown={pla} onPointerUp={y}>
+      <button onPointerDown={pla} onPointerUp={pla}>
         Play
       </button>
       <button onClick={pause}>Pause</button>
