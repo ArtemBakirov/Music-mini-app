@@ -20,7 +20,16 @@ export const DesktopTabletLayout = () => {
           element={<App />}
           children={
             <>
-              <Route index element={<TestIframe />} />
+              <Route
+                index
+                element={
+                  <div>
+                    <TestIframe videoId={"riuF_Ur3unc"} />
+                    <TestIframe videoId={"Gw7ZNifhqmo"} />
+                    <TestIframe videoId={"TdrL3QxjyVw"} />
+                  </div>
+                }
+              />
               <Route path="search/tracks/:query" element={<MusicTracks />} />
               <Route path="search/albums/:query" element={<MusicAlbums />} />
               <Route path="search/artists/:query" element={<MusicArtists />} />
