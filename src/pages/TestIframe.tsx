@@ -109,7 +109,7 @@ export default function TestIframe({
   };
 
   // Optional: if something still races, finish the job when YT says "PLAYING".
-  const onStateChange: YouTubeProps["onStateChange"] = (e) => {
+  /*const onStateChange: YouTubeProps["onStateChange"] = (e) => {
     // We got to PLAYING but didn't manage to unmute in time; try once more.
     const p = playerRef.current;
     // if (!p) return;
@@ -117,7 +117,7 @@ export default function TestIframe({
     p.setVolume(70);
     p.playVideo();
     // doneRef.current = true;
-  };
+  };*/
 
   return (
     <div style={{ position: "relative", width: "100%" }}>
