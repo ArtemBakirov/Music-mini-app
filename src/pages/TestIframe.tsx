@@ -52,14 +52,14 @@ export default function TestIframe({
   };
   const pause = () => playerRef.current?.pauseVideo();
 
-  useEffect(() => {
+  /*useEffect(() => {
     // Example: auto-play muted after mount (safer for autoplay policies)
     const id = setTimeout(() => {
       playerRef.current?.mute();
       playerRef.current?.playVideo();
     }, 500);
     return () => clearTimeout(id);
-  }, []);
+  }, []);*/
 
   return (
     <div style={{ position: "relative", width: "100%" }}>
