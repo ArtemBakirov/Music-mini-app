@@ -25,8 +25,6 @@ export const DesktopTabletLayout = () => {
                 element={
                   <div>
                     <TestIframe videoId={"riuF_Ur3unc"} />
-                    <TestIframe videoId={"Gw7ZNifhqmo"} />
-                    <TestIframe videoId={"TdrL3QxjyVw"} />
                   </div>
                 }
               />

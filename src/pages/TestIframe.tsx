@@ -105,6 +105,7 @@ export default function TestIframe({
     // same human gesture (press->release) still counts as a user action
     p.unMute();
     p.setVolume(70);
+    p.playVideo();
   };
 
   return (
