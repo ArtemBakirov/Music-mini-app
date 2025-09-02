@@ -51,6 +51,25 @@ export default function TestIframe({
     }, 1000);
     playerRef.current?.setVolume(70);
   };
+
+  const pla = () => {
+    console.log("play pointer down");
+    playerRef.current?.mute(); // safe
+    playerRef.current?.playVideo(); // must be in the user gesture
+    console.log("unmute");
+    playerRef.current?.unMute();
+    setTimeout(() => {
+      console.log("play again");
+      playerRef.current?.playVideo();
+    }, 1000);
+    playerRef.current?.setVolume(70);
+  };
+
+  const y = () => {
+    console.log("pointer up");
+    playerRef.current?.playVideo();
+  };
+
   const pause = () => playerRef.current?.pauseVideo();
 
   /*useEffect(() => {
@@ -73,7 +92,9 @@ export default function TestIframe({
           // onStateChange={onStateChange}
         />
       </div>
-      <button onClick={play}>Play</button>
+      <button onPointerDown={pla} onPointerUp={y}>
+        Play
+      </button>
       <button onClick={pause}>Pause</button>
     </div>
   );
