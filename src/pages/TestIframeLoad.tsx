@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import { TestIframe } from "./TestIframe.tsx";
 
 export const TestIframeLoad = () => {
@@ -18,6 +18,11 @@ export const TestIframeLoad = () => {
     "cE6wxDqdOV0",
     "F4ELqraXx-U",
   ];
+
+  useEffect(() => {
+    console.log("try to play all");
+    void playAll();
+  }, []);
 
   return (
     <div className="flex flex-col">
