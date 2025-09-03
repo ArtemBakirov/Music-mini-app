@@ -20,8 +20,10 @@ export const TestIframeLoad = () => {
   ];
 
   useEffect(() => {
-    console.log("try to play all");
-    void playAll();
+    setTimeout(() => {
+      console.log("try to play all");
+      void playAll();
+    }, 5000);
   }, []);
 
   return (
