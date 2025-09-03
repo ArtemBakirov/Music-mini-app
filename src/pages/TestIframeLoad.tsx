@@ -21,6 +21,7 @@ export const TestIframeLoad = () => {
 
   useEffect(() => {
     setTimeout(() => {
+      // show loader, don't show the page content before playAll has fired
       console.log("try to play all");
       void playAll();
     }, 5000);
