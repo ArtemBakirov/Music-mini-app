@@ -31,7 +31,7 @@ export const TestIframeLoad = () => {
         />
       ))}
       <div>
-        <button onClick={playAll}>ALL</button>
+        <button onClick={playAll}>ALL PLAY LOAD</button>
       </div>
     </div>
   );
