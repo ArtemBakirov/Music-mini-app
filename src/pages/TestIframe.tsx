@@ -98,14 +98,14 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
     p.setVolume(70);
   };
 
-  const onPointerUp = () => {
+  const onPlay = () => {
     const p = playerRef.current;
     if (!p) return;
     // same human gesture (press->release) still counts as a user action
-    p.unMute();
-    p.setVolume(70);
+    // p.unMute();
+    // p.setVolume(70);
     p.playVideo();
-    p.pauseVideo();
+    // p.pauseVideo();
     return true;
   };
 
@@ -123,7 +123,7 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
   useImperativeHandle(
     ref,
     () => ({
-      play: () => onPointerUp() ?? Promise.resolve(),
+      play: () => onPlay() ?? Promise.resolve(),
     }),
     [],
   );
