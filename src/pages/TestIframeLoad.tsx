@@ -4,7 +4,7 @@ import { TestIframe } from "./TestIframe.tsx";
 export const TestIframeLoad = () => {
   const itemRefs = useRef<Array<any | null>>([]);
 
-  const playAll = async () => {
+  const loadAll = async () => {
     // Browsers may block if not initiated by a user gesture. Call this inside onClick.
     await Promise.all(
       itemRefs.current.map((h) => h?.play()).filter(Boolean) as Promise<void>[],
@@ -23,7 +23,7 @@ export const TestIframeLoad = () => {
     setTimeout(() => {
       // show loader, don't show the page content before playAll has fired
       console.log("try to play all");
-      void playAll();
+      void loadAll();
     }, 5000);
   }, []);
 

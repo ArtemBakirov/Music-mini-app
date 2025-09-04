@@ -105,6 +105,7 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
     p.unMute();
     p.setVolume(70);
     p.playVideo();
+    p.pauseVideo();
     return true;
   };
 
