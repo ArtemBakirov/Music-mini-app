@@ -22,6 +22,7 @@ export default function YouTubeMusic() {
   const [videos, setVideos] = useState<any[]>([]);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
+  const [allPrimed, setAllPrimed] = useState<boolean>(false);
 
   // Refs to all track cards (for priming)
   const itemRefs = useRef<Array<YtTrackHandle | null>>([]);
@@ -53,7 +54,8 @@ export default function YouTubeMusic() {
         console.log("prime all tracks");
         console.log("itemrefs current", itemRefs.current);
         await primeAllTracks();
-      }, 5000);
+      }, 4000);
+      setAllPrimed(true);
       setPriming(false);
     } catch (e: any) {
       setError(e.message ?? "Search failed");
@@ -102,86 +104,96 @@ export default function YouTubeMusic() {
 
   return (
     <div className="flex flex-col bg-[#371A4D] text-white h-screen w-full p-6 pt-16 mb-24 overflow-hidden">
-      <div className="w-full max-w-2xl mx-auto mb-6">
-        <SearchYoutubeInput onSubmit={handleSearch} />
-      </div>
-
-      <div className="flex-1 overflow-y-auto space-y-10 pr-1 py-4">
-        {error && (
-          <div className="bg-red-600/30 text-red-100 p-3 rounded-md">
-            {error}
+      {allPrimed ? (
+        <>
+          <div className="w-full max-w-2xl mx-auto mb-6">
+            <SearchYoutubeInput onSubmit={handleSearch} />
           </div>
-        )}
 
-        {/* Loader / Priming Gate */}
-        {(loading || priming) && (
-          <div className="space-y-6">
-            <div className="h-6 w-40 bg-[#1f1f1f] rounded animate-pulse" />
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-              {Array.from({ length: 6 }).map((_, i) => (
-                <div
-                  key={i}
-                  className="h-16 bg-[#1f1f1f] rounded-md animate-pulse"
-                />
-              ))}
-            </div>
+          <div className="flex-1 overflow-y-auto space-y-10 pr-1 py-4">
+            {error && (
+              <div className="bg-red-600/30 text-red-100 p-3 rounded-md">
+                {error}
+              </div>
+            )}
+
+            {/* Loader / Priming Gate */}
+            {(loading || priming) && (
+              <div className="space-y-6">
+                <div className="h-6 w-40 bg-[#1f1f1f] rounded animate-pulse" />
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
+                  {Array.from({ length: 6 }).map((_, i) => (
+                    <div
+                      key={i}
+                      className="h-16 bg-[#1f1f1f] rounded-md animate-pulse"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Tracks */}
+            {!loading && !priming && videos.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <Link to={`/yt/search/tracks/${encodeURIComponent(query)}`}>
+                    <h2 className="text-xl font-bold">Titel</h2>
+                  </Link>
+                </div>
+                {tracksGrid}
+              </section>
+            )}
+
+            {/* Albums (playlists) */}
+            {!loading && !priming && playlists.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <Link
+                    to={`/yt/search/playlists/${encodeURIComponent(query)}`}
+                  >
+                    <h2 className="text-xl font-bold">Alben</h2>
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+                  {playlists.map((p: any) => (
+                    <DisplayYoutubeAlbum
+                      key={p.id}
+                      playlistId={p.id}
+                      title={p.title}
+                      channelTitle={p.channelTitle}
+                      thumbnail={p.thumbnail}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
+
+            {/* Artists (channels) */}
+            {!loading && !priming && channels.length > 0 && (
+              <section>
+                <div className="flex items-center justify-between mb-3">
+                  <Link to={`/yt/search/channels/${encodeURIComponent(query)}`}>
+                    <h2 className="text-xl font-bold">Artists</h2>
+                  </Link>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
+                  {channels.map((c: any) => (
+                    <DisplayYoutubeArtist
+                      key={c.id}
+                      title={c.title}
+                      thumbnail={c.thumbnail}
+                    />
+                  ))}
+                </div>
+              </section>
+            )}
           </div>
-        )}
-
-        {/* Tracks */}
-        {!loading && !priming && videos.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <Link to={`/yt/search/tracks/${encodeURIComponent(query)}`}>
-                <h2 className="text-xl font-bold">Titel</h2>
-              </Link>
-            </div>
-            {tracksGrid}
-          </section>
-        )}
-
-        {/* Albums (playlists) */}
-        {!loading && !priming && playlists.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <Link to={`/yt/search/playlists/${encodeURIComponent(query)}`}>
-                <h2 className="text-xl font-bold">Alben</h2>
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-              {playlists.map((p: any) => (
-                <DisplayYoutubeAlbum
-                  key={p.id}
-                  playlistId={p.id}
-                  title={p.title}
-                  channelTitle={p.channelTitle}
-                  thumbnail={p.thumbnail}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-
-        {/* Artists (channels) */}
-        {!loading && !priming && channels.length > 0 && (
-          <section>
-            <div className="flex items-center justify-between mb-3">
-              <Link to={`/yt/search/channels/${encodeURIComponent(query)}`}>
-                <h2 className="text-xl font-bold">Artists</h2>
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
-              {channels.map((c: any) => (
-                <DisplayYoutubeArtist
-                  key={c.id}
-                  title={c.title}
-                  thumbnail={c.thumbnail}
-                />
-              ))}
-            </div>
-          </section>
-        )}
-      </div>
+        </>
+      ) : (
+        <div className="flex items-center justify-center h-full animate-pulse">
+          LOADING...
+        </div>
+      )}
     </div>
   );
 }
