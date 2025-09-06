@@ -27,7 +27,7 @@ export default function YouTubeMusic() {
   const itemRefs = useRef<Array<YtTrackHandle | null>>([]);
 
   const handleSearch = async (q: string) => {
-    setPriming(true);
+    // setPriming(true);
     if (!q.trim()) return;
     setQuery(q);
     setError(null);
