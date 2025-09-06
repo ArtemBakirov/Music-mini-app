@@ -49,7 +49,10 @@ export default function YouTubeMusic() {
 
       // === Special step: PRIME all track players BEFORE UI ===
       setPriming(true);
-      await primeAllTracks();
+      setTimeout(async () => {
+        console.log("prime all tracks");
+        await primeAllTracks();
+      }, 5000);
       setPriming(false);
     } catch (e: any) {
       setError(e.message ?? "Search failed");
@@ -62,7 +65,10 @@ export default function YouTubeMusic() {
     // Wait a microtick to ensure child refs are assigned
     await new Promise((r) => setTimeout(r, 0));
     const primes = itemRefs.current
-      .map((h) => h?.prime())
+      .map((h) => {
+        console.log("prime track", h);
+        return h?.prime();
+      })
       .filter(Boolean) as Promise<void>[];
     await Promise.allSettled(primes);
   };

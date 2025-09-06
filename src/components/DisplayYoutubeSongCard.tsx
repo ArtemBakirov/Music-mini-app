@@ -28,8 +28,8 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
     );
 
     const opts: YouTubeProps["opts"] = {
-      width: "0",
-      height: "0",
+      width: "100%",
+      height: "100%",
       playerVars: {
         rel: 0,
         modestbranding: 1,
@@ -73,13 +73,20 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
 
     // "Prime" one video: wait until ready, then muted play→pause quickly.
     // This respects autoplay policies because it's muted.
-    const prime = async () => {
-      await readyPromiseRef.current;
+    const prime = () => {
+      console.log("prime func");
       const p = playerRef.current;
       if (!p) return;
-      p.mute();
+      /*p.mute();
       p.playVideo();
       await new Promise((r) => setTimeout(r, 200)); // brief tick so player actually transitions
+      p.pauseVideo();*/
+      console.log("play once");
+      p.mute(); // safe
+      p.playVideo(); // starts muted, allowed
+      p.unMute();
+      p.setVolume(70);
+      console.log("pause, after played");
       p.pauseVideo();
       // Leave muted/paused. Real user plays will unmute in `play()`.
     };
@@ -101,7 +108,7 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
         }`}
       >
         {/* Hidden iframe player (audio engine) */}
-        <div className="yt-hidden-iframe">
+        <div>
           <YouTube
             videoId={videoId}
             opts={opts}
