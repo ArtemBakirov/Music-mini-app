@@ -109,7 +109,7 @@ export default function YouTubeMusic() {
 
         <div
           className={`flex-1 overflow-y-auto space-y-10 pr-1 py-4 relative
-        ${priming ? "opacity-10" : "opacity-100"}
+        ${priming ? "opacity-30" : "opacity-100"}
         `}
         >
           {error && (
