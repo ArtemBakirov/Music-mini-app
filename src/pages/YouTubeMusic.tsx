@@ -54,7 +54,7 @@ export default function YouTubeMusic() {
         await primeAllTracks().then(() => {
           setPriming(false);
         });
-      }, 4000);
+      }, 5000);
     } catch (e: any) {
       setError(e.message ?? "Search failed");
       setLoading(false);
