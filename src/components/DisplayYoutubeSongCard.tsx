@@ -69,10 +69,10 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
 
     const play = async () => {
       const p = playerRef.current;
-      console.log("play once now");
+      console.log("play once");
       p.mute(); // safe
       p.playVideo(); // starts muted, allowed
-      await new Promise((r) => setTimeout(r, 2000)); // brief tick so player actually transitions
+      await new Promise((r) => setTimeout(r, 200)); // brief tick so player actually transitions
       p.unMute();
       p.setVolume(70);
     };
