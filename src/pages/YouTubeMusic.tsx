@@ -51,6 +51,7 @@ export default function YouTubeMusic() {
       setPriming(true);
       setTimeout(async () => {
         console.log("prime all tracks");
+        console.log("itemrefs current", itemRefs.current);
         await primeAllTracks();
       }, 5000);
       setPriming(false);

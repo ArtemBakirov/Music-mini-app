@@ -73,7 +73,7 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
 
     // "Prime" one video: wait until ready, then muted play→pause quickly.
     // This respects autoplay policies because it's muted.
-    const prime = () => {
+    const prime = async () => {
       console.log("prime func");
       const p = playerRef.current;
       if (!p) return;
