@@ -87,7 +87,7 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
       await new Promise((r) => setTimeout(r, 2000)); // brief tick so player actually transitions
       p.unMute();
       p.setVolume(70);
-      console.log("pause, after played");
+      console.log("pause, after play");
       // p.pauseVideo();
       // Leave muted/paused. Real user plays will unmute in `play()`.
     };
