@@ -96,6 +96,8 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
     p.playVideo(); // starts muted, allowed
     p.unMute();
     p.setVolume(70);
+    p.pauseVideo();
+    return true;
   };
 
   const onPlay = () => {
@@ -123,7 +125,7 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
   useImperativeHandle(
     ref,
     () => ({
-      play: () => onPlay() ?? Promise.resolve(),
+      play: () => onPointerDown() ?? Promise.resolve(),
     }),
     [],
   );
@@ -140,7 +142,7 @@ export const TestIframe = forwardRef<any, any>(({ videoId }, ref) => {
           // onStateChange={onStateChange}
         />
       </div>
-      <button onClick={onPointerDown}>Play</button>
+      <button onClick={onPlay}>Play</button>
       <button onClick={pause}>Pause</button>
     </div>
   );

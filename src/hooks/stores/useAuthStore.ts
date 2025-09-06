@@ -19,7 +19,7 @@ type AuthState = {
 
 export const useAuthStore = create<AuthState>((set) => ({
   user: null,
-  setUser: (accountInfo) =>
+  setUser: (accountInfo: AccountInfo) =>
     set({
       user: {
         address: accountInfo.address,

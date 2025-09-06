@@ -1,5 +1,5 @@
-import { useState } from "react";
 import Search from "../assets/icons/search.svg?react";
+import { Source, useSourceStore } from "../hooks/stores/useSourceStore";
 
 export const SearchInput = ({
   query,
@@ -15,10 +15,10 @@ export const SearchInput = ({
       onClick();
     }
   };
+  const source = useSourceStore((s) => s.source);
+  const setSource = useSourceStore((s) => s.setSource);
 
-  type Source = "music api" | "uploaded music";
-
-  const [source, setSource] = useState<Source>("music api");
+  // const [source, setSource] = useState<Source>("jamendo");
 
   const handleSourceChange = (source: Source) => {
     console.log("change source", source);
