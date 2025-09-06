@@ -50,11 +50,12 @@ export const SearchInput = ({
           id="music-source"
           name="music-source"
           value={source}
-          onChange={(e) => handleSourceChange(e.target.value)}
+          onChange={(e) => handleSourceChange(e.target.value as Source)}
           className="block w-full rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 focus:outline-none"
         >
-          <option value="jamendo">Music API search</option>
-          <option value="uploaded">Uploaded music</option>
+          <option value="jamendo">Jamendo</option>
+          <option value="youtube">YouTube</option>
+          <option value="bastyon music">Bastyon music</option>
         </select>
       </div>
     </div>

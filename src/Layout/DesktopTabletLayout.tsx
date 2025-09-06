@@ -10,6 +10,7 @@ import MusicPlaylists from "../pages/MusicPlaylists.tsx";
 import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
 import { TestIframeLoad } from "../pages/TestIframeLoad.tsx";
+import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -20,7 +21,7 @@ export const DesktopTabletLayout = () => {
           element={<App />}
           children={
             <>
-              <Route index element={<TestIframeLoad />} />
+              <Route index element={<MusicPageContainer />} />
               <Route path="search/tracks/:query" element={<MusicTracks />} />
               <Route path="search/albums/:query" element={<MusicAlbums />} />
               <Route path="search/artists/:query" element={<MusicArtists />} />
