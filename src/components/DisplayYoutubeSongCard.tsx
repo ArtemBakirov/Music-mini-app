@@ -62,8 +62,8 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
     const play = () => {
       const p = playerRef.current;
       if (!p) return;
-      p.unMute();
-      p.setVolume(80);
+      // p.unMute();
+      // p.setVolume(80);
       p.playVideo();
     };
 
