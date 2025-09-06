@@ -48,13 +48,13 @@ export default function YouTubeMusic() {
       setLoading(false);
 
       // === Special step: PRIME all track players BEFORE UI ===
-      setTimeout(async () => {
+      /* setTimeout(async () => {
         console.log("prime all tracks");
         console.log("itemrefs current", itemRefs.current);
         await primeAllTracks().then(() => {
           setPriming(false);
         });
-      }, 5000);
+      }, 5000)*/
     } catch (e: any) {
       setError(e.message ?? "Search failed");
       setLoading(false);
