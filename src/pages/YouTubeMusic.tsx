@@ -89,7 +89,10 @@ export default function YouTubeMusic() {
             title={v.title}
             channelTitle={v.channelTitle}
             thumbnail={v.thumbnail}
-            ref={(el) => (itemRefs.current[i] = el)}
+            ref={(el: any) => {
+              console.log("setting ref", el);
+              itemRefs.current[i] = el;
+            }}
           />
         ))}
       </div>
