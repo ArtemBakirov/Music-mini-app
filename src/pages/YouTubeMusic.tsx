@@ -76,7 +76,7 @@ export default function YouTubeMusic() {
 
   // When videos list changes (e.g., new search), reset ref array length
   useEffect(() => {
-    itemRefs.current = new Array(videos.length).fill(null);
+    // itemRefs.current = new Array(videos.length).fill(null);
   }, [videos.length]);
 
   const tracksGrid = useMemo(
