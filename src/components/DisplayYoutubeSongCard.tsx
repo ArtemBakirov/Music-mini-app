@@ -28,8 +28,8 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
     );
 
     const opts: YouTubeProps["opts"] = {
-      width: "",
-      height: "",
+      width: "0",
+      height: "0",
       playerVars: {
         rel: 0,
         modestbranding: 1,
