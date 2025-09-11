@@ -11,6 +11,7 @@ import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
 import { TestIframeLoad } from "../pages/TestIframeLoad.tsx";
 import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
+import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -21,6 +22,7 @@ export const DesktopTabletLayout = () => {
           element={<App />}
           children={
             <>
+              {/* Music search */}
               <Route index element={<MusicPageContainer />} />
               <Route path="search/tracks/:query" element={<MusicTracks />} />
               <Route path="search/albums/:query" element={<MusicAlbums />} />
@@ -29,6 +31,12 @@ export const DesktopTabletLayout = () => {
                 path="search/playlists/:query"
                 element={<MusicPlaylists />}
               />
+              {/* Music youTube search */}
+              <Route
+                path="ytsearch/tracks/:query"
+                element={<YouTubeMusicTracks />}
+              />
+
               <Route path="album/:albumId" element={<AlbumDetailsPage />} />
               <Route
                 path="playlist/:playlistId"

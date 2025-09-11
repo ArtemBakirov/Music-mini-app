@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
+import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 import { FooterController } from "./FooterController.tsx";
@@ -7,19 +7,19 @@ import { FooterController } from "./FooterController.tsx";
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
 
-  const currentSong = useJamendoPlayerStore((s) => s.currentSong);
-  const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
-  const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
-  const duration = useJamendoPlayerStore((s) => s.duration);
-  const currentTime = useJamendoPlayerStore((s) => s.currentTime);
+  const currentSong = useMusicPlayerStore((s) => s.currentSong);
+  const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
+  const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
+  const duration = useMusicPlayerStore((s) => s.duration);
+  const currentTime = useMusicPlayerStore((s) => s.currentTime);
 
   // new state/selectors
-  const next = useJamendoPlayerStore((s) => s.next);
-  const prev = useJamendoPlayerStore((s) => s.prev);
-  const toggleShuffle = useJamendoPlayerStore((s) => s.toggleShuffle);
-  const cycleRepeat = useJamendoPlayerStore((s) => s.cycleRepeat);
-  const isShuffling = useJamendoPlayerStore((s) => s.isShuffling);
-  const repeatMode = useJamendoPlayerStore((s) => s.repeatMode);
+  const next = useMusicPlayerStore((s) => s.next);
+  const prev = useMusicPlayerStore((s) => s.prev);
+  const toggleShuffle = useMusicPlayerStore((s) => s.toggleShuffle);
+  const cycleRepeat = useMusicPlayerStore((s) => s.cycleRepeat);
+  const isShuffling = useMusicPlayerStore((s) => s.isShuffling);
+  const repeatMode = useMusicPlayerStore((s) => s.repeatMode);
 
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";

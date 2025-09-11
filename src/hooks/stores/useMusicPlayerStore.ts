@@ -39,7 +39,7 @@ interface PlayerState {
   clearSong: () => void;
 }
 
-export const jamendoPlayerStore = createStore<PlayerState>()(
+export const musicPlayerStore = createStore<PlayerState>()(
   persist(
     (set, get) => ({
       currentSong: null,
@@ -179,11 +179,11 @@ export const jamendoPlayerStore = createStore<PlayerState>()(
   ),
 );
 
-export const useJamendoPlayerStore = <T>(
+export const useMusicPlayerStore = <T>(
   selector?: (state: PlayerState) => T,
   equalityFn?: (a: T, b: T) => boolean,
-) => useStore(jamendoPlayerStore, selector, equalityFn);
+) => useStore(musicPlayerStore, selector, equalityFn);
 
 export const useJamendoPlayerSelector = <T>(
   selector: (state: PlayerState) => T,
-) => useJamendoPlayerStore(selector, shallow);
+) => useMusicPlayerStore(selector, shallow);

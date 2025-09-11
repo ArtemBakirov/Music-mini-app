@@ -1,4 +1,4 @@
-import { useJamendoPlayerSelector } from "../hooks/stores/useJamendoPlayerStore.ts";
+import { useJamendoPlayerSelector } from "../hooks/stores/useMusicPlayerStore.ts";
 import { memo } from "react";
 import { useArtistInfo } from "../hooks/useArtistInfo.ts";
 import FullScreen from "../assets/icons/full_screen.svg?react";

@@ -1,4 +1,4 @@
-import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore.ts";
+import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
@@ -13,12 +13,12 @@ export const DisplayJamendoSongCard = ({
   idx: number;
   allTracks: Array<any>;
 }) => {
-  const currentSong = useJamendoPlayerStore((s) => s.currentSong);
-  const isPlaying = useJamendoPlayerStore((s) => s.isPlaying);
-  const setCurrentSong = useJamendoPlayerStore((s) => s.setCurrentSong);
-  const setIsPlaying = useJamendoPlayerStore((s) => s.setIsPlaying);
-  const setQueue = useJamendoPlayerStore((s) => s.setQueue);
-  const playAt = useJamendoPlayerStore((s) => s.playAt);
+  const currentSong = useMusicPlayerStore((s) => s.currentSong);
+  const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
+  const setCurrentSong = useMusicPlayerStore((s) => s.setCurrentSong);
+  const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
+  const setQueue = useMusicPlayerStore((s) => s.setQueue);
+  const playAt = useMusicPlayerStore((s) => s.playAt);
   const isCurrent = currentSong?.id === songData.id;
   const isPlayingCurrent = isCurrent && isPlaying;
 

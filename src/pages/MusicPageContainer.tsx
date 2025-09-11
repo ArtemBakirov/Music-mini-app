@@ -5,7 +5,7 @@
 import { useSourceStore } from "../hooks/stores/useSourceStore";
 import Music from "./Music.tsx";
 import { BastyonMusic } from "./BastyonMusic.tsx";
-import YouTubeMusic from "./YouTubeMusic.tsx";
+import YouTubeMusic from "./YoutubePages/YouTubeMusic.tsx";
 export const MusicPageContainer = () => {
   const source = useSourceStore((s) => s.source);
 

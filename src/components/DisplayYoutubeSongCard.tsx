@@ -1,5 +1,7 @@
-import { forwardRef, useImperativeHandle, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
+import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
+import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
 
 export type YtTrackHandle = {
   play: () => void;
@@ -12,130 +14,126 @@ type Props = {
   title: string;
   channelTitle: string;
   thumbnail: string;
+  allTracks: Array<any>;
 };
 
-export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
-  ({ videoId, title, channelTitle, thumbnail }, ref) => {
-    const playerRef = useRef<any>(null);
-    const [isPlaying, setIsPlaying] = useState(false);
+export const DisplayYoutubeSongCard = ({
+  videoId,
+  title,
+  channelTitle,
+  thumbnail,
+  allTracks,
+}: Props) => {
+  const playerRef = useRef<any>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
-    // A tiny promise that resolves when the iframe player is ready.
-    const readyResolveRef = useRef<(() => void) | null>(null);
-    const readyPromiseRef = useRef<Promise<void>>(
-      new Promise<void>((resolve) => {
-        readyResolveRef.current = resolve;
-      }),
-    );
+  // player state
 
-    const opts: YouTubeProps["opts"] = {
-      width: "0",
-      height: "0",
-      playerVars: {
-        rel: 0,
-        modestbranding: 1,
-        playsinline: 1,
-        // no autoplay here; we control it manually
-        origin: window.location.origin,
-      },
-    };
+  const currentSong = useMusicPlayerStore((s) => s.currentSong);
+  const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
+  const setCurrentSong = useMusicPlayerStore((s) => s.setCurrentSong);
+  const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
+  const setQueue = useMusicPlayerStore((s) => s.setQueue);
+  const playAt = useMusicPlayerStore((s) => s.playAt);
+  const isCurrent = currentSong?.id === videoId;
+  const isPlayingCurrent = isCurrent && isPlaying;
 
-    const onReady: YouTubeProps["onReady"] = (e) => {
-      playerRef.current = e.target; // window.YT.Player
-      e.target.mute(); // ensure safe autoplay during priming
-      const iframe = e.target.getIframe();
-      iframe?.setAttribute(
-        "allow",
-        "autoplay; encrypted-media; picture-in-picture; fullscreen",
-      );
-      readyResolveRef.current?.();
-    };
-
-    const onStateChange: YouTubeProps["onStateChange"] = (e) => {
-      // Keep a simple "isPlaying" for the custom UI
-      const YT = (window as any).YT;
-      if (!YT) return;
-      if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
-      if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
+  const handleClick = async () => {
+    if (!isCurrent) {
+      setQueue(allTracks);
+      JamendoPlayerManager.pause(); // pause whatever was playing
+      setCurrentSong(songData); // switch song in store
+      setIsPlaying(true); // footer effect will call syncToState()
+      playAt(idx);
+    } else {
+      if (isPlaying) {
+        JamendoPlayerManager.pause();
         setIsPlaying(false);
-    };
+      } else {
+        JamendoPlayerManager.resume();
+        setIsPlaying(true);
+      }
+    }
+  };
 
-    /*const play = () => {
-      const p = playerRef.current;
-      if (!p) return;
-      // p.unMute();
-      // p.setVolume(80);
-      p.playVideo();
-    };*/
+  // A tiny promise that resolves when the iframe player is ready.
+  const readyResolveRef = useRef<(() => void) | null>(null);
 
-    const play = async () => {
-      const p = playerRef.current;
-      console.log("play once");
-      p.mute(); // safe
-      p.playVideo(); // starts muted, allowed
-      await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-      p.unMute();
-      p.setVolume(70);
-    };
+  const opts: YouTubeProps["opts"] = {
+    width: "0",
+    height: "0",
+    playerVars: {
+      rel: 0,
+      modestbranding: 1,
+      playsinline: 1,
+      // no autoplay here; we control it manually
+      origin: window.location.origin,
+    },
+  };
 
-    const pause = () => {
-      playerRef.current?.pauseVideo();
-    };
-
-    // "Prime" one video: wait until ready, then muted play→pause quickly.
-    // This respects autoplay policies because it's muted.
-    const prime = async () => {
-      console.log("prime func");
-      const p = playerRef.current;
-      if (!p) return;
-      /*p.mute();
-      p.playVideo();
-      await new Promise((r) => setTimeout(r, 200)); // brief tick so player actually transitions
-      p.pauseVideo();*/
-      console.log("play once");
-      p.mute(); // safe
-      p.playVideo(); // starts muted, allowed
-      await new Promise((r) => setTimeout(r, 2000)); // brief tick so player actually transitions
-      p.unMute();
-      p.setVolume(70);
-      console.log("pause, after play");
-      // await new Promise((r) => setTimeout(r, 1000));
-      // p.pauseVideo();
-      // Leave muted/paused. Real user plays will unmute in `play()`.
-    };
-
-    useImperativeHandle(
-      ref,
-      () => ({
-        play,
-        pause,
-        prime,
-      }),
-      [],
+  const onReady: YouTubeProps["onReady"] = (e) => {
+    playerRef.current = e.target; // window.YT.Player
+    console.log("onReady", e.target);
+    e.target.mute(); // ensure safe autoplay during priming
+    const iframe = e.target.getIframe();
+    iframe?.setAttribute(
+      "allow",
+      "autoplay; encrypted-media; picture-in-picture; fullscreen",
     );
+    readyResolveRef.current?.();
+    setTimeout(() => {
+      setIsReady(true);
+    }, 2000);
+  };
 
-    return (
-      <div
-        className={`p-2 px-0 mx-2 flex items-center gap-4 border-t-2 ${
-          isPlaying ? "border-[#B065A0] animate-pulse" : "border-gray-500"
-        }`}
-      >
-        {/* Hidden iframe player (audio engine) */}
-        <div>
-          <YouTube
-            videoId={videoId}
-            opts={opts}
-            onReady={onReady}
-            onStateChange={onStateChange}
-          />
-        </div>
+  const onStateChange: YouTubeProps["onStateChange"] = (e) => {
+    // Keep a simple "isPlaying" for the custom UI
+    const YT = (window as any).YT;
+    if (!YT) return;
+    if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
+    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
+      setIsPlaying(false);
+  };
 
-        {/* Custom UI (thumbnail + overlay button) */}
-        <div className="relative rounded-md group flex-shrink-0">
-          <img
-            src={thumbnail}
-            alt={title}
-            className="w-12 h-12 object-cover rounded-md"
-          />
+  const play = async () => {
+    const p = playerRef.current;
+    console.log("play once");
+    p.mute(); // safe
+    p.playVideo(); // starts muted, allowed
+    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+    p.unMute();
+    p.setVolume(70);
+  };
+
+  const pause = () => {
+    playerRef.current?.pauseVideo();
+  };
+
+  return (
+    <div
+      className={`p-2 px-0 mx-2 flex items-center gap-4 border-t-2 ${
+        isPlaying ? "border-[#B065A0] animate-pulse" : "border-gray-500"
+      }`}
+    >
+      {/* Hidden iframe player (audio engine) */}
+      <div>
+        <YouTube
+          videoId={videoId}
+          opts={opts}
+          onReady={onReady}
+          onStateChange={onStateChange}
+        />
+      </div>
+
+      {/* Custom UI (thumbnail + overlay button) */}
+      <div className="relative rounded-md group flex-shrink-0">
+        <img
+          src={thumbnail}
+          alt={title}
+          className="w-12 h-12 object-cover rounded-md"
+        />
+        {isReady ? (
           <button
             onClick={() => (isPlaying ? pause() : play())}
             className="absolute top-1/2 left-1/2 -translate-x-1/2
@@ -164,15 +162,21 @@ export const DisplayYoutubeSongCard = forwardRef<YtTrackHandle, Props>(
               </svg>
             )}
           </button>
-        </div>
-
-        <div className="flex-grow">
-          <div className="font-semibold line-clamp-1">{title}</div>
-          <div className="text-sm text-gray-300 line-clamp-1">
-            {channelTitle}
+        ) : (
+          <div
+            className="animate-pulse absolute top-1/2 left-1/2 -translate-x-1/2
+                       -translate-y-1/2 text-white
+                       transition-opacity"
+          >
+            Loading...
           </div>
-        </div>
+        )}
       </div>
-    );
-  },
-);
+
+      <div className="flex-grow">
+        <div className="font-semibold line-clamp-1">{title}</div>
+        <div className="text-sm text-gray-300 line-clamp-1">{channelTitle}</div>
+      </div>
+    </div>
+  );
+};

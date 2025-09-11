@@ -9,7 +9,7 @@ import {
   useAddSongToPlaylist,
   useAllUserSongIds,
 } from "../hooks/query/playlist.queries.ts";
-import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore.ts";
+import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 
 // global player manager
 import { youtubePlayerManager } from "../utils/YoutubePlayerManager";
@@ -50,7 +50,7 @@ export const DisplaySongCard = ({
     setProgress,
     // setPlayer,
     // player,
-  } = useJamendoPlayerStore();
+  } = useMusicPlayerStore();
   const isActive = currentSong?.videoId === songData.videoId;
 
   useEffect(() => {

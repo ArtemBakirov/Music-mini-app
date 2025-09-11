@@ -1,4 +1,4 @@
-import { jamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
+import { jamendoPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 
 export class JamendoPlayerManager {
   private static audio: HTMLAudioElement | null = null;

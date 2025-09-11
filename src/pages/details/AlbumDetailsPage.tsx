@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useJamendoAlbum } from "../../hooks/query/jamendo.queries";
 import { DisplayJamendoSongCard } from "../../components/DisplayJamendoSongCard";
-import { useJamendoPlayerStore } from "../../hooks/stores/useJamendoPlayerStore";
+import { useMusicPlayerStore } from "../../hooks/stores/useMusicPlayerStore.ts";
 import { getExistingImage } from "../../utils/albumsHelper";
 
 export default function AlbumDetailsPage() {
@@ -10,7 +10,7 @@ export default function AlbumDetailsPage() {
   const { data: album, isLoading, isError, error } = useJamendoAlbum(albumId);
 
   // Optional: set the queue to this album's tracks when it loads
-  const setQueue = useJamendoPlayerStore((s) => s.setQueue);
+  const setQueue = useMusicPlayerStore((s) => s.setQueue);
   useEffect(() => {
     if (album?.tracks?.length) {
       setQueue(album.tracks);

@@ -1,14 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { Link } from "react-router-dom";
-import { searchYouTubeAll } from "../api/youtubeApi.ts";
+import { searchYouTubeAll } from "../../api/youtubeApi.ts";
 import {
   DisplayYoutubeSongCard,
   YtTrackHandle,
-} from "../components/DisplayYoutubeSongCard";
-import { DisplayYoutubeAlbum } from "../components/DisplayYoutubeAlbum";
-import { DisplayYoutubeArtist } from "../components/DisplayYoutubeArtist.tsx";
-import { SearchYoutubeInput } from "../components/SearchYoutubeInput.tsx";
-// import "../components/yt/yt.css";
+} from "../../components/DisplayYoutubeSongCard.tsx";
+import { DisplayYoutubeAlbum } from "../../components/DisplayYoutubeAlbum.tsx";
+import { DisplayYoutubeArtist } from "../../components/DisplayYoutubeArtist.tsx";
+import { SearchYoutubeInput } from "../../components/SearchYoutubeInput.tsx";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw"; // your example key
@@ -27,7 +26,6 @@ export default function YouTubeMusic() {
   const itemRefs = useRef<Array<YtTrackHandle | null>>([]);
 
   const handleSearch = async (q: string) => {
-    // setPriming(true);
     if (!q.trim()) return;
     setQuery(q);
     setError(null);
@@ -46,38 +44,12 @@ export default function YouTubeMusic() {
       setPlaylists(playlists);
       setChannels(channels);
       setLoading(false);
-
-      // === Special step: PRIME all track players BEFORE UI ===
-      /* setTimeout(async () => {
-        console.log("prime all tracks");
-        console.log("itemrefs current", itemRefs.current);
-        await primeAllTracks().then(() => {
-          setPriming(false);
-        });
-      }, 5000)*/
     } catch (e: any) {
       setError(e.message ?? "Search failed");
       setLoading(false);
       setPriming(false);
     }
   };
-
-  const primeAllTracks = async () => {
-    // Wait a microtick to ensure child refs are assigned
-    await new Promise((r) => setTimeout(r, 0));
-    const primes = itemRefs.current
-      .map((h) => {
-        console.log("prime track", h);
-        return h?.prime();
-      })
-      .filter(Boolean) as Promise<void>[];
-    await Promise.allSettled(primes);
-  };
-
-  // When videos list changes (e.g., new search), reset ref array length
-  useEffect(() => {
-    // itemRefs.current = new Array(videos.length).fill(null);
-  }, [videos.length]);
 
   const tracksGrid = useMemo(
     () => (
@@ -89,10 +61,11 @@ export default function YouTubeMusic() {
             title={v.title}
             channelTitle={v.channelTitle}
             thumbnail={v.thumbnail}
-            ref={(el: any) => {
+            allTracks={videos}
+            /* ref={(el: any) => {
               console.log("setting ref", el);
               itemRefs.current[i] = el;
-            }}
+            }} */
           />
         ))}
       </div>
@@ -137,7 +110,7 @@ export default function YouTubeMusic() {
           {!loading && videos.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-3">
-                <Link to={`/yt/search/tracks/${encodeURIComponent(query)}`}>
+                <Link to={`/ytsearch/tracks/${encodeURIComponent(query)}`}>
                   <h2 className="text-xl font-bold">Titel</h2>
                 </Link>
               </div>

@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
 import { useJamendoPlaylist } from "../../hooks/query/jamendo.queries";
 import { DisplayJamendoSongCard } from "../../components/DisplayJamendoSongCard";
-import { useJamendoPlayerStore } from "../../hooks/stores/useJamendoPlayerStore";
+import { useMusicPlayerStore } from "../../hooks/stores/useMusicPlayerStore.ts";
 
 export default function PlaylistDetailsPage() {
   const { playlistId } = useParams();
@@ -14,7 +14,7 @@ export default function PlaylistDetailsPage() {
   } = useJamendoPlaylist(playlistId);
 
   // When the playlist loads, push all its tracks into the global queue
-  const setQueue = useJamendoPlayerStore((s) => s.setQueue);
+  const setQueue = useMusicPlayerStore((s) => s.setQueue);
   useEffect(() => {
     if (playlist?.tracks?.length) {
       setQueue(playlist.tracks);

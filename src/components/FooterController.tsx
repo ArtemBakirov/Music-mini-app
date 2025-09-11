@@ -4,7 +4,7 @@ import Next from "../assets/icons/next.svg?react";
 import Prev from "../assets/icons/prev.svg?react";
 import Repeat from "../assets/icons/repeat.svg?react";
 import Shuffle from "../assets/icons/shuffle.svg?react";
-import { RepeatMode } from "../hooks/stores/useJamendoPlayerStore.ts";
+import { RepeatMode } from "../hooks/stores/useMusicPlayerStore.ts";
 
 export const FooterController = ({
   isPlaying,

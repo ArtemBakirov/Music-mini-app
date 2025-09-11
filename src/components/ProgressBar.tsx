@@ -1,8 +1,8 @@
-import { useJamendoPlayerStore } from "../hooks/stores/useJamendoPlayerStore";
+import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { JamendoPlayerManager } from "../utils/JamendoPlayerManager";
 
 export const ProgressBar = () => {
-  const progress = useJamendoPlayerStore((s) => s.progress);
+  const progress = useMusicPlayerStore((s) => s.progress);
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

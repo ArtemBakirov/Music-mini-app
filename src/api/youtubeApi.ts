@@ -123,3 +123,40 @@ export async function fetchPlaylistItems(
 
   return items;
 }
+
+export type YtSearchVideosPage = {
+  items: YtVideoHit[];
+  nextPageToken?: string;
+};
+
+export async function searchYouTubeVideosPaged(
+  q: string,
+  key: string,
+  maxResults = 24,
+  pageToken?: string,
+): Promise<YtSearchVideosPage> {
+  const url = new URL(`${API_BASE}/search`);
+  url.searchParams.set("part", "snippet");
+  url.searchParams.set("q", q);
+  url.searchParams.set("type", "video");
+  url.searchParams.set("maxResults", String(maxResults));
+  if (pageToken) url.searchParams.set("pageToken", pageToken);
+  url.searchParams.set("key", key);
+
+  const res = await fetch(url.toString());
+  if (!res.ok) throw new Error(`YT search (videos) failed: ${res.status}`);
+  const json = await res.json();
+
+  const items: YtVideoHit[] = (json.items ?? []).map((it: any) => {
+    const s = it.snippet;
+    const id = it.id?.videoId;
+    return {
+      id,
+      title: s.title,
+      channelTitle: s.channelTitle,
+      thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
+    } as YtVideoHit;
+  });
+
+  return { items, nextPageToken: json.nextPageToken };
+}
