@@ -54,7 +54,7 @@ export default function YouTubeMusic() {
   const tracksGrid = useMemo(
     () => (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {videos.map((v, i) => (
+        {videos.map((v, idx) => (
           <DisplayYoutubeSongCard
             key={v.id}
             videoId={v.id}
@@ -62,6 +62,8 @@ export default function YouTubeMusic() {
             channelTitle={v.channelTitle}
             thumbnail={v.thumbnail}
             allTracks={videos}
+            idx={idx}
+            track={v}
             /* ref={(el: any) => {
               console.log("setting ref", el);
               itemRefs.current[i] = el;

@@ -4,11 +4,22 @@ import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
 // import { JamendoSong } from "../../types/playList.types.ts"; // Make sure it matches Jamendo fields
 
+type Song = {
+  id?: string;
+  name: string;
+  artist_id?: string;
+  artist_name?: string;
+  album_name?: string;
+  album_image: string;
+  audio: string;
+  provider: "youtube" | "jamendo";
+};
+
 export type RepeatMode = "off" | "one" | "all";
 
 interface PlayerState {
   // playback
-  currentSong: any | null;
+  currentSong: Song | null;
   isPlaying: boolean;
   duration: number;
   currentTime: number;
@@ -21,7 +32,7 @@ interface PlayerState {
   repeatMode: RepeatMode;
 
   // setters
-  setCurrentSong: (song: any) => void;
+  setCurrentSong: (song: Song) => void;
   setIsPlaying: (playing: boolean) => void;
   setDuration: (duration: number) => void;
   setCurrentTime: (time: number) => void;
@@ -55,7 +66,10 @@ export const musicPlayerStore = createStore<PlayerState>()(
 
       setCurrentTime: (currentTime) => set({ currentTime }),
       setDuration: (duration) => set({ duration }),
-      setCurrentSong: (song) => set({ currentSong: song }),
+      setCurrentSong: (song) => {
+        console.log("set currentSong", song);
+        set({ currentSong: song });
+      },
 
       setIsPlaying: (isPlaying) => set({ isPlaying }),
       setProgress: (progress) => set({ progress }),

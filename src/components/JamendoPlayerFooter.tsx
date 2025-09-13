@@ -1,11 +1,15 @@
 import { useEffect, useRef } from "react";
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
-import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
+import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 import { FooterController } from "./FooterController.tsx";
+
+// for yt
+import YouTube, { YouTubeProps } from "react-youtube";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement>(null);
+  console.log("audioref", audioRef);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
@@ -31,7 +35,8 @@ export const JamendoPlayerFooter = () => {
   // mount the ONE audio element
   useEffect(() => {
     if (audioRef.current) {
-      JamendoPlayerManager.init(audioRef.current);
+      console.log("init audio");
+      MusicPlayerManager.init(audioRef.current);
     }
   }, []);
 
@@ -41,13 +46,36 @@ export const JamendoPlayerFooter = () => {
 
   const handleClick = async () => {
     if (isPlaying) {
-      JamendoPlayerManager.pause();
+      MusicPlayerManager.pause();
       setIsPlaying(false);
     } else {
-      JamendoPlayerManager.resume();
+      MusicPlayerManager.resume();
       setIsPlaying(true);
     }
   };
+
+  const playYoutube = async () => {
+    const p = playerRef.current;
+    console.log("play once");
+    p.mute(); // safe
+    p.playVideo(); // starts muted, allowed
+    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+    p.unMute();
+    p.setVolume(70);
+  };
+
+  const opts: YouTubeProps["opts"] = {
+    width: "0",
+    height: "0",
+    playerVars: {
+      rel: 0,
+      modestbranding: 1,
+      playsinline: 1,
+      // no autoplay here; we control it manually
+      origin: window.location.origin,
+    },
+  };
+
   // if (!currentSong) return null;
   return (
     <div
@@ -84,7 +112,27 @@ export const JamendoPlayerFooter = () => {
           {formatTime(currentTime)} / {formatTime(duration)}
         </div>
       </div>
-      <audio ref={audioRef} onEnded={handleEnded} style={{ display: "none" }} />
+
+      {currentSong && (
+        <>
+          {currentSong?.provider === "jamendo" && (
+            <audio
+              ref={audioRef}
+              onEnded={handleEnded}
+              style={{ display: "none" }}
+            />
+          )}
+          {currentSong?.provider === "youtube" && (
+            <YouTube
+              ref={audioRef}
+              // videoId={videoId}
+              opts={opts}
+              // onReady={onReady}
+              // onStateChange={onStateChange}
+            />
+          )}
+        </>
+      )}
     </div>
   );
 };

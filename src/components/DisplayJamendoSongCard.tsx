@@ -1,5 +1,5 @@
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
-import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
+import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 import Play from "../assets/icons/play.svg?react";
 import Pause from "../assets/icons/pause.svg?react";
 // import { ProgressBar } from "./ProgressBar.tsx";
@@ -25,16 +25,16 @@ export const DisplayJamendoSongCard = ({
   const handleClick = async () => {
     if (!isCurrent) {
       setQueue(allTracks);
-      JamendoPlayerManager.pause(); // pause whatever was playing
-      setCurrentSong(songData); // switch song in store
+      MusicPlayerManager.pause(); // pause whatever was playing
+      setCurrentSong({ ...songData, provider: "jamendo" }); // switch song in store
       setIsPlaying(true); // footer effect will call syncToState()
       playAt(idx);
     } else {
       if (isPlaying) {
-        JamendoPlayerManager.pause();
+        MusicPlayerManager.pause();
         setIsPlaying(false);
       } else {
-        JamendoPlayerManager.resume();
+        MusicPlayerManager.resume();
         setIsPlaying(true);
       }
     }

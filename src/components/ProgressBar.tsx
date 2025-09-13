@@ -1,5 +1,5 @@
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
-import { JamendoPlayerManager } from "../utils/JamendoPlayerManager";
+import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 
 export const ProgressBar = () => {
   const progress = useMusicPlayerStore((s) => s.progress);
@@ -7,7 +7,7 @@ export const ProgressBar = () => {
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();
     const pct = ((e.clientX - rect.left) / rect.width) * 100;
-    JamendoPlayerManager.seekTo(pct);
+    MusicPlayerManager.seekTo(pct);
   };
 
   return (

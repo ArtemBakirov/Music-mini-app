@@ -1,7 +1,7 @@
 import { useRef, useState } from "react";
 import YouTube, { YouTubeProps } from "react-youtube";
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
-import { JamendoPlayerManager } from "../utils/JamendoPlayerManager.ts";
+import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 
 export type YtTrackHandle = {
   play: () => void;
@@ -15,6 +15,8 @@ type Props = {
   channelTitle: string;
   thumbnail: string;
   allTracks: Array<any>;
+  idx: number;
+  track: any;
 };
 
 export const DisplayYoutubeSongCard = ({
@@ -23,12 +25,15 @@ export const DisplayYoutubeSongCard = ({
   channelTitle,
   thumbnail,
   allTracks,
+  idx,
+  track,
 }: Props) => {
   const playerRef = useRef<any>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+  // const [isPlaying, setIsPlaying] = useState(false);
+  const [isReady, setIsReady] = useState(true);
 
   // player state
+  // console.log("track", track);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
@@ -41,17 +46,23 @@ export const DisplayYoutubeSongCard = ({
 
   const handleClick = async () => {
     if (!isCurrent) {
+      console.log("not current");
       setQueue(allTracks);
-      JamendoPlayerManager.pause(); // pause whatever was playing
-      setCurrentSong(songData); // switch song in store
+      MusicPlayerManager.pause(); // pause whatever was playing
+      setCurrentSong({
+        name: title,
+        album_image: thumbnail,
+        audio: videoId,
+        provider: "youtube",
+      }); // switch song in store
       setIsPlaying(true); // footer effect will call syncToState()
       playAt(idx);
     } else {
       if (isPlaying) {
-        JamendoPlayerManager.pause();
+        MusicPlayerManager.pause();
         setIsPlaying(false);
       } else {
-        JamendoPlayerManager.resume();
+        MusicPlayerManager.resume();
         setIsPlaying(true);
       }
     }
@@ -117,14 +128,14 @@ export const DisplayYoutubeSongCard = ({
       }`}
     >
       {/* Hidden iframe player (audio engine) */}
-      <div>
+      {/*<div>
         <YouTube
           videoId={videoId}
           opts={opts}
           onReady={onReady}
           onStateChange={onStateChange}
         />
-      </div>
+      </div>*/}
 
       {/* Custom UI (thumbnail + overlay button) */}
       <div className="relative rounded-md group flex-shrink-0">
@@ -135,7 +146,7 @@ export const DisplayYoutubeSongCard = ({
         />
         {isReady ? (
           <button
-            onClick={() => (isPlaying ? pause() : play())}
+            onClick={handleClick}
             className="absolute top-1/2 left-1/2 -translate-x-1/2
                        -translate-y-1/2 text-white opacity-0 group-hover:opacity-100
                        transition-opacity"

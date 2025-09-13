@@ -1,8 +1,8 @@
-export interface Song {
+/*export interface Song {
   videoId: string;
   title: string;
   thumbnailUrl: string;
-}
+}*/
 
 export interface JamendoSong {
   id: string;
