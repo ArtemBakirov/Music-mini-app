@@ -8,10 +8,13 @@ import { FooterController } from "./FooterController.tsx";
 import YouTube, { YouTubeProps } from "react-youtube";
 
 export const JamendoPlayerFooter = () => {
-  const audioRef = useRef<HTMLAudioElement>(null);
+  const audioRef = useRef<HTMLAudioElement | any>(null);
   console.log("audioref", audioRef);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
+
+  console.log("currentSong footer", currentSong);
+
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
   const duration = useMusicPlayerStore((s) => s.duration);
@@ -24,7 +27,8 @@ export const JamendoPlayerFooter = () => {
   const cycleRepeat = useMusicPlayerStore((s) => s.cycleRepeat);
   const isShuffling = useMusicPlayerStore((s) => s.isShuffling);
   const repeatMode = useMusicPlayerStore((s) => s.repeatMode);
-
+  const provider = useMusicPlayerStore((s) => s.provider);
+  console.log("provider", provider);
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
     const m = Math.floor(seconds / 60);
@@ -34,11 +38,12 @@ export const JamendoPlayerFooter = () => {
 
   // mount the ONE audio element
   useEffect(() => {
+    // console.log("useEffect footer", audioRef.current);
     if (audioRef.current) {
       console.log("init audio");
       MusicPlayerManager.init(audioRef.current);
     }
-  }, []);
+  }, [currentSong]);
 
   const handleEnded = () => {
     setIsPlaying(false);
@@ -103,7 +108,9 @@ export const JamendoPlayerFooter = () => {
         </div>
         <div className={"flex flex-col items-center w-full"}>
           <div className={"flex gap-4 justify-center mb-2"}>
-            <div className="font-bold">{currentSong?.name}</div>
+            <div className="font-bold">
+              {currentSong?.title || currentSong?.name}
+            </div>
             <div className="font-bold">{currentSong?.artist_name}</div>
           </div>
           <ProgressBar />
@@ -115,14 +122,14 @@ export const JamendoPlayerFooter = () => {
 
       {currentSong && (
         <>
-          {currentSong?.provider === "jamendo" && (
+          {provider === "jamendo" && (
             <audio
               ref={audioRef}
               onEnded={handleEnded}
               style={{ display: "none" }}
             />
           )}
-          {currentSong?.provider === "youtube" && (
+          {provider === "youtube" && (
             <YouTube
               ref={audioRef}
               // videoId={videoId}

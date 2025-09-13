@@ -5,7 +5,8 @@ import {
   useQueryClient,
   useInfiniteQuery,
 } from "@tanstack/react-query";
-import { Playlist, Song } from "../../types/playList.types";
+import { Playlist } from "../../types/playList.types";
+// import { Song } from "../stores/useMusicPlayerStore.ts";
 
 const CLIENT_ID = import.meta.env.VITE_JAMENDO_CLIENT_ID;
 
@@ -28,7 +29,7 @@ export const useAddSongToPlaylist = () => {
       song,
     }: {
       playlistId: string;
-      song: Song;
+      song: any;
       ownerId: string;
     }) => {
       const { data } = await apiInstance.post(

@@ -41,20 +41,23 @@ export const DisplayYoutubeSongCard = ({
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
   const setQueue = useMusicPlayerStore((s) => s.setQueue);
   const playAt = useMusicPlayerStore((s) => s.playAt);
+  const setProvider = useMusicPlayerStore((s) => s.setProvider);
   const isCurrent = currentSong?.id === videoId;
   const isPlayingCurrent = isCurrent && isPlaying;
 
   const handleClick = async () => {
     if (!isCurrent) {
-      console.log("not current");
+      // console.log("not current");
       setQueue(allTracks);
       MusicPlayerManager.pause(); // pause whatever was playing
+      // console.log("setting provider");
+      // setProvider("youtube");
       setCurrentSong({
         name: title,
         album_image: thumbnail,
         audio: videoId,
-        provider: "youtube",
       }); // switch song in store
+
       setIsPlaying(true); // footer effect will call syncToState()
       playAt(idx);
     } else {

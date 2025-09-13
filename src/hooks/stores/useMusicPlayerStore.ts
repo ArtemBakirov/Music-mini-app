@@ -4,7 +4,7 @@ import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
 // import { JamendoSong } from "../../types/playList.types.ts"; // Make sure it matches Jamendo fields
 
-type Song = {
+export type Song = {
   id?: string;
   name: string;
   artist_id?: string;
@@ -12,10 +12,10 @@ type Song = {
   album_name?: string;
   album_image: string;
   audio: string;
-  provider: "youtube" | "jamendo";
 };
 
 export type RepeatMode = "off" | "one" | "all";
+export type Provider = "youtube" | "jamendo" | null;
 
 interface PlayerState {
   // playback
@@ -24,6 +24,7 @@ interface PlayerState {
   duration: number;
   currentTime: number;
   progress: number;
+  provider: Provider;
 
   // queue
   queue: Array<any>;
@@ -37,6 +38,7 @@ interface PlayerState {
   setDuration: (duration: number) => void;
   setCurrentTime: (time: number) => void;
   setProgress: (progress: number) => void;
+  setProvider: (provider: Provider) => void;
 
   // queue ops
   setQueue: (tracks: Array<any>) => void;
@@ -58,6 +60,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
       currentTime: 0,
       duration: 0,
       progress: 0,
+      provider: null,
 
       queue: [],
       currentIndex: -1,
@@ -67,8 +70,18 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setCurrentTime: (currentTime) => set({ currentTime }),
       setDuration: (duration) => set({ duration }),
       setCurrentSong: (song) => {
-        console.log("set currentSong", song);
-        set({ currentSong: song });
+        console.log("set current song", song);
+        set({
+          currentSong: {
+            name: song.name,
+            album_image: song.album_image,
+            audio: song.audio,
+          },
+        });
+      },
+      setProvider: (provider) => {
+        console.log("set provider playerStore", provider);
+        set({ provider });
       },
 
       setIsPlaying: (isPlaying) => set({ isPlaying }),
@@ -188,6 +201,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
         progress: state.progress,
         duration: state.duration,
         currentTime: state.currentTime,
+        provider: state.provider,
       }),
     },
   ),
