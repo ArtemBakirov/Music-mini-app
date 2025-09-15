@@ -70,8 +70,8 @@ export const JamendoPlayerFooter = () => {
   };
 
   const opts: YouTubeProps["opts"] = {
-    width: "60%",
-    height: "30%",
+    width: "0",
+    height: "0",
     playerVars: {
       rel: 0,
       modestbranding: 1,

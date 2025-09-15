@@ -22,9 +22,7 @@ export class MusicPlayerManager {
         "autoplay; encrypted-media; picture-in-picture; fullscreen",
       );
       // readyResolveRef.current?.();
-      setTimeout(() => {
-        console.log("READY TRUE");
-      }, 2000);
+      console.log("INIT FINISHED");
     }
 
     // console.log("init music player manager");
@@ -109,8 +107,12 @@ export class MusicPlayerManager {
           if (!this.audio.videoId) return;
           console.log("isPlaying, trying to play", this.audio.videoId);
           try {
+            console.log("cueing video");
             this.audio.cueVideoById({ videoId: this.audio.videoId });
-            await this.playYoutube(this.audio);
+            setTimeout(async () => {
+              console.log("STARTING PLAY");
+              await this.playYoutube(this.audio);
+            }, 5000);
           } catch (e) {
             console.warn("audio.play() failed (user gesture?):", e);
           }
