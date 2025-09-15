@@ -70,7 +70,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setCurrentTime: (currentTime) => set({ currentTime }),
       setDuration: (duration) => set({ duration }),
       setCurrentSong: (song) => {
-        console.log("set current song", song);
+        // console.log("set current song", song);
         set({
           currentSong: {
             name: song.name,
@@ -80,7 +80,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
         });
       },
       setProvider: (provider) => {
-        console.log("set provider playerStore", provider);
+        // console.log("set provider playerStore", provider);
         set({ provider });
       },
 

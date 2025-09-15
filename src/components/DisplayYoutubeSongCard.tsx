@@ -51,7 +51,7 @@ export const DisplayYoutubeSongCard = ({
       setQueue(allTracks);
       MusicPlayerManager.pause(); // pause whatever was playing
       // console.log("setting provider");
-      // setProvider("youtube");
+      setProvider("youtube");
       setCurrentSong({
         name: title,
         album_image: thumbnail,

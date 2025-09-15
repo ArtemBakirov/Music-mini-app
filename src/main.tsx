@@ -26,10 +26,9 @@ const queryClient = new QueryClient({
 });
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
-    <QueryClientProvider client={queryClient}>
-      <BastyonSDKProvider>
-        {/*<BrowserRouter>
+  <QueryClientProvider client={queryClient}>
+    <BastyonSDKProvider>
+      {/*<BrowserRouter>
           <Routes>
             <Route
               path="/"
@@ -43,8 +42,7 @@ createRoot(document.getElementById("root")!).render(
             />
           </Routes>
         </BrowserRouter> */}
-        <DesktopMobileProvider />
-      </BastyonSDKProvider>
-    </QueryClientProvider>
-  </StrictMode>,
+      <DesktopMobileProvider />
+    </BastyonSDKProvider>
+  </QueryClientProvider>,
 );

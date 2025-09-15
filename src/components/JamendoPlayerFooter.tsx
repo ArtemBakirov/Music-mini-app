@@ -9,11 +9,11 @@ import YouTube, { YouTubeProps } from "react-youtube";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
-  console.log("audioref", audioRef);
+  // console.log("audioref", audioRef);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
 
-  console.log("currentSong footer", currentSong);
+  // console.log("currentSong footer", currentSong);
 
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
@@ -41,7 +41,7 @@ export const JamendoPlayerFooter = () => {
     // console.log("useEffect footer", audioRef.current);
     if (audioRef.current) {
       console.log("init audio");
-      MusicPlayerManager.init(audioRef.current);
+      // MusicPlayerManager.init(audioRef.current);;
     }
   }, [currentSong]);
 
@@ -70,8 +70,8 @@ export const JamendoPlayerFooter = () => {
   };
 
   const opts: YouTubeProps["opts"] = {
-    width: "0",
-    height: "0",
+    width: "60%",
+    height: "30%",
     playerVars: {
       rel: 0,
       modestbranding: 1,
@@ -79,6 +79,14 @@ export const JamendoPlayerFooter = () => {
       // no autoplay here; we control it manually
       origin: window.location.origin,
     },
+  };
+
+  const onYTReady: YouTubeProps["onReady"] = (e) => {
+    MusicPlayerManager.init(e.target); // YT.Player
+  };
+
+  const onYTStateChange: YouTubeProps["onStateChange"] = (e) => {
+    MusicPlayerManager.onYTStateChange?.(e);
   };
 
   // if (!currentSong) return null;
@@ -131,9 +139,11 @@ export const JamendoPlayerFooter = () => {
           )}
           {provider === "youtube" && (
             <YouTube
-              ref={audioRef}
+              // ref={audioRef}
               // videoId={videoId}
               opts={opts}
+              onReady={onYTReady}
+              onStateChange={onYTStateChange}
               // onReady={onReady}
               // onStateChange={onStateChange}
             />

@@ -8,7 +8,26 @@ export class MusicPlayerManager {
   private static unsubStore?: () => void;
 
   static init(audioEl: HTMLAudioElement | any) {
-    console.log("init music player manager");
+    const { provider } = musicPlayerStore.getState();
+    if (provider === "youtube") {
+      if (!audioEl) return;
+      console.log("init youtube");
+      this.audio = audioEl; // window.YT.Player
+      // console.log("audioEl", audioEl);
+      // console.log("onReady", e.target);
+      audioEl.mute(); // ensure safe autoplay during priming
+      const iframe = audioEl.getIframe();
+      iframe?.setAttribute(
+        "allow",
+        "autoplay; encrypted-media; picture-in-picture; fullscreen",
+      );
+      // readyResolveRef.current?.();
+      setTimeout(() => {
+        console.log("READY TRUE");
+      }, 2000);
+    }
+
+    // console.log("init music player manager");
     this.audio = audioEl;
     if (!this.listenersAttached) {
       this.attachListeners();
@@ -27,7 +46,7 @@ export class MusicPlayerManager {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
         };
-        console.log("compare slice prevslice", slice, prevSlice);
+        // console.log("compare slice prevslice", slice, prevSlice);
         if (
           slice.currentSong !== prevSlice.currentSong ||
           slice.isPlaying !== prevSlice.isPlaying
@@ -41,84 +60,66 @@ export class MusicPlayerManager {
   }
 
   private static attachListeners() {
-    const { currentSong, provider, isPlaying, setIsPlaying } =
-      musicPlayerStore.getState();
-    console.log("this currentsong", currentSong, isPlaying);
-    if (provider == "youtube") {
+    if (!this.audio) return;
+    const set = musicPlayerStore.setState;
+    const get = musicPlayerStore.getState();
+
+    this.audio?.addEventListener("timeupdate", () => {
+      if (!this.audio || !this.audio.duration) return;
+      const currentTime = this.audio.currentTime;
+      const duration = this.audio.duration;
+      const progress = (currentTime / duration) * 100;
+      set({ currentTime, progress });
+    });
+
+    this.audio.addEventListener("loadedmetadata", () => {
       if (!this.audio) return;
-      this.audio.onReady = (e: any) => {
-        this.audio = e.target; // window.YT.Player
-        console.log("onReady", e.target);
-        e.target.mute(); // ensure safe autoplay during priming
-        const iframe = e.target.getIframe();
-        iframe?.setAttribute(
-          "allow",
-          "autoplay; encrypted-media; picture-in-picture; fullscreen",
-        );
-        // readyResolveRef.current?.();
-        /* setTimeout(() => {
-          setIsReady(true);
-        }, 2000); */
-      };
+      set({ duration: this.audio.duration });
+    });
 
-      this.audio.onStateChange = (e: any) => {
-        // Keep a simple "isPlaying" for the custom UI
-        const YT = (window as any).YT;
-        if (!YT) return;
-        if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
-        if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
-          setIsPlaying(false);
-      };
-    } else {
-      if (!this.audio) return;
-      const set = musicPlayerStore.setState;
-      const get = musicPlayerStore.getState();
-
-      this.audio?.addEventListener("timeupdate", () => {
-        if (!this.audio || !this.audio.duration) return;
-        const currentTime = this.audio.currentTime;
-        const duration = this.audio.duration;
-        const progress = (currentTime / duration) * 100;
-        set({ currentTime, progress });
+    this.audio.addEventListener("ended", () => {
+      set({
+        isPlaying: false,
+        progress: 100,
+        currentTime: musicPlayerStore.getState().duration,
       });
-
-      this.audio.addEventListener("loadedmetadata", () => {
-        if (!this.audio) return;
-        set({ duration: this.audio.duration });
-      });
-
-      this.audio.addEventListener("ended", () => {
-        set({
-          isPlaying: false,
-          progress: 100,
-          currentTime: musicPlayerStore.getState().duration,
-        });
-        get.handleEnded();
-      });
-    }
+      get.handleEnded();
+    });
   }
 
   static async syncToState() {
-    console.log("syncToState");
+    // console.log("syncToState");
     const { currentSong, isPlaying, provider } = musicPlayerStore.getState();
     if (!this.audio || !currentSong) return;
 
     if (provider === "youtube") {
+      console.log("sync youtube");
       if (this.currentSrc !== currentSong.audio) {
         //*****************
         // youtube player expects videoId property
+        // console.log("setting videoId", currentSong.audio);
         this.audio.videoId = currentSong.audio;
         this.currentSrc = currentSong.audio;
+        // console.log("set videoId", this.audio);
       }
 
-      if (isPlaying) {
-        try {
-          await this.playYoutube(this.audio);
-        } catch (e) {
-          console.warn("audio.play() failed (user gesture?):", e);
+      if (this.audio) {
+        console.log("this audio");
+        if (isPlaying) {
+          if (!this.audio.videoId) return;
+          console.log("isPlaying, trying to play", this.audio.videoId);
+          try {
+            this.audio.cueVideoById({ videoId: this.audio.videoId });
+            await this.playYoutube(this.audio);
+          } catch (e) {
+            console.warn("audio.play() failed (user gesture?):", e);
+          }
+        } else {
+          // console.log("audio is", this.audio);
+          this.audio.pauseVideo();
         }
       } else {
-        this.audio.pause();
+        console.log("no audio");
       }
     } else {
       console.log("not youtube");
@@ -128,7 +129,7 @@ export class MusicPlayerManager {
       }
 
       if (isPlaying) {
-        console.log("sync to state playing");
+        // console.log("sync to state playing");
         try {
           await this.audio.play();
         } catch (e) {
@@ -141,9 +142,15 @@ export class MusicPlayerManager {
   }
 
   static pause() {
+    const { provider } = musicPlayerStore.getState();
     if (this.audio) {
-      console.log("this audio", this.audio);
-      this.audio?.pause();
+      if (provider === "youtube") {
+        console.log("this audio", this.audio);
+        this.audio?.pauseVideo();
+      } else {
+        console.log("this audio", this.audio);
+        this.audio?.pause();
+      }
       musicPlayerStore.setState({ isPlaying: false });
     } else {
       console.log("no audio");
@@ -152,7 +159,12 @@ export class MusicPlayerManager {
 
   static resume() {
     if (!this.audio) return;
-    this.audio.play()?.catch(() => {});
+    const { provider } = musicPlayerStore.getState();
+    if (provider === "youtube") {
+      this.audio.playVideo()?.catch(() => {});
+    } else {
+      this.audio.play()?.catch(() => {});
+    }
     musicPlayerStore.setState({ isPlaying: true });
   }
 
@@ -186,13 +198,27 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
+    if (!audioEl) return;
+
     console.log("play inside MusicPlayerManager", audioEl);
-    const p = audioEl.current;
+    console.log("videoId", audioEl.videoId);
+    const p = audioEl;
     console.log("play once");
     p.mute(); // safe
+    console.log("did mute");
     p.playVideo(); // starts muted, allowed
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
     p.unMute();
     p.setVolume(70);
+    console.log("executed play");
+  }
+
+  static onYTStateChange(e: any) {
+    const { setIsPlaying } = musicPlayerStore.getState();
+    const YT = (window as any).YT;
+    if (!YT) return;
+    if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
+    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
+      setIsPlaying(false);
   }
 }
