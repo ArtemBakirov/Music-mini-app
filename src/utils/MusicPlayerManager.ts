@@ -112,7 +112,7 @@ export class MusicPlayerManager {
             setTimeout(async () => {
               console.log("STARTING PLAY");
               await this.playYoutube(this.audio);
-            }, 2000);
+            }, 1500);
           } catch (e) {
             console.warn("audio.play() failed (user gesture?):", e);
           }
