@@ -3,7 +3,7 @@ import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 
 export const ProgressBar = () => {
   const progress = useMusicPlayerStore((s) => s.progress);
-  console.log("progress", progress);
+  // console.log("progress", progress);
 
   const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
     const rect = e.currentTarget.getBoundingClientRect();

@@ -74,7 +74,7 @@ export class MusicPlayerManager {
         const duration = player.getDuration();
         if (duration > 0) {
           const progress = (currentTime / duration) * 100;
-          console.log("setting progress yt", progress);
+          // console.log("setting progress yt", progress);
           set({ currentTime, duration, progress });
         }
       };
@@ -223,11 +223,29 @@ export class MusicPlayerManager {
   }
 
   static seekTo(percent: number) {
-    if (!this.audio || !this.audio.duration) return;
+    if (!this.audio) return;
+
+    const { provider } = musicPlayerStore.getState();
+    // clamp 0..100
     const p = Math.max(0, Math.min(100, percent));
-    const t = (p / 100) * this.audio.duration;
-    this.audio.currentTime = t;
-    musicPlayerStore.setState({ currentTime: t, progress: p });
+
+    if (provider === "youtube") {
+      // YT: use getDuration/getCurrentTime + seekTo(seconds, allowSeekAhead)
+      const dur =
+        typeof this.audio.getDuration === "function"
+          ? this.audio.getDuration()
+          : 0;
+      if (!dur || !isFinite(dur)) return; // not ready yet
+      const t = (p / 100) * dur;
+      this.audio.seekTo(t, /* allowSeekAhead */ true);
+      musicPlayerStore.setState({ currentTime: t, duration: dur, progress: p });
+    } else {
+      if (!this.audio || !this.audio.duration) return;
+      const p = Math.max(0, Math.min(100, percent));
+      const t = (p / 100) * this.audio.duration;
+      this.audio.currentTime = t;
+      musicPlayerStore.setState({ currentTime: t, progress: p });
+    }
   }
 
   static getCurrentProgress(): number {

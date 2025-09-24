@@ -45,6 +45,8 @@ export const DisplayYoutubeSongCard = ({
   const isCurrent = currentSong?.id === videoId;
   const isPlayingCurrent = isCurrent && isPlaying;
 
+  console.log("is playing", isPlaying);
+
   const handleClick = async () => {
     if (!isCurrent) {
       // console.log("not current");
@@ -127,7 +129,7 @@ export const DisplayYoutubeSongCard = ({
   return (
     <div
       className={`p-2 px-0 mx-2 flex items-center gap-4 border-t-2 ${
-        isPlaying ? "border-[#B065A0] animate-pulse" : "border-gray-500"
+        isPlayingCurrent ? "border-[#B065A0] animate-pulse" : "border-gray-500"
       }`}
     >
       {/* Hidden iframe player (audio engine) */}
