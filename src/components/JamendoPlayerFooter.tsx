@@ -13,6 +13,8 @@ export const JamendoPlayerFooter = () => {
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
 
+  // console.log("current song", currentSong);
+
   // console.log("currentSong footer", currentSong);
 
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
@@ -40,8 +42,10 @@ export const JamendoPlayerFooter = () => {
   useEffect(() => {
     // console.log("useEffect footer", audioRef.current);
     if (audioRef.current) {
-      console.log("init audio");
-      // MusicPlayerManager.init(audioRef.current);;
+      if (provider === "jamendo") {
+        MusicPlayerManager.init(audioRef.current);
+      }
+      //
     }
   }, [currentSong]);
 
@@ -57,16 +61,6 @@ export const JamendoPlayerFooter = () => {
       MusicPlayerManager.resume();
       setIsPlaying(true);
     }
-  };
-
-  const playYoutube = async () => {
-    const p = playerRef.current;
-    console.log("play once");
-    p.mute(); // safe
-    p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-    p.unMute();
-    p.setVolume(70);
   };
 
   const opts: YouTubeProps["opts"] = {
@@ -131,11 +125,13 @@ export const JamendoPlayerFooter = () => {
       {currentSong && (
         <>
           {provider === "jamendo" && (
-            <audio
-              ref={audioRef}
-              onEnded={handleEnded}
-              style={{ display: "none" }}
-            />
+            <div>
+              <audio
+                ref={audioRef}
+                onEnded={handleEnded}
+                // style={{ display: "none" }}
+              />
+            </div>
           )}
           {provider === "youtube" && (
             <YouTube

@@ -6,8 +6,10 @@ export class MusicPlayerManager {
   private static listenersAttached = false;
   private static currentSrc: string | null = null;
   private static unsubStore?: () => void;
+  private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
+    console.log("init");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
@@ -59,30 +61,68 @@ export class MusicPlayerManager {
 
   private static attachListeners() {
     if (!this.audio) return;
+    const { provider } = musicPlayerStore.getState();
     const set = musicPlayerStore.setState;
     const get = musicPlayerStore.getState();
+    if (provider === "youtube") {
+      // --- YOUTUBE ---
+      const player = this.audio;
+      // Polling loop for progress
+      const updateProgress = () => {
+        if (!player || typeof player.getCurrentTime !== "function") return;
+        const currentTime = player.getCurrentTime();
+        const duration = player.getDuration();
+        if (duration > 0) {
+          const progress = (currentTime / duration) * 100;
+          console.log("setting progress yt", progress);
+          set({ currentTime, duration, progress });
+        }
+      };
 
-    this.audio?.addEventListener("timeupdate", () => {
-      if (!this.audio || !this.audio.duration) return;
-      const currentTime = this.audio.currentTime;
-      const duration = this.audio.duration;
-      const progress = (currentTime / duration) * 100;
-      set({ currentTime, progress });
-    });
+      // Start polling when video is playing, stop when paused/ended
+      player.addEventListener("onStateChange", (e: any) => {
+        const YT = (window as any).YT;
+        if (!YT) return;
 
-    this.audio.addEventListener("loadedmetadata", () => {
-      if (!this.audio) return;
-      set({ duration: this.audio.duration });
-    });
+        if (e.data === YT.PlayerState.PLAYING) {
+          this.progressTimer = setInterval(updateProgress, 1000);
+        } else {
+          clearInterval(this.progressTimer);
+          this.progressTimer = null;
 
-    this.audio.addEventListener("ended", () => {
-      set({
-        isPlaying: false,
-        progress: 100,
-        currentTime: musicPlayerStore.getState().duration,
+          if (e.data === YT.PlayerState.ENDED) {
+            set({
+              isPlaying: false,
+              progress: 100,
+              currentTime: player.getDuration(),
+            });
+            get.handleEnded();
+          }
+        }
       });
-      get.handleEnded();
-    });
+    } else {
+      this.audio?.addEventListener("timeupdate", () => {
+        if (!this.audio || !this.audio.duration) return;
+        const currentTime = this.audio.currentTime;
+        const duration = this.audio.duration;
+        const progress = (currentTime / duration) * 100;
+        set({ currentTime, progress });
+      });
+
+      this.audio.addEventListener("loadedmetadata", () => {
+        if (!this.audio) return;
+        set({ duration: this.audio.duration });
+      });
+
+      this.audio.addEventListener("ended", () => {
+        set({
+          isPlaying: false,
+          progress: 100,
+          currentTime: musicPlayerStore.getState().duration,
+        });
+        get.handleEnded();
+      });
+    }
   }
 
   static async syncToState() {
