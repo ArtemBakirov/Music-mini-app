@@ -13,7 +13,6 @@ export const App = () => {
           "flex flex-col flex-1 relative my-0 mx-auto font-bold items-center justify-center"
         }
       >
-        {/*<Navbar /> */}
         <Outlet />
         <JamendoPlayerFooter />
       </main>

@@ -1,6 +1,5 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { App } from "./App.tsx";
-import Music from "../pages/Music.tsx";
 import Account from "../pages/Account.tsx";
 import StartCreating from "../pages/StartCreating.tsx";
 import { MusicTracks } from "../pages/MusicTracks.tsx";
@@ -9,7 +8,6 @@ import MusicArtists from "../pages/MusicArtists.tsx";
 import MusicPlaylists from "../pages/MusicPlaylists.tsx";
 import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
-import { TestIframeLoad } from "../pages/TestIframeLoad.tsx";
 import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
 import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
 

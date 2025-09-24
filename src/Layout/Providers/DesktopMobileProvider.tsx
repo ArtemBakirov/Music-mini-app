@@ -30,9 +30,7 @@ export const DesktopMobileProvider = ({
     return window.innerWidth < breakpoint;
   }, [breakpoint]);
 
-  const [ready, setReady] = useState(
-    typeof window === "undefined" ? false : true,
-  );
+  const [ready, setReady] = useState(typeof window !== "undefined");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -43,8 +41,7 @@ export const DesktopMobileProvider = ({
 
       // Multiple signals for better accuracy
       const ua = navigator.userAgent || "";
-      const uaDataMobile =
-        (navigator as any).userAgentData?.mobile === true ? true : false;
+      const uaDataMobile = (navigator as any).userAgentData?.mobile === true;
       const touch =
         "ontouchstart" in window ||
         navigator.maxTouchPoints > 0 ||

@@ -31,7 +31,7 @@ export default function YouTubeMusicTracks() {
 
   // Keep child handles in a Map so we never "wipe" them by accident
   const handlesRef = useRef<Map<string, YtTrackHandle>>(new Map());
-  const [primingInitial, setPrimingInitial] = useState(false);
+  // const [primingInitial, setPrimingInitial] = useState(false);
 
   // Prime the FIRST page before revealing UI; later pages can prime on the fly
   /*useEffect(() => {
@@ -103,7 +103,7 @@ export default function YouTubeMusicTracks() {
 
       <div className="flex-1 overflow-y-auto pb-24 relative">
         {/* States */}
-        {(isLoading || primingInitial) && (
+        {isLoading && (
           <div className="space-y-6">
             <div className="h-6 w-40 bg-[#1f1f1f] rounded animate-pulse" />
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
@@ -123,7 +123,7 @@ export default function YouTubeMusicTracks() {
           </div>
         )}
 
-        {!isLoading && !primingInitial && tracks.length === 0 && (
+        {!isLoading && tracks.length === 0 && (
           <div className="py-10 text-center opacity-80">
             No tracks for “{decodeURIComponent(query)}”.
           </div>
@@ -133,21 +133,18 @@ export default function YouTubeMusicTracks() {
         {tracks.length > 0 && (
           <>
             <div
-              className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 ${
-                primingInitial ? "opacity-0 pointer-events-none" : "opacity-100"
-              }`}
+              className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}
             >
-              {tracks.map((v) => (
+              {tracks.map((v, idx) => (
                 <DisplayYoutubeSongCard
+                  allTracks={tracks}
+                  idx={idx}
                   key={v.id}
                   videoId={v.id}
+                  track={v}
                   title={v.title}
                   channelTitle={v.channelTitle}
                   thumbnail={v.thumbnail}
-                  /* ref={(el) => {
-                    if (el) handlesRef.current.set(v.id, el);
-                    else handlesRef.current.delete(v.id); // cleanup on unmount
-                  }} */
                 />
               ))}
             </div>
