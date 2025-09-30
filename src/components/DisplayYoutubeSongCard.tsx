@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import YouTube, { YouTubeProps } from "react-youtube";
+import { YouTubeProps } from "react-youtube";
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 
@@ -26,14 +26,8 @@ export const DisplayYoutubeSongCard = ({
   thumbnail,
   allTracks,
   idx,
-  track,
 }: Props) => {
-  const playerRef = useRef<any>(null);
-  // const [isPlaying, setIsPlaying] = useState(false);
   const [isReady, setIsReady] = useState(true);
-
-  // player state
-  // console.log("track", track);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
@@ -73,75 +67,12 @@ export const DisplayYoutubeSongCard = ({
     }
   };
 
-  // A tiny promise that resolves when the iframe player is ready.
-  const readyResolveRef = useRef<(() => void) | null>(null);
-
-  const opts: YouTubeProps["opts"] = {
-    width: "0",
-    height: "0",
-    playerVars: {
-      rel: 0,
-      modestbranding: 1,
-      playsinline: 1,
-      // no autoplay here; we control it manually
-      origin: window.location.origin,
-    },
-  };
-
-  const onReady: YouTubeProps["onReady"] = (e) => {
-    playerRef.current = e.target; // window.YT.Player
-    console.log("onReady", e.target);
-    e.target.mute(); // ensure safe autoplay during priming
-    const iframe = e.target.getIframe();
-    iframe?.setAttribute(
-      "allow",
-      "autoplay; encrypted-media; picture-in-picture; fullscreen",
-    );
-    readyResolveRef.current?.();
-    setTimeout(() => {
-      setIsReady(true);
-    }, 2000);
-  };
-
-  const onStateChange: YouTubeProps["onStateChange"] = (e) => {
-    // Keep a simple "isPlaying" for the custom UI
-    const YT = (window as any).YT;
-    if (!YT) return;
-    if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
-    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
-      setIsPlaying(false);
-  };
-
-  const play = async () => {
-    const p = playerRef.current;
-    console.log("play once");
-    p.mute(); // safe
-    p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-    p.unMute();
-    p.setVolume(70);
-  };
-
-  const pause = () => {
-    playerRef.current?.pauseVideo();
-  };
-
   return (
     <div
       className={`p-2 px-0 mx-2 flex items-center gap-4 border-t-2 ${
         isPlayingCurrent ? "border-[#B065A0] animate-pulse" : "border-gray-500"
       }`}
     >
-      {/* Hidden iframe player (audio engine) */}
-      {/*<div>
-        <YouTube
-          videoId={videoId}
-          opts={opts}
-          onReady={onReady}
-          onStateChange={onStateChange}
-        />
-      </div>*/}
-
       {/* Custom UI (thumbnail + overlay button) */}
       <div className="relative rounded-md group flex-shrink-0">
         <img
@@ -157,7 +88,7 @@ export const DisplayYoutubeSongCard = ({
                        transition-opacity"
             aria-label={isPlaying ? "Pause" : "Play"}
           >
-            {isPlaying ? (
+            {isPlayingCurrent ? (
               <svg
                 width="40"
                 height="40"

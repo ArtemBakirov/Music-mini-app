@@ -107,9 +107,16 @@ export const musicPlayerStore = createStore<PlayerState>()(
         console.log("playAt", index);
         const { queue } = get();
         if (index < 0 || index >= queue.length) return;
+        console.log("queue", queue);
+        console.log("new currentSong", queue[index]);
+        const { title, thumbnail, id } = queue[index];
         set({
           currentIndex: index,
-          currentSong: queue[index],
+          currentSong: {
+            name: title,
+            album_image: thumbnail,
+            audio: id,
+          },
           isPlaying: true,
         });
       },

@@ -30,7 +30,7 @@ export const JamendoPlayerFooter = () => {
   const isShuffling = useMusicPlayerStore((s) => s.isShuffling);
   const repeatMode = useMusicPlayerStore((s) => s.repeatMode);
   const provider = useMusicPlayerStore((s) => s.provider);
-  console.log("provider", provider);
+  // console.log("provider", provider);
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
     const m = Math.floor(seconds / 60);
@@ -91,12 +91,6 @@ export const JamendoPlayerFooter = () => {
     >
       <div className="flex items-center gap-4 w-full">
         <div>
-          {/*<button
-            onClick={handleClick}
-            className="bg-purple-600 text-white px-3 py-1 rounded"
-          >
-            {isPlaying ? <Pause /> : <Play />}
-          </button> */}
           <FooterController
             onPlayPauseClick={handleClick}
             isPlaying={isPlaying}

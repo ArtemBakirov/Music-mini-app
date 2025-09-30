@@ -132,7 +132,9 @@ export class MusicPlayerManager {
 
     if (provider === "youtube") {
       console.log("sync youtube");
+      console.log("src data", this.currentSrc, currentSong.audio, currentSong);
       if (this.currentSrc !== currentSong.audio) {
+        console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
@@ -140,10 +142,11 @@ export class MusicPlayerManager {
         this.currentSrc = currentSong.audio;
         // console.log("set videoId", this.audio);
       }
-
+      console.log("this audio in sync", this.audio);
       if (this.audio) {
-        console.log("this audio");
+        console.log("sync this audio exists", this.audio);
         if (isPlaying) {
+          console.log("sync is playing true");
           if (!this.audio.videoId) return;
           console.log("isPlaying, trying to play", this.audio.videoId);
           try {
@@ -187,10 +190,10 @@ export class MusicPlayerManager {
     const { provider } = musicPlayerStore.getState();
     if (this.audio) {
       if (provider === "youtube") {
-        console.log("this audio", this.audio);
+        // console.log("this audio", this.audio);
         this.audio?.pauseVideo();
       } else {
-        console.log("this audio", this.audio);
+        // console.log("this audio", this.audio);
         this.audio?.pause();
       }
       musicPlayerStore.setState({ isPlaying: false });
