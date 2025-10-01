@@ -5,6 +5,7 @@ export class MusicPlayerManager {
   private static audio: HTMLAudioElement | any | null = null;
   private static listenersAttached = false;
   private static currentSrc: string | null = null;
+  private static newSrc: string | null = null;
   private static unsubStore?: () => void;
   private static progressTimer: any | null = null;
 
@@ -132,40 +133,49 @@ export class MusicPlayerManager {
 
     if (provider === "youtube") {
       console.log("sync youtube");
-      console.log("src data", this.currentSrc, currentSong.audio, currentSong);
+      console.log(
+        "this current, currentSong audio",
+        this.currentSrc,
+        currentSong.audio,
+      );
+      // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
       if (this.currentSrc !== currentSong.audio) {
-        console.log("change src", this.currentSrc, currentSong.audio);
+        console.log("different src");
+        // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
         this.audio.videoId = currentSong.audio;
         this.currentSrc = currentSong.audio;
         // console.log("set videoId", this.audio);
-      }
-      console.log("this audio in sync", this.audio);
-      if (this.audio) {
-        console.log("sync this audio exists", this.audio);
-        if (isPlaying) {
-          console.log("sync is playing true");
-          if (!this.audio.videoId) return;
-          console.log("isPlaying, trying to play", this.audio.videoId);
-          try {
-            console.log("cueing video");
-            this.audio.cueVideoById({ videoId: this.audio.videoId });
-            setTimeout(async () => {
-              console.log("STARTING PLAY");
-              await this.playYoutube(this.audio);
-            }, 1500);
-          } catch (e) {
-            console.warn("audio.play() failed (user gesture?):", e);
+        if (this.audio) {
+          console.log("sync this audio exists", this.audio);
+          console.log("isPlaying", isPlaying);
+          if (isPlaying) {
+            console.log("sync is playing true");
+            if (!this.audio.videoId) return;
+            console.log("isPlaying, trying to play", this.audio.videoId);
+            try {
+              console.log("cueing video");
+
+              this.audio.cueVideoById({ videoId: this.audio.videoId });
+              setTimeout(async () => {
+                console.log("STARTING PLAY");
+                await this.playYoutube(this.audio);
+              }, 1500);
+            } catch (e) {
+              console.warn("audio.play() failed (user gesture?):", e);
+            }
+          } else {
+            // console.log("audio is", this.audio);
+            this.audio.pauseVideo();
           }
         } else {
-          // console.log("audio is", this.audio);
-          this.audio.pauseVideo();
+          // console.log("no audio");
         }
-      } else {
-        console.log("no audio");
       }
+
+      // console.log("this audio in sync", this.audio);
     } else {
       console.log("not youtube");
       if (this.currentSrc !== currentSong.audio) {
@@ -263,12 +273,12 @@ export class MusicPlayerManager {
   static async playYoutube(audioEl: any) {
     if (!audioEl) return;
 
-    console.log("play inside MusicPlayerManager", audioEl);
-    console.log("videoId", audioEl.videoId);
+    // console.log("play inside MusicPlayerManager", audioEl);
+    // console.log("videoId", audioEl.videoId);
     const p = audioEl;
-    console.log("play once");
+    // console.log("play once");
     p.mute(); // safe
-    console.log("did mute");
+    // console.log("did mute");
     p.playVideo(); // starts muted, allowed
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
     p.unMute();
@@ -280,7 +290,10 @@ export class MusicPlayerManager {
     const { setIsPlaying } = musicPlayerStore.getState();
     const YT = (window as any).YT;
     if (!YT) return;
-    if (e.data === YT.PlayerState.PLAYING) setIsPlaying(true);
+    if (e.data === YT.PlayerState.PLAYING) {
+      console.log("CHANGING STATE", e, "Setting playing true");
+      setIsPlaying(true);
+    }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
       setIsPlaying(false);
   }

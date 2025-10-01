@@ -104,11 +104,11 @@ export const musicPlayerStore = createStore<PlayerState>()(
         });
       },
       playAt: (index) => {
-        console.log("playAt", index);
+        // console.log("playAt", index);
         const { queue } = get();
         if (index < 0 || index >= queue.length) return;
-        console.log("queue", queue);
-        console.log("new currentSong", queue[index]);
+        // console.log("queue", queue);
+        // console.log("new currentSong", queue[index]);
         const { title, thumbnail, id } = queue[index];
         set({
           currentIndex: index,
@@ -121,9 +121,9 @@ export const musicPlayerStore = createStore<PlayerState>()(
         });
       },
       next: () => {
-        console.log("next");
+        // console.log("next");
         const { queue, currentIndex, isShuffling, repeatMode } = get();
-        console.log("queue", queue);
+        // console.log("queue", queue);
         if (!queue.length) return;
 
         // repeat one -> stay on same index

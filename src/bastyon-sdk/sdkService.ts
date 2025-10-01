@@ -68,7 +68,7 @@ export class SdkService {
     this.ensureInitialized();
     try {
       const account = await this.sdk!.get.account();
-      console.log("account info", account);
+      // console.log("account info", account);
       return account;
     } catch (error) {
       console.error("Ошибка запроса:", error);

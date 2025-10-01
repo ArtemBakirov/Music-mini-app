@@ -59,6 +59,7 @@ export const JamendoPlayerFooter = () => {
       setIsPlaying(false);
     } else {
       MusicPlayerManager.resume();
+      console.log("Change state in Footer");
       setIsPlaying(true);
     }
   };

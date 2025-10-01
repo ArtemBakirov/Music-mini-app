@@ -36,12 +36,15 @@ export const DisplayYoutubeSongCard = ({
   const setQueue = useMusicPlayerStore((s) => s.setQueue);
   const playAt = useMusicPlayerStore((s) => s.playAt);
   const setProvider = useMusicPlayerStore((s) => s.setProvider);
-  const isCurrent = currentSong?.id === videoId;
+  const isCurrent = currentSong?.audio === videoId;
   const isPlayingCurrent = isCurrent && isPlaying;
 
-  console.log("is playing", isPlaying);
+  // console.log("is playing", isPlaying);
+  // console.log("is playing current", isPlayingCurrent);
 
   const handleClick = async () => {
+    console.log("click");
+    setIsPlaying(true);
     if (!isCurrent) {
       // console.log("not current");
       setQueue(allTracks);
@@ -53,8 +56,8 @@ export const DisplayYoutubeSongCard = ({
         album_image: thumbnail,
         audio: videoId,
       }); // switch song in store
-
-      setIsPlaying(true); // footer effect will call syncToState()
+      // console.log("Change state in Card");
+      // setIsPlaying(true); // footer effect will call syncToState()
       playAt(idx);
     } else {
       if (isPlaying) {
@@ -62,9 +65,10 @@ export const DisplayYoutubeSongCard = ({
         setIsPlaying(false);
       } else {
         MusicPlayerManager.resume();
-        setIsPlaying(true);
+        // setIsPlaying(true);
       }
     }
+    console.log("current song", currentSong);
   };
 
   return (
@@ -73,7 +77,7 @@ export const DisplayYoutubeSongCard = ({
         isPlayingCurrent ? "border-[#B065A0] animate-pulse" : "border-gray-500"
       }`}
     >
-      {/* Custom UI (thumbnail + overlay button) */}
+      {/* Custom UI (thumbnail and overlay button) */}
       <div className="relative rounded-md group flex-shrink-0">
         <img
           src={thumbnail}
@@ -86,7 +90,7 @@ export const DisplayYoutubeSongCard = ({
             className="absolute top-1/2 left-1/2 -translate-x-1/2
                        -translate-y-1/2 text-white opacity-0 group-hover:opacity-100
                        transition-opacity"
-            aria-label={isPlaying ? "Pause" : "Play"}
+            aria-label={isPlayingCurrent ? "Pause" : "Play"}
           >
             {isPlayingCurrent ? (
               <svg
@@ -119,7 +123,6 @@ export const DisplayYoutubeSongCard = ({
           </div>
         )}
       </div>
-
       <div className="flex-grow">
         <div className="font-semibold line-clamp-1">{title}</div>
         <div className="text-sm text-gray-300 line-clamp-1">{channelTitle}</div>
