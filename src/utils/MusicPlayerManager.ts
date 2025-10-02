@@ -220,7 +220,8 @@ export class MusicPlayerManager {
     if (!this.audio) return;
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
-      this.audio.playVideo()?.catch(() => {});
+      // not sure why I add this, maybe don't need to call playVideo here
+      // this.audio.playVideo()?.catch(() => {});
     } else {
       this.audio.play()?.catch(() => {});
     }
