@@ -43,6 +43,7 @@ export class MusicPlayerManager {
       };
 
       this.unsubStore = musicPlayerStore.subscribe((state) => {
+        console.log("subscriber");
         const slice = {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
@@ -52,12 +53,15 @@ export class MusicPlayerManager {
           slice.currentSong !== prevSlice.currentSong ||
           slice.isPlaying !== prevSlice.isPlaying
         ) {
+          console.log("store changed, sync");
           void this.syncToState();
         }
 
         prevSlice = slice;
       });
     }
+    // on first init, the subscriber will not be called, so we need to sync manually
+    void this.syncToState();
   }
 
   private static attachListeners() {

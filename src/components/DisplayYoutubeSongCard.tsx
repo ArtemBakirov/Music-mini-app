@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { YouTubeProps } from "react-youtube";
-import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
+import {
+  musicPlayerStore,
+  useMusicPlayerStore,
+} from "../hooks/stores/useMusicPlayerStore.ts";
 import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 
 export type YtTrackHandle = {
@@ -38,26 +41,28 @@ export const DisplayYoutubeSongCard = ({
   const setProvider = useMusicPlayerStore((s) => s.setProvider);
   const isCurrent = currentSong?.audio === videoId;
   const isPlayingCurrent = isCurrent && isPlaying;
+  const set = musicPlayerStore.setState;
 
   // console.log("is playing", isPlaying);
   // console.log("is playing current", isPlayingCurrent);
 
   const handleClick = async () => {
-    console.log("click");
-    setIsPlaying(true);
     if (!isCurrent) {
       // console.log("not current");
-      setQueue(allTracks);
       MusicPlayerManager.pause(); // pause whatever was playing
       // console.log("setting provider");
+      console.log("click");
       setProvider("youtube");
-      setCurrentSong({
-        name: title,
-        album_image: thumbnail,
-        audio: videoId,
-      }); // switch song in store
-      // console.log("Change state in Card");
-      // setIsPlaying(true); // footer effect will call syncToState()
+      setIsPlaying(true);
+      // setQueue(allTracks);
+      set({
+        currentSong: {
+          name: title,
+          album_image: thumbnail,
+          audio: videoId,
+        },
+        queue: allTracks,
+      });
       playAt(idx);
     } else {
       if (isPlaying) {

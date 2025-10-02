@@ -84,7 +84,10 @@ export const musicPlayerStore = createStore<PlayerState>()(
         set({ provider });
       },
 
-      setIsPlaying: (isPlaying) => set({ isPlaying }),
+      setIsPlaying: (isPlaying) => {
+        console.log("set isPlaying Store");
+        set({ isPlaying });
+      },
       setProgress: (progress) => set({ progress }),
 
       setQueue: (tracks) => {

@@ -30,6 +30,7 @@ export const JamendoPlayerFooter = () => {
   const isShuffling = useMusicPlayerStore((s) => s.isShuffling);
   const repeatMode = useMusicPlayerStore((s) => s.repeatMode);
   const provider = useMusicPlayerStore((s) => s.provider);
+  console.log("provider footer", provider);
   // console.log("provider", provider);
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
@@ -40,7 +41,7 @@ export const JamendoPlayerFooter = () => {
 
   // mount the ONE audio element
   useEffect(() => {
-    // console.log("useEffect footer", audioRef.current);
+    // console.log("useEffect footer", audioRef.current, provider);
     if (audioRef.current) {
       if (provider === "jamendo") {
         MusicPlayerManager.init(audioRef.current);
@@ -77,6 +78,7 @@ export const JamendoPlayerFooter = () => {
   };
 
   const onYTReady: YouTubeProps["onReady"] = (e) => {
+    console.log("onYTReady", e);
     MusicPlayerManager.init(e.target); // YT.Player
   };
 
@@ -129,15 +131,17 @@ export const JamendoPlayerFooter = () => {
             </div>
           )}
           {provider === "youtube" && (
-            <YouTube
-              // ref={audioRef}
-              // videoId={videoId}
-              opts={opts}
-              onReady={onYTReady}
-              onStateChange={onYTStateChange}
-              // onReady={onReady}
-              // onStateChange={onStateChange}
-            />
+            <>
+              <YouTube
+                // ref={audioRef}
+                // videoId={videoId}
+                opts={opts}
+                onReady={onYTReady}
+                onStateChange={onYTStateChange}
+                // onReady={onReady}
+                // onStateChange={onStateChange}
+              />
+            </>
           )}
         </>
       )}
