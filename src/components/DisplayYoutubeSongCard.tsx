@@ -52,10 +52,12 @@ export const DisplayYoutubeSongCard = ({
       MusicPlayerManager.pause(); // pause whatever was playing
       // console.log("setting provider");
       console.log("click");
-      setProvider("youtube");
-      setIsPlaying(true);
+      // setProvider("youtube");
+      // setIsPlaying(true);
       // setQueue(allTracks);
       set({
+        provider: "youtube",
+        isPlaying: true,
         currentSong: {
           name: title,
           album_image: thumbnail,
@@ -63,7 +65,8 @@ export const DisplayYoutubeSongCard = ({
         },
         queue: allTracks,
       });
-      playAt(idx);
+      // find out why here was playAt? I think, I only need this when click prev/next
+      //playAt(idx);
     } else {
       if (isPlaying) {
         MusicPlayerManager.pause();
@@ -73,7 +76,7 @@ export const DisplayYoutubeSongCard = ({
         // setIsPlaying(true);
       }
     }
-    console.log("current song", currentSong);
+    // console.log("current song", currentSong);
   };
 
   return (

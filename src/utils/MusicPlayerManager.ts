@@ -10,11 +10,11 @@ export class MusicPlayerManager {
   private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
-    console.log("init");
+    // console.log("init");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
-      console.log("init youtube");
+      // console.log("init youtube");
       this.audio = audioEl; // window.YT.Player
       // console.log("audioEl", audioEl);
       // console.log("onReady", e.target);
@@ -25,7 +25,7 @@ export class MusicPlayerManager {
         "autoplay; encrypted-media; picture-in-picture; fullscreen",
       );
       // readyResolveRef.current?.();
-      console.log("INIT FINISHED");
+      // console.log("INIT FINISHED");
     }
 
     // console.log("init music player manager");
@@ -43,7 +43,6 @@ export class MusicPlayerManager {
       };
 
       this.unsubStore = musicPlayerStore.subscribe((state) => {
-        console.log("subscriber");
         const slice = {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
@@ -53,7 +52,8 @@ export class MusicPlayerManager {
           slice.currentSong !== prevSlice.currentSong ||
           slice.isPlaying !== prevSlice.isPlaying
         ) {
-          console.log("store changed, sync");
+          console.log("store changed, sync", "slice", slice);
+          console.log("prevSlice", prevSlice);
           void this.syncToState();
         }
 
@@ -61,6 +61,7 @@ export class MusicPlayerManager {
       });
     }
     // on first init, the subscriber will not be called, so we need to sync manually
+    console.log("manual sync after init");
     void this.syncToState();
   }
 
@@ -132,19 +133,20 @@ export class MusicPlayerManager {
 
   static async syncToState() {
     // console.log("syncToState");
-    const { currentSong, isPlaying, provider } = musicPlayerStore.getState();
+    const { currentSong, isPlaying, provider, repeatMode } =
+      musicPlayerStore.getState();
     if (!this.audio || !currentSong) return;
 
     if (provider === "youtube") {
-      console.log("sync youtube");
-      console.log(
+      // console.log("sync youtube");
+      /* console.log(
         "this current, currentSong audio",
         this.currentSrc,
         currentSong.audio,
-      );
+      );*/
       // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
-      if (this.currentSrc !== currentSong.audio) {
-        console.log("different src");
+      if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
+        // console.log("different src");
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
         // youtube player expects videoId property
@@ -153,18 +155,18 @@ export class MusicPlayerManager {
         this.currentSrc = currentSong.audio;
         // console.log("set videoId", this.audio);
         if (this.audio) {
-          console.log("sync this audio exists", this.audio);
-          console.log("isPlaying", isPlaying);
+          // console.log("sync this audio exists", this.audio);
+          // console.log("isPlaying", isPlaying);
           if (isPlaying) {
-            console.log("sync is playing true");
+            // console.log("sync is playing true");
             if (!this.audio.videoId) return;
-            console.log("isPlaying, trying to play", this.audio.videoId);
+            // console.log("isPlaying, trying to play", this.audio.videoId);
             try {
-              console.log("cueing video");
+              // console.log("cueing video");
 
               this.audio.cueVideoById({ videoId: this.audio.videoId });
               setTimeout(async () => {
-                console.log("STARTING PLAY");
+                // console.log("STARTING PLAY");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -225,6 +227,7 @@ export class MusicPlayerManager {
     } else {
       this.audio.play()?.catch(() => {});
     }
+    console.log("resume");
     musicPlayerStore.setState({ isPlaying: true });
   }
 
@@ -296,10 +299,12 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("CHANGING STATE", e, "Setting playing true");
-      setIsPlaying(true);
+      console.log("state changed to Playing");
+      // console.log("CHANGING STATE", e, "Setting playing true");
+      // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
-      setIsPlaying(false);
+      console.log("state changed to not Playing");
+    // setIsPlaying(false);
   }
 }

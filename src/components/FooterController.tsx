@@ -73,7 +73,7 @@ export const FooterController = ({
         }`}
         title={`Repeat: ${repeatMode}`}
       >
-        <Repeat /> {/* Replace with your SVG import */}
+        <Repeat />
         {repeatMode !== "off" && (
           <span className="absolute -bottom-1 -right-1 text-[10px] bg-white text-black rounded px-1 leading-none">
             {repeatLabel}

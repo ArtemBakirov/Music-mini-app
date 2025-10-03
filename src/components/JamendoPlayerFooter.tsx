@@ -30,7 +30,7 @@ export const JamendoPlayerFooter = () => {
   const isShuffling = useMusicPlayerStore((s) => s.isShuffling);
   const repeatMode = useMusicPlayerStore((s) => s.repeatMode);
   const provider = useMusicPlayerStore((s) => s.provider);
-  console.log("provider footer", provider);
+  // console.log("provider footer", provider);
   // console.log("provider", provider);
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
@@ -51,10 +51,12 @@ export const JamendoPlayerFooter = () => {
   }, [currentSong]);
 
   const handleEnded = () => {
+    console.log("set after ended");
     setIsPlaying(false);
   };
 
   const handleClick = async () => {
+    console.log("click footer");
     if (isPlaying) {
       MusicPlayerManager.pause();
       setIsPlaying(false);
@@ -132,6 +134,7 @@ export const JamendoPlayerFooter = () => {
           )}
           {provider === "youtube" && (
             <>
+              <div>Rendered YouTube</div>
               <YouTube
                 // ref={audioRef}
                 // videoId={videoId}

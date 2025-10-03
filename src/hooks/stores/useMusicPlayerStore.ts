@@ -2,6 +2,7 @@ import { createStore } from "zustand";
 import { useStore } from "zustand/react";
 import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
+import { MusicPlayerManager } from "../../utils/MusicPlayerManager.ts";
 // import { JamendoSong } from "../../types/playList.types.ts"; // Make sure it matches Jamendo fields
 
 export type Song = {
@@ -85,7 +86,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
       },
 
       setIsPlaying: (isPlaying) => {
-        console.log("set isPlaying Store");
+        // console.log("set isPlaying Store");
         set({ isPlaying });
       },
       setProgress: (progress) => set({ progress }),
@@ -107,13 +108,26 @@ export const musicPlayerStore = createStore<PlayerState>()(
         });
       },
       playAt: (index) => {
-        // console.log("playAt", index);
+        console.log("playAt", index);
         const { queue } = get();
         if (index < 0 || index >= queue.length) return;
         // console.log("queue", queue);
         // console.log("new currentSong", queue[index]);
         const { title, thumbnail, id } = queue[index];
+        // MusicPlayerManager.pause();
+        console.log("set...");
         set({
+          // currentIndex: index,
+          currentSong: {
+            name: title,
+            album_image: thumbnail,
+            audio: id,
+          },
+          // isPlaying: true,
+        });
+        // set({ isPlaying: true });
+        // MusicPlayerManager.resume();
+        /* set({
           currentIndex: index,
           currentSong: {
             name: title,
@@ -121,7 +135,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
             audio: id,
           },
           isPlaying: true,
-        });
+        }); */
       },
       next: () => {
         // console.log("next");
@@ -130,10 +144,12 @@ export const musicPlayerStore = createStore<PlayerState>()(
         if (!queue.length) return;
 
         // repeat one -> stay on same index
-        if (repeatMode === "one") {
+        // when repeatMode is "one", should only stay at the same index when the song is ended, but not if
+        // the user clicks "next" or "prev"
+        /* if (repeatMode === "one") {
           set({ isPlaying: true }); // just continue
           return;
-        }
+        } */
 
         if (isShuffling) {
           // pick a random different index
