@@ -134,7 +134,6 @@ export const JamendoPlayerFooter = () => {
           )}
           {provider === "youtube" && (
             <>
-              <div>Rendered YouTube</div>
               <YouTube
                 // ref={audioRef}
                 // videoId={videoId}

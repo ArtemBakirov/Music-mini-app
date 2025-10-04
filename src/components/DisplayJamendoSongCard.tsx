@@ -21,12 +21,15 @@ export const DisplayJamendoSongCard = ({
   const playAt = useMusicPlayerStore((s) => s.playAt);
   const setProvider = useMusicPlayerStore((s) => s.setProvider);
   const isCurrent = currentSong?.id === songData.id;
+  console.log("currentSong", currentSong);
   const isPlayingCurrent = isCurrent && isPlaying;
-
+  console.log("isCurrentPlaying", isPlayingCurrent);
   const handleClick = async () => {
+    console.log("click jamendo");
     if (!isCurrent) {
       setQueue(allTracks);
       MusicPlayerManager.pause(); // pause whatever was playing
+      console.log("setting songData", songData);
       setCurrentSong(songData); // switch song in store
       setProvider("jamendo");
       setIsPlaying(true); // footer effect will call syncToState()
@@ -63,7 +66,7 @@ export const DisplayJamendoSongCard = ({
           opacity-0 group-hover:opacity-100 transition-opacity
           `}
         >
-          {isCurrent && isPlaying ? (
+          {isPlayingCurrent ? (
             <Pause className={"w-10 h-10"} />
           ) : (
             <Play className={"w-10 h-10"} />

@@ -10,7 +10,7 @@ export class MusicPlayerManager {
   private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
-    // console.log("init");
+    console.log("init");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
@@ -43,6 +43,7 @@ export class MusicPlayerManager {
       };
 
       this.unsubStore = musicPlayerStore.subscribe((state) => {
+        // console.log("store changed");
         const slice = {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
@@ -52,8 +53,8 @@ export class MusicPlayerManager {
           slice.currentSong !== prevSlice.currentSong ||
           slice.isPlaying !== prevSlice.isPlaying
         ) {
-          console.log("store changed, sync", "slice", slice);
-          console.log("prevSlice", prevSlice);
+          // console.log("store changed, different slice, sync", "slice", slice);
+          // console.log("prevSlice", prevSlice);
           void this.syncToState();
         }
 
@@ -61,7 +62,7 @@ export class MusicPlayerManager {
       });
     }
     // on first init, the subscriber will not be called, so we need to sync manually
-    console.log("manual sync after init");
+    // console.log("manual sync after init");
     void this.syncToState();
   }
 
@@ -132,7 +133,7 @@ export class MusicPlayerManager {
   }
 
   static async syncToState() {
-    // console.log("syncToState");
+    console.log("syncToState");
     const { currentSong, isPlaying, provider, repeatMode } =
       musicPlayerStore.getState();
     if (!this.audio || !currentSong) return;
@@ -185,6 +186,7 @@ export class MusicPlayerManager {
     } else {
       console.log("not youtube");
       if (this.currentSrc !== currentSong.audio) {
+        console.log("src", currentSong.audio);
         this.audio.src = currentSong.audio;
         this.currentSrc = currentSong.audio;
       }
@@ -192,6 +194,7 @@ export class MusicPlayerManager {
       if (isPlaying) {
         // console.log("sync to state playing");
         try {
+          console.log("play", this.audio);
           await this.audio.play();
         } catch (e) {
           console.warn("audio.play() failed (user gesture?):", e);
@@ -219,15 +222,18 @@ export class MusicPlayerManager {
   }
 
   static resume() {
+    console.log("resume");
     if (!this.audio) return;
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       // not sure why I add this, maybe don't need to call playVideo here
-      // this.audio.playVideo()?.catch(() => {});
+      console.log("play video");
+      this.audio.playVideo();
+      // ?.catch(() => {});
     } else {
       this.audio.play()?.catch(() => {});
     }
-    console.log("resume");
+    // console.log("resume");
     musicPlayerStore.setState({ isPlaying: true });
   }
 
@@ -279,6 +285,7 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
+    // console.log("playYoutube");
     if (!audioEl) return;
 
     // console.log("play inside MusicPlayerManager", audioEl);
@@ -299,12 +306,14 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("state changed to Playing");
+      // console.log("state changed to Playing");
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
-    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED)
-      console.log("state changed to not Playing");
+    if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+      // console.log("state changed to not Playing");
+    }
+
     // setIsPlaying(false);
   }
 }

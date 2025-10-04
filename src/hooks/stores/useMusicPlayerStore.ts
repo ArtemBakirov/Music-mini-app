@@ -92,11 +92,14 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setProgress: (progress) => set({ progress }),
 
       setQueue: (tracks) => {
+        // console.log("setting queue, tracks", tracks);
         // keep current if still present; otherwise reset selection
         const { currentSong } = get();
+        // console.log("setting queue, currentSong", currentSong);
         let currentIndex = -1;
         if (currentSong) {
-          currentIndex = tracks.findIndex((t) => t.id === currentSong.id);
+          currentIndex = tracks.findIndex((t) => t.id === currentSong.audio);
+          // console.log("current index found", currentIndex);
         }
         set({
           queue: tracks,
@@ -108,23 +111,38 @@ export const musicPlayerStore = createStore<PlayerState>()(
         });
       },
       playAt: (index) => {
-        console.log("playAt", index);
-        const { queue } = get();
+        // console.log("playAt", index);
+        const { queue, provider } = get();
         if (index < 0 || index >= queue.length) return;
         // console.log("queue", queue);
         // console.log("new currentSong", queue[index]);
         const { title, thumbnail, id } = queue[index];
+        const song = queue[index];
         // MusicPlayerManager.pause();
-        console.log("set...");
-        set({
-          // currentIndex: index,
-          currentSong: {
-            name: title,
-            album_image: thumbnail,
-            audio: id,
-          },
-          // isPlaying: true,
-        });
+        // console.log("set...");
+        if (provider === "youtube") {
+          set({
+            currentIndex: index,
+            currentSong: {
+              name: title,
+              album_image: thumbnail,
+              audio: id,
+            },
+            isPlaying: true,
+          });
+        } else {
+          set({
+            currentIndex: index,
+            currentSong: {
+              name: song.name,
+              album_image: song.album_image,
+              audio: song.audio,
+              id: song.id,
+            },
+            isPlaying: true,
+          });
+        }
+
         // set({ isPlaying: true });
         // MusicPlayerManager.resume();
         /* set({
@@ -138,20 +156,18 @@ export const musicPlayerStore = createStore<PlayerState>()(
         }); */
       },
       next: () => {
-        // console.log("next");
+        console.log("next");
         const { queue, currentIndex, isShuffling, repeatMode } = get();
+        // console.log("next, currentIndex", currentIndex);
         // console.log("queue", queue);
         if (!queue.length) return;
 
         // repeat one -> stay on same index
         // when repeatMode is "one", should only stay at the same index when the song is ended, but not if
         // the user clicks "next" or "prev"
-        /* if (repeatMode === "one") {
-          set({ isPlaying: true }); // just continue
-          return;
-        } */
 
         if (isShuffling) {
+          // console.log("is shuffling");
           // pick a random different index
           let nextIdx = currentIndex;
           if (queue.length > 1) {
@@ -164,7 +180,9 @@ export const musicPlayerStore = createStore<PlayerState>()(
         }
 
         const lastIndex = queue.length - 1;
+        // console.log("lastIndex", lastIndex);
         if (currentIndex < lastIndex) {
+          // console.log("next index play");
           get().playAt(currentIndex + 1);
         } else {
           // at end
@@ -200,6 +218,12 @@ export const musicPlayerStore = createStore<PlayerState>()(
       },
 
       handleEnded: () => {
+        // when a song ends and repeatMode is "one" - then just repeat the song.
+        const { repeatMode } = get();
+        if (repeatMode === "one") {
+          set({ isPlaying: true }); // just continue
+          return;
+        }
         get().next();
       },
 
