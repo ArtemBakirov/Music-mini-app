@@ -9,8 +9,6 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BastyonSDKProvider } from "./Layout/Providers/BastyonSDKProvider.tsx";
 import { DesktopMobileProvider } from "./Layout/Providers/DesktopMobileProvider.tsx";
 
-// import { TestIframe } from "./pages/TestIframe.tsx";
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

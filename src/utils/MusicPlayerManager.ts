@@ -139,7 +139,7 @@ export class MusicPlayerManager {
     if (!this.audio || !currentSong) return;
 
     if (provider === "youtube") {
-      // console.log("sync youtube");
+      console.log("sync youtube");
       /* console.log(
         "this current, currentSong audio",
         this.currentSrc,
@@ -147,7 +147,7 @@ export class MusicPlayerManager {
       );*/
       // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
       if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
-        // console.log("different src");
+        console.log("different src");
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
         // youtube player expects videoId property
@@ -167,7 +167,7 @@ export class MusicPlayerManager {
 
               this.audio.cueVideoById({ videoId: this.audio.videoId });
               setTimeout(async () => {
-                // console.log("STARTING PLAY");
+                console.log("STARTING PLAY");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -228,8 +228,9 @@ export class MusicPlayerManager {
     if (provider === "youtube") {
       // not sure why I add this, maybe don't need to call playVideo here
       console.log("play video");
-      this.audio.playVideo();
-      // ?.catch(() => {});
+      this.audio.playVideo()?.catch((e) => {
+        console.log("play video failed", e);
+      });
     } else {
       this.audio.play()?.catch(() => {});
     }
