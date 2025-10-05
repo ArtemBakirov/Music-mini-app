@@ -57,7 +57,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
       await getUserAddress();
       // Optional extras you had:
       void SdkService.getAppInfo();
-      void SdkService.showHelperMessage("test helper message");
+      // void SdkService.showHelperMessage("test helper message");
       void SdkService.getUserState();
     })();
   }, []);
