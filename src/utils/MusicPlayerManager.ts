@@ -228,9 +228,12 @@ export class MusicPlayerManager {
     if (provider === "youtube") {
       // not sure why I add this, maybe don't need to call playVideo here
       console.log("play video");
-      this.audio.playVideo()?.catch((e) => {
+      try {
+        this.audio.playVideo();
+        console.log("video playing");
+      } catch (e) {
         console.log("play video failed", e);
-      });
+      }
     } else {
       this.audio.play()?.catch(() => {});
     }
