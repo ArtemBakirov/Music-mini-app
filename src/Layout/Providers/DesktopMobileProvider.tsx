@@ -57,7 +57,7 @@ export const DesktopMobileProvider = ({
       const isMobile = media || uaDataMobile || touch;
       const platform = detectPlatform(ua);
       // console.log("device, is mobile?", isMobile, platform, width, height);
-      if (isMobile) {
+      /* if (isMobile) {
         if (inBastyon) {
           void SdkService.showHelperMessage("mobile detected");
         }
@@ -65,7 +65,7 @@ export const DesktopMobileProvider = ({
         if (inBastyon) {
           void SdkService.showHelperMessage("desktop");
         }
-      }
+      } */
 
       set({ isMobile, platform, width, height });
     };
@@ -88,7 +88,7 @@ export const DesktopMobileProvider = ({
     return (
       fallback ??
       (initialIsMobile ? (
-        <>{<MobileLayout />}</>
+        <>{<DesktopTabletLayout />}</>
       ) : (
         <>{<DesktopTabletLayout />}</>
       ))
@@ -96,7 +96,7 @@ export const DesktopMobileProvider = ({
   }
 
   return isMobileFromStore ? (
-    <>{<MobileLayout />}</>
+    <>{<DesktopTabletLayout />}</>
   ) : (
     <>{<DesktopTabletLayout />}</>
   );

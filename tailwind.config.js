@@ -195,6 +195,10 @@ module.exports = {
       // => @media (min-width: 834px) { ... }
       desk: "1024px", // Desktop
       // => @media (min-width: 1024px) { ... }
+
+      sm: "640px",
+      md: "768px", // tablet
+      lg: "1024px", // small laptop / desktop
       xl: "1280px",
       "2xl": "1536px",
     },
