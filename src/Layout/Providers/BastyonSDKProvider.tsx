@@ -62,5 +62,5 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
     })();
   }, []);
 
-  return <>{children}</>;
+  return <>{initialized && children}</>;
 };
