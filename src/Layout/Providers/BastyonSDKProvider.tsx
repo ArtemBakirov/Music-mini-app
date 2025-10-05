@@ -7,7 +7,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const setLoading = useAccountStore((s) => s.setLoading);
   const setError = useAccountStore((s) => s.setError);
   const patchProfile = useAccountStore((s) => s.patchProfile);
-  // console.log("sdk provider");
+  console.log("sdk provider");
   // console.log("SDK init");
   const getUserAddress = async () => {
     try {
