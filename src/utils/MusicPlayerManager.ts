@@ -215,7 +215,7 @@ export class MusicPlayerManager {
         // console.log("this audio", this.audio);
         this.audio?.pause();
       }
-      musicPlayerStore.setState({ isPlaying: false });
+      // musicPlayerStore.setState({ isPlaying: false });
     } else {
       console.log("no audio");
     }
