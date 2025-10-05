@@ -25,7 +25,7 @@ export const DesktopMobileProvider = ({
 }: Props) => {
   const set = useDesktopMobileStore((s) => s.set);
   const isMobileFromStore = useDesktopMobileStore((s) => s.isMobile);
-  const inBastyon = SdkService.inBastyon();
+  // const inBastyon = SdkService.inBastyon();
 
   // SSR-safe first guess to avoid hydration mismatch
   const initialIsMobile = useMemo(() => {
@@ -56,15 +56,16 @@ export const DesktopMobileProvider = ({
       const isMobile = media || uaDataMobile || touch;
       const platform = detectPlatform(ua);
       // console.log("device, is mobile?", isMobile, platform, width, height);
-      if (isMobile) {
+      /* if (isMobile) {
         if (inBastyon) {
           void SdkService.showHelperMessage("mobile detected");
         }
       } else {
-        if (inBastyon) {
+        if(inBastyon){
           void SdkService.showHelperMessage("desktop");
         }
-      }
+
+      } */
 
       set({ isMobile, platform, width, height });
     };
