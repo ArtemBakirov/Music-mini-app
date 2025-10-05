@@ -26,7 +26,7 @@ export const DesktopMobileProvider = ({
   const set = useDesktopMobileStore((s) => s.set);
   const isMobileFromStore = useDesktopMobileStore((s) => s.isMobile);
   const inBastyon = SdkService.inBastyon();
-  console.log("inBastyon", inBastyon);
+  console.log("inBastyon ", inBastyon);
 
   // SSR-safe first guess to avoid hydration mismatch
   const initialIsMobile = useMemo(() => {
