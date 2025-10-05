@@ -3,6 +3,8 @@ import { useDesktopMobileStore } from "../../hooks/stores/useDesktopMobileStore.
 import { DesktopTabletLayout } from "../DesktopTabletLayout.tsx";
 import { MobileLayout } from "../MobileLayout.tsx";
 
+import { SdkService } from "../../bastyon-sdk/sdkService.ts";
+
 type Props = {
   // mobile: ReactNode; // what to render on mobile
   // desktop: ReactNode; // what to render on desktop
@@ -23,6 +25,7 @@ export const DesktopMobileProvider = ({
 }: Props) => {
   const set = useDesktopMobileStore((s) => s.set);
   const isMobileFromStore = useDesktopMobileStore((s) => s.isMobile);
+  const inBastyon = SdkService.inBastyon();
 
   // SSR-safe first guess to avoid hydration mismatch
   const initialIsMobile = useMemo(() => {
@@ -53,6 +56,15 @@ export const DesktopMobileProvider = ({
       const isMobile = media || uaDataMobile || touch;
       const platform = detectPlatform(ua);
       // console.log("device, is mobile?", isMobile, platform, width, height);
+      if (isMobile) {
+        if (inBastyon) {
+          void SdkService.showHelperMessage("mobile detected");
+        }
+      } else {
+        if (inBastyon) {
+          void SdkService.showHelperMessage("desktop");
+        }
+      }
 
       set({ isMobile, platform, width, height });
     };
