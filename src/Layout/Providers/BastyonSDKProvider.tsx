@@ -1,5 +1,5 @@
 import { SdkService } from "../../bastyon-sdk/sdkService.ts";
-import { ReactNode, useEffect } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { useAccountStore } from "../../hooks/stores/useAccountStore";
 
 export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
@@ -8,6 +8,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const setError = useAccountStore((s) => s.setError);
   const patchProfile = useAccountStore((s) => s.patchProfile);
   console.log("sdk provider");
+  const [initialized, setInitialized] = useState<boolean>(false);
   // console.log("SDK init");
   const getUserAddress = async () => {
     try {
@@ -47,7 +48,11 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     (async () => {
-      await SdkService.init();
+      console.log("sdk effect");
+      await SdkService.init().then((info) => {
+        console.log("app info", info);
+        setInitialized(true);
+      });
       // await SdkService.requestPermissions();
       await getUserAddress();
       // Optional extras you had:
