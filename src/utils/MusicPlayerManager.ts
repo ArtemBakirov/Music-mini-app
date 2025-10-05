@@ -221,7 +221,7 @@ export class MusicPlayerManager {
     }
   }
 
-  static resume() {
+  static async resume() {
     console.log("resume");
     if (!this.audio) return;
     const { provider } = musicPlayerStore.getState();
@@ -229,7 +229,13 @@ export class MusicPlayerManager {
       // not sure why I add this, maybe don't need to call playVideo here
       console.log("play video");
       try {
-        this.audio.playVideo();
+        const p = this.audio;
+        p.mute(); // safe
+        // console.log("did mute");
+        p.playVideo(); // starts muted, allowed
+        await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+        p.unMute();
+        p.setVolume(70);
         console.log("video playing");
       } catch (e) {
         console.log("play video failed", e);
