@@ -88,6 +88,10 @@ export const JamendoPlayerFooter = () => {
     MusicPlayerManager.onYTStateChange?.(e);
   };
 
+  const handleError = (e) => {
+    console.log("error in youtube", e);
+  };
+
   // if (!currentSong) return null;
   return (
     <div
@@ -140,6 +144,7 @@ export const JamendoPlayerFooter = () => {
                 opts={opts}
                 onReady={onYTReady}
                 onStateChange={onYTStateChange}
+                onError={handleError}
                 // onReady={onReady}
                 // onStateChange={onStateChange}
               />
