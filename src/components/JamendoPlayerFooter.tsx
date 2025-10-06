@@ -10,6 +10,7 @@ import {
   useMotionValue,
   useTransform,
   AnimatePresence,
+  useAnimationControls,
 } from "framer-motion";
 import { Vibrant } from "node-vibrant/browser";
 
@@ -26,9 +27,38 @@ export const JamendoPlayerFooter = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [bgColor, setBgColor] = useState("#2D0F3A");
 
-  // console.log("audioref", audioRef);
+  // --- Viewport + panel sizing ---
+  const viewportH = Math.max(
+    // prefer store height, fall back to window
+    useDesktopMobileStore.getState().height || 0,
+    typeof window !== "undefined" ? window.innerHeight : 0,
+  );
+  const FOOTER_H = 64; // closed footer height (px). tweak to match your design
+  const PANEL_H = Math.max(0, viewportH - FOOTER_H);
+
+  // Snap positions (translateY relative to bottom-anchored wrapper)
+  const CLOSED_Y = 0;
+  const OPEN_Y = -PANEL_H;
+
+  // animation controller
+  const controls = useAnimationControls();
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
+
+  // snap helper
+  const snapTo = (open: boolean) => {
+    setIsExpanded(open);
+    controls.start({
+      y: open ? OPEN_Y : CLOSED_Y,
+      transition: { type: "spring", stiffness: 600, damping: 42 }, // crisp + fast
+    });
+  };
+
+  useEffect(() => {
+    controls.set(isExpanded ? OPEN_Y : CLOSED_Y);
+  }, [controls, OPEN_Y, CLOSED_Y, isExpanded, currentSong]);
+
+  // console.log("audioref", audioRef);
 
   // console.log("current song", currentSong);
 
@@ -87,6 +117,27 @@ export const JamendoPlayerFooter = () => {
       //
     }
   }, [currentSong]);
+
+  const onDragEnd = (
+    _: any,
+    info: { offset: { y: number }; velocity: { y: number } },
+  ) => {
+    const distance = info.offset.y; // positive if dragged downward, negative upward
+    const vy = info.velocity.y;
+
+    const DIST_THRESHOLD = PANEL_H * 0.2; // 20% of panel height
+    const VEL_THRESHOLD = 600; // px/s
+
+    if (!isExpanded) {
+      // Was closed; user dragged up? open if enough
+      const shouldOpen = distance < -DIST_THRESHOLD || vy < -VEL_THRESHOLD;
+      snapTo(shouldOpen);
+    } else {
+      // Was open; user dragged down? close if enough
+      const shouldClose = distance > DIST_THRESHOLD || vy > VEL_THRESHOLD;
+      snapTo(!shouldClose ? true : false);
+    }
+  };
 
   const handleEnded = () => {
     console.log("set after ended");
@@ -206,92 +257,128 @@ export const JamendoPlayerFooter = () => {
   // 📱 MOBILE LAYOUT
   return (
     <>
-      <AnimatePresence>
+      {/* Draggable sheet that is exactly viewport tall and anchored to bottom */}
+      <motion.div
+        className="fixed left-0 right-0 bottom-0 z-50 overflow-hidden rounded-t-2xl shadow-lg"
+        style={{
+          height: viewportH, // sheet fills the screen
+          backgroundColor: isExpanded ? bgColor : "#2D0F3A",
+        }}
+        animate={controls}
+        initial={false}
+        drag="y"
+        dragConstraints={{ top: OPEN_Y, bottom: CLOSED_Y }}
+        dragElastic={0.06} // tight feel
+        dragMomentum={false} // no fling past constraints
+        onDragEnd={onDragEnd}
+      >
+        {/* CONTENT AREA: translate the inner content so that when CLOSED_Y (0), only the footer band shows */}
         <motion.div
-          drag="y"
-          dragConstraints={{ top: -height + 120, bottom: 0 }}
-          dragElastic={0.2}
-          onDragEnd={handleDragEnd}
-          style={{
-            y,
-            backgroundColor: isExpanded ? bgColor : "#2D0F3A",
-          }}
-          className={`fixed left-0 right-0 bottom-0 text-white z-50 rounded-t-2xl overflow-hidden
-            shadow-lg transition-all duration-300`}
+          style={{ y: 0, height: viewportH }}
+          className="flex flex-col w-full h-full"
         >
-          {/* Mini Footer (collapsed) */}
-          {!isExpanded && (
-            <motion.div
-              className="flex items-center justify-between px-4 py-2"
-              style={{ opacity }}
-            >
-              <div className="flex items-center gap-3 w-full">
-                <img
-                  src={currentSong?.album_image}
-                  alt=""
-                  className="w-10 h-10 rounded object-cover"
-                />
-                <div className="flex flex-col min-w-0">
-                  <span className="font-semibold truncate">
-                    {currentSong?.title || currentSong?.name}
-                  </span>
-                  <span className="text-xs text-gray-300 truncate">
-                    {currentSong?.artist_name}
-                  </span>
-                </div>
-              </div>
-              <div className="flex gap-3 items-center">
-                <button onClick={prev}>⏮️</button>
-                <button onClick={handleClick}>{isPlaying ? "⏸️" : "▶️"}</button>
-                <button onClick={next}>⏭️</button>
-              </div>
-            </motion.div>
-          )}
+          {/* FULLSCREEN content occupies PANEL_H and lives 'above' the footer */}
+          <div className="flex-1 flex flex-col items-center justify-between px-6 py-6">
+            {/* Top handle */}
+            <div className="w-12 h-1.5 rounded-full bg-white/50 self-center" />
 
-          {/* Fullscreen Player */}
-          {isExpanded && (
-            <motion.div
-              className="flex flex-col items-center justify-between h-[90vh] px-6 py-8"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
+            {/* Artwork */}
+            <img
+              src={currentSong.album_image}
+              alt=""
+              className="w-72 h-72 rounded-xl object-cover shadow-2xl mt-4"
+            />
+
+            {/* Title/artist */}
+            <div className="text-center mt-3">
+              <div className="font-bold text-xl truncate">
+                {currentSong.title || currentSong.name}
+              </div>
+              <div className="text-white/80 text-sm truncate">
+                {currentSong.artist_name}
+              </div>
+            </div>
+
+            {/* Progress bar */}
+            <div className="w-full mt-6 px-2">
+              <ProgressBar />
+            </div>
+
+            {/* Controls */}
+            <div className="flex items-center justify-center gap-6 mt-4 mb-4">
+              <button onClick={prev} aria-label="Previous">
+                ⏮️
+              </button>
+              <button
+                onClick={handleClick}
+                className="text-4xl"
+                aria-label={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? "⏸️" : "▶️"}
+              </button>
+              <button onClick={next} aria-label="Next">
+                ⏭️
+              </button>
+            </div>
+          </div>
+
+          {/* FOOTER BAND (always sticks to bottom). Thinner, no progress bar */}
+          <div
+            className="h-16 px-4 flex items-center justify-between bg-black/15 backdrop-blur-sm"
+            onClick={() => snapTo(true)} // tap to expand
+          >
+            <div className="flex items-center gap-3 min-w-0">
               <img
-                src={currentSong?.album_image}
+                src={currentSong.album_image}
                 alt=""
-                className="w-72 h-72 rounded-xl object-cover shadow-2xl"
+                className="w-10 h-10 rounded object-cover"
               />
-              <div className="flex flex-col items-center gap-2 text-center mt-4">
-                <div className="font-bold text-xl">
-                  {currentSong?.title || currentSong?.name}
-                </div>
-                <div className="text-gray-200">{currentSong?.artist_name}</div>
+              <div className="flex flex-col min-w-0">
+                <span className="font-semibold truncate">
+                  {currentSong.title || currentSong.name}
+                </span>
+                <span className="text-xs text-white/70 truncate">
+                  {currentSong.artist_name}
+                </span>
               </div>
-
-              <div className="w-full mt-6">
-                <ProgressBar />
-              </div>
-
-              <div className="flex items-center justify-center gap-6 mt-6">
-                <button onClick={prev}>⏮️</button>
-                <button onClick={handleClick} className="text-4xl">
-                  {isPlaying ? "⏸️" : "▶️"}
-                </button>
-                <button onClick={next}>⏭️</button>
-              </div>
-            </motion.div>
-          )}
+            </div>
+            <div className="flex gap-3 items-center pr-1">
+              <button onClick={prev} aria-label="Previous">
+                ⏮️
+              </button>
+              <button
+                onClick={handleClick}
+                aria-label={isPlaying ? "Pause" : "Play"}
+              >
+                {isPlaying ? "⏸️" : "▶️"}
+              </button>
+              <button onClick={next} aria-label="Next">
+                ⏭️
+              </button>
+            </div>
+          </div>
         </motion.div>
-      </AnimatePresence>
+      </motion.div>
 
-      {/* audio/youtube elements (still hidden) */}
-      {provider === "jamendo" && <audio ref={audioRef} onEnded={handleEnded} />}
+      {/* Keep players outside the draggable to avoid pointer/transform quirks */}
+      {provider === "jamendo" && (
+        <audio ref={audioRef} onEnded={() => setIsPlaying(false)} />
+      )}
       {provider === "youtube" && (
         <YouTube
-          opts={opts}
-          onReady={onYTReady}
-          onStateChange={onYTStateChange}
-          onError={handleError}
+          opts={{
+            width: "0",
+            height: "0",
+            playerVars: {
+              rel: 0,
+              modestbranding: 1,
+              playsinline: 1,
+              origin: window.location.origin,
+            },
+          }}
+          onReady={(e) => MusicPlayerManager.init(e.target)}
+          onStateChange={(e) => MusicPlayerManager.onYTStateChange?.(e)}
+          onError={(e) => console.log("YT error", e)}
         />
       )}
     </>
