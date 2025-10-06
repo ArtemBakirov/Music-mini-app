@@ -1,14 +1,31 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useMusicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
 import { ProgressBar } from "./ProgressBar.tsx";
 import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
 import { FooterController } from "./FooterController.tsx";
+
+// animations
+import {
+  motion,
+  useMotionValue,
+  useTransform,
+  AnimatePresence,
+} from "framer-motion";
+import { Vibrant } from "node-vibrant/browser";
+
+// mobile / desktop
+import { useDesktopMobileStore } from "../hooks/stores/useDesktopMobileStore.ts";
 
 // for yt
 import YouTube, { YouTubeProps } from "react-youtube";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
+
+  // animations
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [bgColor, setBgColor] = useState("#2D0F3A");
+
   // console.log("audioref", audioRef);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
@@ -16,6 +33,27 @@ export const JamendoPlayerFooter = () => {
   // console.log("current song", currentSong);
 
   // console.log("currentSong footer", currentSong);
+
+  // Extract color from album cover
+  useEffect(() => {
+    if (currentSong?.album_image) {
+      Vibrant.from(currentSong.album_image)
+        .getPalette()
+        .then((palette) => {
+          const color = palette.Vibrant?.hex || "#2D0F3A";
+          setBgColor(color);
+        })
+        .catch(() => setBgColor("#2D0F3A"));
+    }
+  }, [currentSong?.album_image]);
+
+  // desktop/mobile store
+  const isMobile = useDesktopMobileStore((s) => s.isMobile);
+  const platform = useDesktopMobileStore((s) => s.platform);
+  const width = useDesktopMobileStore((s) => s.width);
+  const height = useDesktopMobileStore((s) => s.height);
+
+  console.log("in footer device", isMobile, platform, width, height);
 
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
@@ -92,66 +130,170 @@ export const JamendoPlayerFooter = () => {
     console.log("error in youtube", e);
   };
 
-  // if (!currentSong) return null;
-  return (
-    <div
-      className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
-    items-center z-50 px-32`}
-    >
-      <div className="flex items-center gap-4 w-full">
-        <div>
-          <FooterController
-            onPlayPauseClick={handleClick}
-            isPlaying={isPlaying}
-            onPrevClick={prev}
-            onNextClick={next}
-            onShuffleClick={toggleShuffle}
-            onRepeatClick={cycleRepeat}
-            shuffleActive={isShuffling}
-            repeatMode={repeatMode}
-          />
-        </div>
-        <div className={"flex flex-col items-center w-full"}>
-          <div className={"flex gap-4 justify-center mb-2"}>
-            <div className="font-bold">
-              {currentSong?.title || currentSong?.name}
-            </div>
-            <div className="font-bold">{currentSong?.artist_name}</div>
-          </div>
-          <ProgressBar />
-        </div>
-        <div className="text-xs text-gray-300 mt-1">
-          {formatTime(currentTime)} / {formatTime(duration)}
-        </div>
-      </div>
+  // 🎵 Drag logic for mobile
+  const y = useMotionValue(0);
+  const opacity = useTransform(y, [0, -300], [1, 0]);
+  const handleDragEnd = (_, info) => {
+    if (info.offset.y < -100) setIsExpanded(true);
+    else if (info.offset.y > 100) setIsExpanded(false);
+  };
 
-      {currentSong && (
-        <>
-          {provider === "jamendo" && (
-            <div>
-              <audio
-                ref={audioRef}
-                onEnded={handleEnded}
-                // style={{ display: "none" }}
-              />
+  // if (!currentSong) return null;
+  if (!isMobile) {
+    return (
+      <div
+        className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
+    items-center z-50 px-32`}
+      >
+        <div className="flex items-center gap-4 w-full">
+          <div>
+            <FooterController
+              onPlayPauseClick={handleClick}
+              isPlaying={isPlaying}
+              onPrevClick={prev}
+              onNextClick={next}
+              onShuffleClick={toggleShuffle}
+              onRepeatClick={cycleRepeat}
+              shuffleActive={isShuffling}
+              repeatMode={repeatMode}
+            />
+          </div>
+          <div className={"flex flex-col items-center w-full"}>
+            <div className={"flex gap-4 justify-center mb-2"}>
+              <div className="font-bold">
+                {currentSong?.title || currentSong?.name}
+              </div>
+              <div className="font-bold">{currentSong?.artist_name}</div>
             </div>
+            <ProgressBar />
+          </div>
+          <div className="text-xs text-gray-300 mt-1">
+            {formatTime(currentTime)} / {formatTime(duration)}
+          </div>
+        </div>
+
+        {currentSong && (
+          <>
+            {provider === "jamendo" && (
+              <div>
+                <audio
+                  ref={audioRef}
+                  onEnded={handleEnded}
+                  // style={{ display: "none" }}
+                />
+              </div>
+            )}
+            {provider === "youtube" && (
+              <>
+                <YouTube
+                  // ref={audioRef}
+                  // videoId={videoId}
+                  opts={opts}
+                  onReady={onYTReady}
+                  onStateChange={onYTStateChange}
+                  onError={handleError}
+                  // onReady={onReady}
+                  // onStateChange={onStateChange}
+                />
+              </>
+            )}
+          </>
+        )}
+      </div>
+    );
+  }
+
+  // 📱 MOBILE LAYOUT
+  return (
+    <>
+      <AnimatePresence>
+        <motion.div
+          drag="y"
+          dragConstraints={{ top: -height + 120, bottom: 0 }}
+          dragElastic={0.2}
+          onDragEnd={handleDragEnd}
+          style={{
+            y,
+            backgroundColor: isExpanded ? bgColor : "#2D0F3A",
+          }}
+          className={`fixed left-0 right-0 bottom-0 text-white z-50 rounded-t-2xl overflow-hidden
+            shadow-lg transition-all duration-300`}
+        >
+          {/* Mini Footer (collapsed) */}
+          {!isExpanded && (
+            <motion.div
+              className="flex items-center justify-between px-4 py-2"
+              style={{ opacity }}
+            >
+              <div className="flex items-center gap-3 w-full">
+                <img
+                  src={currentSong?.album_image}
+                  alt=""
+                  className="w-10 h-10 rounded object-cover"
+                />
+                <div className="flex flex-col min-w-0">
+                  <span className="font-semibold truncate">
+                    {currentSong?.title || currentSong?.name}
+                  </span>
+                  <span className="text-xs text-gray-300 truncate">
+                    {currentSong?.artist_name}
+                  </span>
+                </div>
+              </div>
+              <div className="flex gap-3 items-center">
+                <button onClick={prev}>⏮️</button>
+                <button onClick={handleClick}>{isPlaying ? "⏸️" : "▶️"}</button>
+                <button onClick={next}>⏭️</button>
+              </div>
+            </motion.div>
           )}
-          {provider === "youtube" && (
-            <>
-              <YouTube
-                // ref={audioRef}
-                // videoId={videoId}
-                opts={opts}
-                onReady={onYTReady}
-                onStateChange={onYTStateChange}
-                onError={handleError}
-                // onReady={onReady}
-                // onStateChange={onStateChange}
+
+          {/* Fullscreen Player */}
+          {isExpanded && (
+            <motion.div
+              className="flex flex-col items-center justify-between h-[90vh] px-6 py-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <img
+                src={currentSong?.album_image}
+                alt=""
+                className="w-72 h-72 rounded-xl object-cover shadow-2xl"
               />
-            </>
+              <div className="flex flex-col items-center gap-2 text-center mt-4">
+                <div className="font-bold text-xl">
+                  {currentSong?.title || currentSong?.name}
+                </div>
+                <div className="text-gray-200">{currentSong?.artist_name}</div>
+              </div>
+
+              <div className="w-full mt-6">
+                <ProgressBar />
+              </div>
+
+              <div className="flex items-center justify-center gap-6 mt-6">
+                <button onClick={prev}>⏮️</button>
+                <button onClick={handleClick} className="text-4xl">
+                  {isPlaying ? "⏸️" : "▶️"}
+                </button>
+                <button onClick={next}>⏭️</button>
+              </div>
+            </motion.div>
           )}
-        </>
+        </motion.div>
+      </AnimatePresence>
+
+      {/* audio/youtube elements (still hidden) */}
+      {provider === "jamendo" && <audio ref={audioRef} onEnded={handleEnded} />}
+      {provider === "youtube" && (
+        <YouTube
+          opts={opts}
+          onReady={onYTReady}
+          onStateChange={onYTStateChange}
+          onError={handleError}
+        />
       )}
-    </div>
+    </>
   );
 };

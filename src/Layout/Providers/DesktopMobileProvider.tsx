@@ -1,9 +1,6 @@
 import { ReactNode, useEffect, useMemo, useState } from "react";
 import { useDesktopMobileStore } from "../../hooks/stores/useDesktopMobileStore.ts";
 import { DesktopTabletLayout } from "../DesktopTabletLayout.tsx";
-import { MobileLayout } from "../MobileLayout.tsx";
-
-import { SdkService } from "../../bastyon-sdk/sdkService.ts";
 
 type Props = {
   // mobile: ReactNode; // what to render on mobile
