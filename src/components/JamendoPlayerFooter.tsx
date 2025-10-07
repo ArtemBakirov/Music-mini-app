@@ -272,6 +272,7 @@ export const JamendoPlayerFooter = () => {
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={{ top: 0, bottom: 0.5 }}
               style={{ y }}
+              onPointerDown={(e) => contols.start(e)}
             >
               <DragHandle
                 onPointerDown={(e) => contols.start(e)}
