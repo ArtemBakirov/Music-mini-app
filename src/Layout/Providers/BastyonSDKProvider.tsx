@@ -7,7 +7,6 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const setLoading = useAccountStore((s) => s.setLoading);
   const setError = useAccountStore((s) => s.setError);
   const patchProfile = useAccountStore((s) => s.patchProfile);
-  console.log("sdk provider");
   const [initialized, setInitialized] = useState<boolean>(false);
   // console.log("SDK init");
   const getUserAddress = async () => {
@@ -48,7 +47,6 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
 
   useEffect(() => {
     (async () => {
-      console.log("sdk effect");
       await SdkService.init().then((info) => {
         console.log("app info", info);
         setInitialized(true);
