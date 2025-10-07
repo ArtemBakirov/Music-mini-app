@@ -255,7 +255,7 @@ export const JamendoPlayerFooter = () => {
           >
             <motion.div
               className={
-                "absolute bg-[#2D0F3A] flex flex-col items-center gap-6 bottom-0 h-[100vh] w-full overflow-hidden py-52"
+                "touch-none absolute bg-[#2D0F3A] flex flex-col items-center gap-6 bottom-0 h-[100vh] w-full overflow-hidden py-52"
               }
               initial={{ y: 100 }}
               animate={{ y: 0 }}
@@ -271,8 +271,8 @@ export const JamendoPlayerFooter = () => {
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
               dragElastic={{ top: 0, bottom: 0.5 }}
-              style={{ y }}
-              onPointerDown={(e) => contols.start(e)}
+              style={{ y, touchAction: "none" }}
+              // onPointerDown={(e) => contols.start(e)}
             >
               <DragHandle
                 onPointerDown={(e) => contols.start(e)}
