@@ -206,7 +206,7 @@ export const JamendoPlayerFooter = () => {
 
   // 📱 MOBILE LAYOUT
   return (
-    <div className={"border-green-300 border-1"}>
+    <div>
       <div
         className={`text-white z-50 rounded-t-2xl overflow-hidden
             shadow-lg`}

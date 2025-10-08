@@ -53,7 +53,7 @@ export const MobileMenu = () => {
   );
 
   return (
-    <div className={`bg-[#2D0F3A] text-white z-50 border-blue-300 border-1`}>
+    <div className={`bg-[#2D0F3A] text-white z-50 `}>
       {renderMenu(mobileMenu)}
     </div>
   );
