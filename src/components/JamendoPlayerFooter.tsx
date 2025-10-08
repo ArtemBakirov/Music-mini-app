@@ -215,27 +215,34 @@ export const JamendoPlayerFooter = () => {
         {!isExpanded && (
           <div
             onClick={() => setIsExpanded(true)}
-            className="flex items-center justify-between px-4 py-2 bg-[#2D0F3A]"
+            className="flex items-center px-4 py-4 bg-[#2D0F3A]"
           >
-            <div className="flex items-center gap-3 w-full">
-              <img
-                src={currentSong?.album_image}
-                alt=""
-                className="w-10 h-10 rounded object-cover"
-              />
-              <div className="flex flex-col min-w-0">
-                <span className="font-semibold truncate">
-                  {currentSong?.title || currentSong?.name}
-                </span>
-                <span className="text-xs text-gray-300 truncate">
-                  {currentSong?.artist_name}
-                </span>
-              </div>
+            <img
+              src={currentSong?.album_image}
+              alt=""
+              className="w-12 h-12 rounded object-cover flex-shrink-0 mr-4"
+            />
+
+            <div className="flex-1 min-w-0 basis-0">
+              <p className="font-semibold truncate">
+                {currentSong?.title || currentSong?.name}
+              </p>
+              <p className="text-xs text-gray-300 truncate">
+                {currentSong?.artist_name}
+              </p>
             </div>
-            <div className="flex gap-3 items-center">
-              <button onClick={prev}>⏮️</button>
-              <button onClick={handleClick}>{isPlaying ? "⏸️" : "▶️"}</button>
-              <button onClick={next}>⏭️</button>
+
+            <div className={"flex-shrink-0"}>
+              <FooterController
+                onPlayPauseClick={handleClick}
+                isPlaying={isPlaying}
+                onPrevClick={prev}
+                onNextClick={next}
+                onShuffleClick={toggleShuffle}
+                onRepeatClick={cycleRepeat}
+                shuffleActive={isShuffling}
+                repeatMode={repeatMode}
+              />
             </div>
           </div>
         )}
