@@ -6,12 +6,7 @@ import { FooterController } from "./FooterController.tsx";
 import DragHandle from "../assets/icons/dragHandle.svg?react";
 
 // animations
-import {
-  motion,
-  useMotionValue,
-  useTransform,
-  useDragControls,
-} from "framer-motion";
+import { motion, useMotionValue, useDragControls } from "framer-motion";
 import { Vibrant } from "node-vibrant/browser";
 
 // mobile / desktop
@@ -148,7 +143,7 @@ export const JamendoPlayerFooter = () => {
   if (!isMobile) {
     return (
       <div
-        className={`fixed bottom-0 left-0 right-0 bg-[#2D0F3A] text-white p-4 flex justify-between
+        className={`bg-[#2D0F3A] text-white p-4 flex justify-between
     items-center z-50 px-32`}
       >
         <div className="flex items-center gap-4 w-full">
@@ -211,9 +206,9 @@ export const JamendoPlayerFooter = () => {
 
   // 📱 MOBILE LAYOUT
   return (
-    <>
+    <div className={"border-green-300 border-1"}>
       <div
-        className={`fixed left-0 right-0 bottom-0 text-white z-50 rounded-t-2xl overflow-hidden
+        className={`text-white z-50 rounded-t-2xl overflow-hidden
             shadow-lg`}
       >
         {/* Mini Footer (collapsed) */}
@@ -314,6 +309,6 @@ export const JamendoPlayerFooter = () => {
           onError={handleError}
         />
       )}
-    </>
+    </div>
   );
 };

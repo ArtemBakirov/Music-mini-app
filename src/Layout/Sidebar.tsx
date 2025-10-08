@@ -63,7 +63,7 @@ export const SideBar = () => {
             >
               <Link className={"flex items-center gap-3"} to={key}>
                 <Icon
-                  className={`${key === "account" ? "w-6 h-6" : "w-5 h-5"}  ${isActive ? "text-red-400" : "text-red-500"}`}
+                  className={`${key === "account" ? "w-6 h-6" : "w-5 h-5"}`}
                 />
                 <span className="truncate">{label}</span>
               </Link>
