@@ -315,6 +315,7 @@ export class MusicPlayerManager {
       console.log("state changed to Ended", YT.PlayerState);
       console.log("on ended, YT.Player", YT.Player);
       this.audio.playVideo();
+      console.log("exec playVideo");
     }
 
     // setIsPlaying(false);
