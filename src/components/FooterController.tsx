@@ -34,7 +34,6 @@ export const FooterController = ({
   if (!isMobile) {
     return (
       <div className="flex items-center justify-center gap-6">
-        {/* Shuffle */}
         <button
           onClick={onShuffleClick}
           className={`p-2 rounded-full hover:bg-[#3a1a4d] transition ${
