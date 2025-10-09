@@ -302,7 +302,7 @@ export class MusicPlayerManager {
     }
   }
 
-  static onYTStateChange(e: any) {
+  static async onYTStateChange(e: any) {
     // const { setIsPlaying } = musicPlayerStore.getState();
     const YT = (window as any).YT;
     if (!YT) return;
