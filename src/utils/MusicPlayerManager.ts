@@ -313,7 +313,7 @@ export class MusicPlayerManager {
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
       console.log("state changed to Ended", YT.PlayerState);
-      console.log("on ended, YT.Player", YT.Player);
+      console.log("on ended, playVideo", this.audio.playVideo);
       this.audio.playVideo();
       console.log("exec playVideo");
     }
