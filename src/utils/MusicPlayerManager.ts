@@ -290,19 +290,21 @@ export class MusicPlayerManager {
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
     p.unMute();
     p.setVolume(70);
+    console.log("play...");
+    p.playVideo();
   }
 
   static onYTStateChange(e: any) {
-    const { setIsPlaying } = musicPlayerStore.getState();
+    // const { setIsPlaying } = musicPlayerStore.getState();
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      // console.log("state changed to Playing");
+      console.log("state changed to Playing");
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-      // console.log("state changed to not Playing");
+      console.log("state changed to Ended");
     }
 
     // setIsPlaying(false);
