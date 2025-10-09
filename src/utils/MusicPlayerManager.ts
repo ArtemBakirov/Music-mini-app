@@ -286,12 +286,20 @@ export class MusicPlayerManager {
     console.log("play once");
     p.mute(); // safe
     console.log("did mute");
-    p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-    p.unMute();
-    p.setVolume(70);
-    console.log("play...");
-    p.playVideo();
+    try {
+      p.playVideo(); // starts muted, allowed
+      console.log("playVideo");
+      await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+      console.log("new Promise");
+      p.unMute();
+      console.log("unmute");
+      p.setVolume(70);
+      console.log("setVolume");
+      console.log("play...");
+      p.playVideo();
+    } catch (e) {
+      console.log("play failed, error", e);
+    }
   }
 
   static onYTStateChange(e: any) {
