@@ -137,6 +137,7 @@ export class MusicPlayerManager {
       if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
+        console.log("sync youtube");
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
         this.audio.videoId = currentSong.audio;
@@ -154,6 +155,7 @@ export class MusicPlayerManager {
 
               this.audio.cueVideoById({ videoId: this.audio.videoId });
               setTimeout(async () => {
+                console.log("EXECUTING YOUTUBE");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -275,15 +277,15 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
-    // console.log("playYoutube");
+    console.log("playYoutube");
     if (!audioEl) return;
 
     // console.log("play inside MusicPlayerManager", audioEl);
     // console.log("videoId", audioEl.videoId);
     const p = audioEl;
-    // console.log("play once");
+    console.log("play once");
     p.mute(); // safe
-    // console.log("did mute");
+    console.log("did mute");
     p.playVideo(); // starts muted, allowed
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
     p.unMute();
