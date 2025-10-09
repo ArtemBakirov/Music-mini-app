@@ -296,7 +296,7 @@ export class MusicPlayerManager {
       p.setVolume(70);
       console.log("setVolume");
       console.log("play...");
-      p.playVideo();
+      // p.playVideo();
     } catch (e) {
       console.log("play failed, error", e);
     }
