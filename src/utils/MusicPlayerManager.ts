@@ -291,8 +291,9 @@ export class MusicPlayerManager {
       p.playVideo(); // starts muted, allowed
       console.log("wait...");
       await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-      console.log("unmute");
+      console.log("unmute and setvolume");
       p.unMute();
+      p.setVolume(70);
       // console.log("unmute");
       // p.setVolume(70);
       // console.log("setVolume");
@@ -302,8 +303,8 @@ export class MusicPlayerManager {
       await new Promise((r) => setTimeout(r, 1000));
       console.log("play");
       this.audio.playVideo();
-      console.log("resume");
-      await this.resume();
+      // console.log("resume");
+      // await this.resume();
     } catch (e) {
       console.log("play failed, error", e);
     }
