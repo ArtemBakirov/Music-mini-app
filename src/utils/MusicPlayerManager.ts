@@ -152,8 +152,9 @@ export class MusicPlayerManager {
             // console.log("isPlaying, trying to play", this.audio.videoId);
             try {
               // console.log("cueing video");
-
-              this.audio.cueVideoById({ videoId: this.audio.videoId });
+              const videoId = this.audio.videoId;
+              console.log("videoId before cue", videoId);
+              this.audio.cueVideoById({ videoId });
               setTimeout(async () => {
                 console.log("EXECUTING YOUTUBE");
                 await this.playYoutube(this.audio);
