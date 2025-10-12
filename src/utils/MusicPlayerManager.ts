@@ -313,11 +313,14 @@ export class MusicPlayerManager {
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
+      console.log("state changed to Ended/Paused", YT.PlayerState, e.data);
       if (e.data === YT.PlayerState.PAUSED) {
-        console.log("paused, now resuming");
+        console.log("paused, now resuming in 1 second");
+        await new Promise((r) => setTimeout(r, 1000));
         this.audio.playVideo();
+        this.audio.playVideo();
+        await this.resume();
       }
-      console.log("state changed to Ended", YT.PlayerState, e.data);
       await new Promise((r) => setTimeout(r, 1000));
       // console.log("on ended, playVideo", this.audio.playVideo);
       // this.audio.playVideo();
