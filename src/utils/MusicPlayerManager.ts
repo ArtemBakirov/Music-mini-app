@@ -287,16 +287,23 @@ export class MusicPlayerManager {
     p.mute(); // safe
     console.log("did mute");
     try {
+      console.log("playVideo");
       p.playVideo(); // starts muted, allowed
-      // console.log("playVideo");
-      // await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-      // console.log("new Promise");
-      // p.unMute();
+      console.log("wait...");
+      await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+      console.log("unmute");
+      p.unMute();
       // console.log("unmute");
       // p.setVolume(70);
       // console.log("setVolume");
       // console.log("play...");
       // p.playVideo();
+      console.log("wait 1 s");
+      await new Promise((r) => setTimeout(r, 1000));
+      console.log("play");
+      this.audio.playVideo();
+      console.log("resume");
+      await this.resume();
     } catch (e) {
       console.log("play failed, error", e);
     }
@@ -307,19 +314,19 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("state changed to Playing, unmute");
-      this.audio.unMute();
+      // console.log("state changed to Playing, unmute");
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
       console.log("state changed to Ended/Paused", YT.PlayerState, e.data);
       if (e.data === YT.PlayerState.PAUSED) {
-        console.log("paused, now resuming in 1 second");
-        await new Promise((r) => setTimeout(r, 1000));
-        this.audio.playVideo();
-        this.audio.playVideo();
-        await this.resume();
+        console.log("state changed to paused");
+        // console.log("paused, now resuming in 1 second");
+        //await new Promise((r) => setTimeout(r, 1000));
+        //this.audio.playVideo();
+        // this.audio.playVideo();
+        //await this.resume();
       }
       await new Promise((r) => setTimeout(r, 1000));
       // console.log("on ended, playVideo", this.audio.playVideo);
