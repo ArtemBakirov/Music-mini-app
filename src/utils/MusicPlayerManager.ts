@@ -287,24 +287,11 @@ export class MusicPlayerManager {
     p.mute(); // safe
     console.log("did mute");
     try {
-      console.log("playVideo");
       p.playVideo(); // starts muted, allowed
-      console.log("wait...");
       await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-      console.log("unmute and setvolume");
       p.unMute();
       p.setVolume(70);
-      // console.log("unmute");
-      // p.setVolume(70);
-      // console.log("setVolume");
-      // console.log("play...");
-      // p.playVideo();
-      console.log("wait 1 s");
-      await new Promise((r) => setTimeout(r, 1000));
-      console.log("play");
-      this.audio.playVideo();
-      // console.log("resume");
-      // await this.resume();
+      p.playVideo();
     } catch (e) {
       console.log("play failed, error", e);
     }
@@ -315,21 +302,20 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      // console.log("state changed to Playing, unmute");
+      console.log("state changed to Playing, unmute");
+      // this.audio.unMute();
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-      console.log("state changed to Ended/Paused", YT.PlayerState, e.data);
       if (e.data === YT.PlayerState.PAUSED) {
         console.log("state changed to paused");
-        // console.log("paused, now resuming in 1 second");
-        //await new Promise((r) => setTimeout(r, 1000));
-        //this.audio.playVideo();
         // this.audio.playVideo();
-        //await this.resume();
+      } else {
+        console.log("state changed to Ended", YT.PlayerState, e.data);
       }
-      await new Promise((r) => setTimeout(r, 1000));
+
+      // await new Promise((r) => setTimeout(r, 1000));
       // console.log("on ended, playVideo", this.audio.playVideo);
       // this.audio.playVideo();
       // console.log("exec playVideo");
