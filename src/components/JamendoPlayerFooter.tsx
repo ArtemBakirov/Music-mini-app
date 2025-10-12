@@ -251,13 +251,13 @@ export const JamendoPlayerFooter = () => {
         {isExpanded && (
           <motion.div
             // onClick={() => setIsExpanded(false)}
-            className="border-red-500 border-2 fixed inset-0 z-50 flex flex-col items-center justify-between h-[100vh] px-6 py-8"
+            className="fixed inset-0 z-50 flex flex-col items-center justify-between h-[100vh] px-6 py-8"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
             <motion.div
               className={
-                "border-yellow-500 border-2 touch-none absolute bg-[#2D0F3A] flex flex-col items-center justify-center gap-6 bottom-0 h-[100vh] w-full overflow-hidden"
+                "touch-none absolute bg-[#2D0F3A] flex flex-col items-center justify-center gap-6 bottom-0 h-[100vh] w-full overflow-hidden"
               }
               initial={{ y: 100 }}
               animate={{ y: 0 }}
@@ -294,12 +294,17 @@ export const JamendoPlayerFooter = () => {
 
               <ProgressBar />
 
-              <div className="flex items-center justify-center gap-6 mt-6">
-                <button onClick={prev}>⏮️</button>
-                <button onClick={handleClick} className="text-4xl">
-                  {isPlaying ? "⏸️" : "▶️"}
-                </button>
-                <button onClick={next}>⏭️</button>
+              <div className={"flex-shrink-0"}>
+                <FooterController
+                  onPlayPauseClick={handleClick}
+                  isPlaying={isPlaying}
+                  onPrevClick={prev}
+                  onNextClick={next}
+                  onShuffleClick={toggleShuffle}
+                  onRepeatClick={cycleRepeat}
+                  shuffleActive={isShuffling}
+                  repeatMode={repeatMode}
+                />
               </div>
             </motion.div>
           </motion.div>
