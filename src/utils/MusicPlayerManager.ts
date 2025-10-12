@@ -307,7 +307,8 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("state changed to Playing");
+      console.log("state changed to Playing, unmute");
+      this.audio.unMute();
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
