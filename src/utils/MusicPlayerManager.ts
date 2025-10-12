@@ -313,7 +313,7 @@ export class MusicPlayerManager {
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-      console.log("state changed to Ended", YT.PlayerState);
+      console.log("state changed to Ended", YT.PlayerState, e);
       await new Promise((r) => setTimeout(r, 1000));
       // console.log("on ended, playVideo", this.audio.playVideo);
       // this.audio.playVideo();
