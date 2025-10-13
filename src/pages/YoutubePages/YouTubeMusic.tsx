@@ -146,7 +146,7 @@ export default function YouTubeMusic() {
           {!loading && channels.length > 0 && (
             <section>
               <div className="flex items-center justify-between mb-3">
-                <Link to={`/yt/search/channels/${encodeURIComponent(query)}`}>
+                <Link to={`ytsearch/artists/${encodeURIComponent(query)}`}>
                   <h2 className="text-xl font-bold">Artists</h2>
                 </Link>
               </div>

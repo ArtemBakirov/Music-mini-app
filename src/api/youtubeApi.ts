@@ -11,6 +11,8 @@ export type YtSearchItem =
     })
   | ({ id: { kind: "youtube#channel"; channelId: string } } & { snippet: any });
 
+export type YTPage<T> = { items: T[]; nextPageToken?: string };
+
 export type YtVideoHit = {
   id: string; // videoId
   title: string;
@@ -157,6 +159,82 @@ export async function searchYouTubeVideosPaged(
       thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
     } as YtVideoHit;
   });
+
+  return { items, nextPageToken: json.nextPageToken };
+}
+
+// ---- Search CHANNELS (Artists) ----
+export async function fetchYouTubeChannels(
+  key: string,
+  query: string,
+  pageToken?: string,
+  maxResults = 24,
+): Promise<YTPage<{ id: string; title: string; thumbnail: string }>> {
+  const params = new URLSearchParams({
+    key: key,
+    part: "snippet",
+    type: "channel",
+    q: query,
+    maxResults: String(maxResults),
+  });
+  if (pageToken) params.set("pageToken", pageToken);
+
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/search?${params}`,
+  );
+
+  console.log("res fetch channels", res);
+  if (!res.ok) throw new Error("YouTube channel search failed");
+  const json = await res.json();
+
+  const items = (json.items ?? []).map((it: any) => ({
+    id: it.id.channelId,
+    title: it.snippet.title,
+    thumbnail:
+      it.snippet.thumbnails?.medium?.url ||
+      it.snippet.thumbnails?.default?.url ||
+      "",
+  }));
+
+  return { items, nextPageToken: json.nextPageToken };
+}
+
+// ---- Videos by CHANNEL ----
+// NOTE: `search` gives lightweight video list; if you need durations, call /videos by ids after.
+export async function fetchChannelVideos(
+  key: string,
+  channelId: string,
+  pageToken?: string,
+  maxResults = 24,
+): Promise<
+  YTPage<{ id: string; title: string; channelTitle: string; thumbnail: string }>
+> {
+  const params = new URLSearchParams({
+    key: key,
+    part: "snippet",
+    type: "video",
+    channelId,
+    order: "date", // or "viewCount" / "relevance"
+    maxResults: String(maxResults),
+  });
+  if (pageToken) params.set("pageToken", pageToken);
+
+  const res = await fetch(
+    `https://www.googleapis.com/youtube/v3/search?${params}`,
+  );
+  console.log("channels tracks fetch res", res);
+  if (!res.ok) throw new Error("YouTube channel videos fetch failed");
+  const json = await res.json();
+
+  const items = (json.items ?? []).map((it: any) => ({
+    id: it.id.videoId,
+    title: it.snippet.title,
+    channelTitle: it.snippet.channelTitle,
+    thumbnail:
+      it.snippet.thumbnails?.medium?.url ||
+      it.snippet.thumbnails?.default?.url ||
+      "",
+  }));
 
   return { items, nextPageToken: json.nextPageToken };
 }

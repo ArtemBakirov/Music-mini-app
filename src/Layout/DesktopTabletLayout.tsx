@@ -10,6 +10,8 @@ import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
 import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
 import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
+import YouTubeMusicArtists from "../pages/YoutubePages/YouTubeMusicArtists.tsx";
+import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -34,6 +36,28 @@ export const DesktopTabletLayout = () => {
                 path="ytsearch/tracks/:query"
                 element={<YouTubeMusicTracks />}
               />
+              <Route
+                path="ytsearch/artists/:query"
+                element={<YouTubeMusicArtists />}
+              />
+              <Route
+                path="ytsearch/album/:albumId"
+                element={<AlbumDetailsPage />}
+              />
+              <Route
+                path="ytsearch/artist/tracks/:channelId"
+                element={<YouTubeArtistTracks />}
+              />
+
+              {/*<Route
+                path="ytsearch/albums/:query"
+                element={<YouTubeMusicAlbums />}
+              />
+
+              <Route
+                path="ytsearch/playlists/:query"
+                element={<YouTubeMusicPlaylists />}
+              /> */}
 
               <Route path="album/:albumId" element={<AlbumDetailsPage />} />
               <Route
