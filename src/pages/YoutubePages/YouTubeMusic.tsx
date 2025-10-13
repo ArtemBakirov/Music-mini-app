@@ -11,7 +11,7 @@ import { SearchYoutubeInput } from "../../components/SearchYoutubeInput.tsx";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw"; // your example key
-
+console.log("import meta env", import.meta.env.VITE_YT_API_KEY);
 export default function YouTubeMusic() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
@@ -153,6 +153,7 @@ export default function YouTubeMusic() {
               <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
                 {channels.map((c: any) => (
                   <DisplayYoutubeArtist
+                    id={c.id}
                     key={c.id}
                     title={c.title}
                     thumbnail={c.thumbnail}
