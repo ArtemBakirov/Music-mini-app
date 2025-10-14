@@ -1,5 +1,6 @@
-import { musicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
+import { musicPlayerStore, Song } from "../hooks/stores/useMusicPlayerStore.ts";
 // import { YouTubeProps } from "react-youtube";
+import { updateMediaSession } from "./updateMediaSession.ts";
 
 export class MusicPlayerManager {
   private static audio: HTMLAudioElement | any | null = null;
@@ -279,6 +280,12 @@ export class MusicPlayerManager {
 
   static async playYoutube(audioEl: any) {
     console.log("playYoutube");
+    const { currentSong } = musicPlayerStore.getState();
+    if (currentSong) {
+      console.log("update session");
+      updateMediaSession(currentSong as Song);
+    }
+
     if (!audioEl) return;
 
     // console.log("play inside MusicPlayerManager", audioEl);
