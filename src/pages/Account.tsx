@@ -11,6 +11,7 @@ import noImage from "../assets/picture/no_image.png";
 
 export default function Account() {
   const profile = useAccountStore((s) => s.profile);
+  console.log("account", profile);
   const patchProfile = useAccountStore((s) => s.patchProfile);
 
   const { isLoading, isError } = useHydratedUser(profile.address || "");
