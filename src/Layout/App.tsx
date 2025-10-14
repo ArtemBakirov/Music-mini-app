@@ -10,7 +10,11 @@ export const App = () => {
   const isMobile = useDesktopMobileStore((s) => s.isMobile);
 
   return (
-    <div className={"flex bg-[#371A4D] h-screen text-black"}>
+    <div
+      className={`w-screen bg-[#371A4D] h-screen text-black border-green-500 border-2
+          ${!isMobile && "flex"}
+        `}
+    >
       {/* Left Sidebar */}
       {!isMobile && <SideBar />}
       <main

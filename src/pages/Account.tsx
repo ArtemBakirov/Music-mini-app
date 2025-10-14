@@ -80,23 +80,28 @@ export default function Account() {
       <h1 className="text-2xl font-bold mb-6">Account</h1>
 
       {/* Public key (read-only) */}
-      <section className="bg-[#2D0F3A] rounded-xl p-4 mb-6">
-        <h2 className="text-lg font-semibold mb-2">{profile.address}</h2>
-        <div className="flex items-start gap-3">
-          <button
-            onClick={() => navigator.clipboard.writeText(profile.address || "")}
-            className="ml-auto text-sm bg-white/10 hover:bg-white/20 px-3 py-1 rounded"
-          >
-            Copy
-          </button>
-        </div>
-      </section>
+      {
+        <section className="bg-[#2D0F3A] rounded-xl p-4 mb-6">
+          <h2 className="text-lg font-semibold mb-2 min-w-0 basis-0 truncate text-wrap">
+            {profile.address}
+          </h2>
+          <div className="flex items-start gap-3">
+            <button
+              onClick={() =>
+                navigator.clipboard.writeText(profile.address || "")
+              }
+              className="ml-auto text-sm bg-white/10 hover:bg-white/20 px-3 py-1 rounded"
+            >
+              Copy
+            </button>
+          </div>
+        </section>
+      }
 
       {/* Profile form */}
       <section className="bg-[#2D0F3A] rounded-xl p-4 mb-6">
         <h2 className="text-lg font-semibold mb-4">Profile</h2>
 
-        {/* Avatar uploader */}
         <div className="flex items-center gap-6 mb-6">
           <div className="relative">
             {!avatarIsError ? (
@@ -112,7 +117,7 @@ export default function Account() {
                 alt={"no image"}
               />
             )}
-            {/* Optional badge if using preview */}
+
             {avatarPreview && (
               <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 text-[10px] bg-amber-500 text-black px-2 py-0.5 rounded">
                 preview
@@ -136,7 +141,6 @@ export default function Account() {
           </div>
         </div>
 
-        {/* Username */}
         <label className="block mb-4">
           <span className="block text-sm mb-2 opacity-90">Username</span>
           <input
@@ -151,7 +155,6 @@ export default function Account() {
           </span>
         </label>
 
-        {/* Bio */}
         <label className="block">
           <span className="block text-sm mb-2 opacity-90">About you</span>
           <textarea
