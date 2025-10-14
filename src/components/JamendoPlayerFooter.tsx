@@ -104,7 +104,7 @@ export const JamendoPlayerFooter = () => {
   };
 
   const opts: YouTubeProps["opts"] = {
-    width: "200",
+    width: "0",
     height: "100",
     playerVars: {
       rel: 0,
