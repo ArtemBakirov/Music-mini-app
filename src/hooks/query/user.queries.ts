@@ -100,7 +100,7 @@ export function useUser(address?: string, enabled = true) {
 }
 
 export function useHydratedUser(address?: string) {
-  console.log("user hydrated user");
+  console.log("user hydrated user for address", address);
   const setFromServer = useAccountStore((s) => s.setFromServer);
 
   const q = useQuery({
@@ -111,10 +111,12 @@ export function useHydratedUser(address?: string) {
     },
     enabled: Boolean(address),
   });
+  console.log("query q", q);
 
   // hydrate store when fresh data arrives
   useEffect(() => {
     if (q.data && address) {
+      console.log("useEffect setFromServer", q.data, address);
       setFromServer(q.data as Partial<Profile>);
     }
   }, [q.data, address, setFromServer]);
