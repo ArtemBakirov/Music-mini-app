@@ -100,6 +100,7 @@ export function useUser(address?: string, enabled = true) {
 }
 
 export function useHydratedUser(address?: string) {
+  console.log("user hydrated user");
   const setFromServer = useAccountStore((s) => s.setFromServer);
 
   const q = useQuery({
