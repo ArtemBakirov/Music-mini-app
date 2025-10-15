@@ -29,13 +29,13 @@
 
 
 
-/* styles for images, maybe don't need anymore */
+/* styles for images, maybe don't need anymore
 .main-container {
   background-image: url('./assets/example-background.jpg');
-  background-size: cover;            /* Scale image to cover container */
-  background-position: center;       /* Center the image */
-  background-repeat: no-repeat;      /* Don't repeat */
-  min-height: 100vh;                 /* Ensure it fills the viewport */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 100vh;
   position: relative;
   z-index: 1;
 }
@@ -47,6 +47,6 @@
   left: 0;
   height: 100%;
   width: 100%;
-  background-color: rgba(255, 255, 255, 0.4); /* Light overlay */
-  z-index: -1; /* Put behind content */
-}
+  background-color: rgba(255, 255, 255, 0.4);
+  z-index: -1;
+} */

@@ -11,7 +11,7 @@ export const App = () => {
 
   return (
     <div
-      className={`w-screen bg-[#371A4D] h-screen text-black
+      className={`w-screen bg-[#371A4D] h-screen text-black border-orange-600 border-2
           ${!isMobile && "flex"}
         `}
     >
@@ -30,7 +30,7 @@ export const App = () => {
       </main>
       {/* Right Sidebar */}
       {!isMobile && <InfoBar />}
-      <div id={"modal-root"} />
+      {/*<div id={"modal-root"} /> */}
     </div>
   );
 };

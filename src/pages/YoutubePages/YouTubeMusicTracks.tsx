@@ -98,11 +98,10 @@ export default function YouTubeMusicTracks() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="h-screen w-full flex flex-col p-6 mt-16 mb-18 gap-6 overflow-hidden bg-[#371A4D] text-white">
+    <div className="border-blue-600 border-2 h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
       <h1 className="text-2xl font-bold">Tracks</h1>
 
-      <div className="flex-1 overflow-y-auto pb-24 relative">
-        {/* States */}
+      <div className="flex-1 overflow-y-auto pb-24 relative border-green-600 border-2">
         {isLoading && (
           <div className="space-y-6">
             <div className="h-6 w-40 bg-[#1f1f1f] rounded animate-pulse" />
@@ -129,7 +128,6 @@ export default function YouTubeMusicTracks() {
           </div>
         )}
 
-        {/* Grid */}
         {tracks.length > 0 && (
           <>
             <div
@@ -149,7 +147,6 @@ export default function YouTubeMusicTracks() {
               ))}
             </div>
 
-            {/* Sentinel */}
             <div
               ref={sentinelRef}
               className="h-10 flex items-center justify-center"

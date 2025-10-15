@@ -75,7 +75,7 @@ export const SideBar = () => {
   );
 
   return (
-    <aside className="bg-[#502B6C] w-60 h-screen text-white flex flex-col py-4 pt-16">
+    <aside className=" bg-[#502B6C] w-60 h-screen text-white flex flex-col py-4 pt-16py-4 pt-16">
       {renderMenu("", mainMenu)}
       {renderMenu("Meine Mediathek", libraryMenu)}
       {renderMenu("Playlists", playlistsMenu)}

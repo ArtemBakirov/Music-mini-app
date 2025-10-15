@@ -76,7 +76,7 @@ export default function Account() {
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-6 text-white">
+    <div className="w-full max-w-3xl mx-auto p-6 text-white border-red-500 border-2">
       <h1 className="text-2xl font-bold mb-6">Account</h1>
 
       {/* Public key (read-only) */}
