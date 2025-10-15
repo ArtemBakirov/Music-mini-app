@@ -10,15 +10,17 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const [initialized, setInitialized] = useState<boolean>(false);
   // console.log("SDK init");
   const getUserAddress = async () => {
+    console.log("get user address");
     try {
       setLoading(true);
       const inBastyon = SdkService.inBastyon();
-      // console.log("inBastyon", inBastyon);
+      console.log("inBastyon", inBastyon);
 
       let userInfo;
       if (inBastyon) {
         userInfo = await SdkService.getUsersInfo();
       } else {
+        console.log("setting default");
         userInfo = {
           address: "TGSzZGCTaYjjmMZontBcdi3M9EToS5ztEp",
           signature: {
@@ -36,6 +38,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // console.log("patch address from sdk", userInfo?.address);
+      console.log("patch profile with", userInfo?.address);
       patchProfile({ address: userInfo?.address });
     } catch (e) {
       console.error(e);
@@ -46,18 +49,24 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
+    console.log("useEffect sdk provider");
     (async () => {
-      await SdkService.init().then((info) => {
-        console.log("app info", info);
-        setInitialized(true);
-      });
+      await SdkService.init()
+        .then((info) => {
+          console.log("app info", info);
+          setInitialized(true);
+        })
+        .catch((e) => {
+          console.error("failed init", e);
+        });
       // await SdkService.requestPermissions();
-      await getUserAddress();
       // Optional extras you had:
       void SdkService.getAppInfo();
       // void SdkService.showHelperMessage("test helper message");
       void SdkService.getUserState();
     })();
+    console.log("get address");
+    void getUserAddress();
   }, []);
 
   return <>{children}</>;
