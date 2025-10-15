@@ -31,7 +31,9 @@ const userKeys = {
 
 // ---- Fetchers ----
 async function fetchUser(address: string): Promise<UserDto> {
+  console.log("fetching user for address", address);
   const res = await apiInstance.get(`/users/${encodeURIComponent(address)}`);
+  console.log("fetched user res data", res.data);
   /*if (!res.data.ok) {
     if (res.status === 404) throw new Error("User not found");
     throw new Error(`Failed to fetch user (${res.status})`);
@@ -167,7 +169,10 @@ export function useUserAvatar(address?: string) {
 export function useObjectUrl(blob?: Blob) {
   const [url, setUrl] = useState<string>();
   useEffect(() => {
-    if (!blob) { setUrl(undefined); return; }
+    if (!blob) {
+      setUrl(undefined);
+      return;
+    }
     const u = URL.createObjectURL(blob);
     setUrl(u);
     return () => URL.revokeObjectURL(u); // revoke THIS url when blob changes/unmounts
