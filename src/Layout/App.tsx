@@ -11,8 +11,9 @@ export const App = () => {
 
   return (
     <div
-      className={`w-screen bg-[#371A4D] h-screen text-black border-red-700 border-2
-          ${!isMobile && "flex"}
+      className={`w-screen bg-[#371A4D] h-screen text-black border-green-700 border-2
+      overflow-y-scroll
+      ${!isMobile && "flex"}
         `}
     >
       {/* Left Sidebar */}
