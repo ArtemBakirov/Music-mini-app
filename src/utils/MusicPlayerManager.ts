@@ -281,10 +281,10 @@ export class MusicPlayerManager {
   static async playYoutube(audioEl: any) {
     console.log("playYoutube");
     const { currentSong } = musicPlayerStore.getState();
-    if (currentSong) {
+    /* if (currentSong) {
       console.log("update session");
       updateMediaSession(currentSong as Song);
-    }
+    }*/
 
     if (!audioEl) return;
 
@@ -296,7 +296,7 @@ export class MusicPlayerManager {
     console.log("did mute");
     p.playVideo(); // starts muted, allowed
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-    p.unMute();
+    // p.unMute();
     p.setVolume(70);
     // p.playVideo();
   }
