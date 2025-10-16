@@ -59,6 +59,7 @@ export type UpsertInput =
  *  - a prebuilt FormData (with fields: address, username, bio, avatar)
  */
 async function upsertUser(input: UpsertInput): Promise<UserDto> {
+  console.log("upsert user");
   let body: BodyInit;
   // let headers: HeadersInit | undefined;
 
@@ -128,11 +129,11 @@ export function useUpsertUser() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: upsertUser,
-    onSuccess: (user) => {
+    onSuccess: async (user) => {
       if (user?.address) {
         qc.setQueryData(userKeys.byAddress(user.address), user);
         // bust avatar query (so it refetches if image changed)
-        qc.invalidateQueries({ queryKey: userKeys.avatar(user.address) });
+        await qc.invalidateQueries({ queryKey: userKeys.all });
       }
     },
   });
