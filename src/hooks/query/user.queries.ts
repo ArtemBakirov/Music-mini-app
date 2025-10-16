@@ -33,9 +33,7 @@ const userKeys = {
 
 // ---- Fetchers ----
 async function fetchUser(address: string): Promise<UserDto> {
-  console.log("fetching user for address", address);
   const res = await apiInstance.get(`/users/${encodeURIComponent(address)}`);
-  console.log("fetched user res data", res.data);
   /*if (!res.data.ok) {
     if (res.status === 404) throw new Error("User not found");
     throw new Error(`Failed to fetch user (${res.status})`);
@@ -61,7 +59,6 @@ export type UpsertInput =
  *  - a prebuilt FormData (with fields: address, username, bio, avatar)
  */
 async function upsertUser(input: UpsertInput): Promise<UserDto> {
-  console.log("upsert user");
   let body: BodyInit;
   // let headers: HeadersInit | undefined;
 
@@ -79,13 +76,11 @@ async function upsertUser(input: UpsertInput): Promise<UserDto> {
     headers: { "Content-Type": "multipart/form-data" },
   });
 
-  if (!res.data.ok) {
-    const msg = await res.data.text().catch(() => "");
-    throw new Error(
-      `Failed to save user (${res.status}): ${msg || res.statusText}`,
-    );
+  if (res.status < 200 || res.status >= 300) {
+    // const msg = await res.data.text().catch(() => "");
+    throw new Error(`Failed to save user (${res.status})`);
   }
-  const data = await res.data.json();
+  const data = await res.data;
   return data as UserDto;
 }
 
@@ -103,7 +98,6 @@ export function useUser(address?: string, enabled = true) {
 }
 
 export function useHydratedUser(address?: string) {
-  console.log("user hydrated user for address", address);
   const setFromServer = useAccountStore((s) => s.setFromServer);
 
   const q = useQuery({
@@ -114,12 +108,10 @@ export function useHydratedUser(address?: string) {
     },
     enabled: Boolean(address),
   });
-  console.log("query q", q);
 
   // hydrate store when fresh data arrives
   useEffect(() => {
     if (q.data && address) {
-      // console.log("useEffect setFromServer", q.data, address);
       setFromServer(q.data as Partial<Profile>);
     }
   }, [q.data, address, setFromServer]);
@@ -131,12 +123,12 @@ export function useUpsertUser() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: upsertUser,
-    onSuccess: async (user) => {
+    onSuccess: (user) => {
       if (user?.address) {
         setProfile(user as Profile);
         qc.setQueryData(userKeys.byAddress(user.address), user);
         // bust avatar query (so it refetches if image changed)
-        await qc.invalidateQueries({ queryKey: userKeys.all });
+        void qc.invalidateQueries({ queryKey: userKeys.all });
       }
     },
   });

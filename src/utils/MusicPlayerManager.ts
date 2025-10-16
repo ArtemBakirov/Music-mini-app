@@ -11,7 +11,7 @@ export class MusicPlayerManager {
   private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
-    console.log("init player");
+    // console.log("init player");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
@@ -138,7 +138,7 @@ export class MusicPlayerManager {
       if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
-        console.log("sync youtube");
+        // console.log("sync youtube");
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
         this.audio.videoId = currentSong.audio;

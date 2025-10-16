@@ -11,8 +11,6 @@ import noImage from "../assets/picture/no_image.png";
 
 export default function Account() {
   const profile = useAccountStore((s) => s.profile);
-  const setProfile = useAccountStore((s) => s.setProfile);
-  console.log("profile", profile);
   const patchProfile = useAccountStore((s) => s.patchProfile);
 
   const { isLoading, isError } = useHydratedUser(profile.address || "");
@@ -27,8 +25,6 @@ export default function Account() {
     profile.address || "",
   );
   const avatarUrl = useObjectUrl(avatar);
-
-  console.log("avatar", avatar);
 
   const onPickFile = () => fileInputRef.current?.click();
 
@@ -54,7 +50,6 @@ export default function Account() {
 
     try {
       mutate(fd as UpsertInput);
-      console.log("mutation status");
     } catch (e) {
       console.error(e);
       console.error("Failed to save profile.", error);

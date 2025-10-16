@@ -112,7 +112,11 @@ export const useAccountStore = create<AccountState>()(
         }
       },
 
-      setProfile: (profile) => set({ profile }),
+      setProfile: (profile) => {
+        console.log("set profile", profile);
+        set({ profile });
+      },
+
       patchProfile: (patch) => {
         // console.log("patch profile", patch);
         set({ profile: { ...get().profile, ...patch } });
