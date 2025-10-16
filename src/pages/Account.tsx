@@ -54,7 +54,7 @@ export default function Account() {
 
     try {
       mutate(fd as UpsertInput);
-      console.log("mutation status", status);
+      console.log("mutation status");
     } catch (e) {
       console.error(e);
       console.error("Failed to save profile.", error);

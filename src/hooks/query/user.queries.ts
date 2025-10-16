@@ -9,7 +9,7 @@ import {
 } from "@tanstack/react-query";
 import { Profile, useAccountStore } from "../stores/useAccountStore.ts";
 
-const setProfile = useAccountStore((s) => s.setProfile);
+const setProfile = useAccountStore.getState().setProfile;
 
 export type UserDto = {
   address: string;
