@@ -42,7 +42,7 @@ export const SideBar = () => {
 
   const uploadsMenu: MenuItem[] = [
     { key: "create", label: "Create Upload", Icon: Upload },
-    { key: "myUploads", label: "My Uploads", Icon: MyUploads },
+    // { key: "myUploads", label: "My Uploads", Icon: MyUploads },
   ];
 
   const renderMenu = (title: string, items: MenuItem[]) => (

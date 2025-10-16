@@ -12,6 +12,7 @@ import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
 import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
 import YouTubeMusicArtists from "../pages/YoutubePages/YouTubeMusicArtists.tsx";
 import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
+import { CreateUploadPlaceholder } from "../pages/CreateUploadPlaceholder.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -65,7 +66,7 @@ export const DesktopTabletLayout = () => {
                 element={<PlaylistDetailsPage />}
               />
               <Route path="account" element={<Account />} />
-              <Route path="create" element={<StartCreating />} />
+              <Route path="create" element={<CreateUploadPlaceholder />} />
             </>
           }
         />
