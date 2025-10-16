@@ -295,20 +295,20 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
-    // console.log("playYoutube");
-    if (!audioEl) return;
-
-    // console.log("play inside MusicPlayerManager", audioEl);
-    // console.log("videoId", audioEl.videoId);
-    const p = audioEl;
-    // console.log("play once");
-    p.mute(); // safe
-    // console.log("did mute");
-    p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-    p.unMute();
-    p.setVolume(70);
-    console.log("executed play");
+    console.log("play video");
+    try {
+      const p = this.audio;
+      p.mute(); // safe
+      // console.log("did mute");
+      p.playVideo(); // starts muted, allowed
+      await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+      p.unMute();
+      p.setVolume(70);
+      console.log("video playing");
+    } catch (e) {
+      console.log("play video failed", e);
+    }
+    musicPlayerStore.setState({ isPlaying: true });
   }
 
   static onYTStateChange(e: any) {
