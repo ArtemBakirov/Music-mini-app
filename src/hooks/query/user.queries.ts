@@ -9,6 +9,8 @@ import {
 } from "@tanstack/react-query";
 import { Profile, useAccountStore } from "../stores/useAccountStore.ts";
 
+const setProfile = useAccountStore((s) => s.setProfile);
+
 export type UserDto = {
   address: string;
   username?: string;
@@ -131,6 +133,7 @@ export function useUpsertUser() {
     mutationFn: upsertUser,
     onSuccess: async (user) => {
       if (user?.address) {
+        setProfile(user as Profile);
         qc.setQueryData(userKeys.byAddress(user.address), user);
         // bust avatar query (so it refetches if image changed)
         await qc.invalidateQueries({ queryKey: userKeys.all });
