@@ -295,7 +295,7 @@ export class MusicPlayerManager {
     p.mute(); // safe
     console.log("did mute");
     p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 700)); // brief tick so player actually transitions
+    await new Promise((r) => setTimeout(r, 1000)); // brief tick so player actually transitions
     console.log("unmuting");
     p.unMute();
     p.setVolume(70);
