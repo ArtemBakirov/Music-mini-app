@@ -15,7 +15,7 @@ export const InfoBar = memo(() => {
   const info = data?.results[0];
 
   return (
-    <aside className="w-100 border-r-2 border-black p-4 flex flex-col bg-[#502B6C] text-gray-300">
+    <aside className="w-100 p-4 flex flex-col bg-[#502B6C] text-gray-300">
       {currentSong && (
         <>
           <FullScreen className="w-8 h-8 text-white hover:text-gray-300 cursor-pointer" />

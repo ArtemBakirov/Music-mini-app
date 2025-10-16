@@ -11,7 +11,7 @@ export const App = () => {
 
   return (
     <div
-      className={`w-screen bg-[#371A4D] h-screen text-black border-green-700 border-2
+      className={`w-screen bg-[#371A4D] h-screen text-black
       overflow-y-scroll
       ${!isMobile && "flex"}
         `}
