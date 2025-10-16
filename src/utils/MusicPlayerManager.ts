@@ -294,15 +294,11 @@ export class MusicPlayerManager {
     console.log("play once");
     p.mute(); // safe
     console.log("did mute");
-    try {
-      p.playVideo(); // starts muted, allowed
-      await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
-      p.unMute();
-      p.setVolume(70);
-      p.playVideo();
-    } catch (e) {
-      console.log("play failed, error", e);
-    }
+    p.playVideo(); // starts muted, allowed
+    await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
+    p.unMute();
+    p.setVolume(70);
+    // p.playVideo();
   }
 
   static async onYTStateChange(e: any) {
@@ -310,7 +306,7 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("state changed to Playing, unmute");
+      // console.log("state changed to Playing, unmute");
       // this.audio.unMute();
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
