@@ -295,10 +295,10 @@ export class MusicPlayerManager {
     p.mute(); // safe
     console.log("did mute");
     p.playVideo(); // starts muted, allowed
-    await new Promise((r) => setTimeout(r, 1000)); // brief tick so player actually transitions
-    console.log("unmuting");
-    p.unMute();
-    p.setVolume(70);
+    // await new Promise((r) => setTimeout(r, 1000)); // brief tick so player actually transitions
+    // console.log("unmuting");
+    // p.unMute();
+    // p.setVolume(70);
     // p.playVideo();
   }
 
@@ -307,6 +307,9 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
+      console.log("unmuting");
+      this.audio.unMute();
+      this.audio.setVolume(70);
       // console.log("state changed to Playing, unmute");
       // this.audio.unMute();
       // console.log("CHANGING STATE", e, "Setting playing true");
