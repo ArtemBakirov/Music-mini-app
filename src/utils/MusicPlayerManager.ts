@@ -11,7 +11,7 @@ export class MusicPlayerManager {
   private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
-    console.log("init");
+    console.log("init player");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;

@@ -116,7 +116,7 @@ export function useHydratedUser(address?: string) {
   // hydrate store when fresh data arrives
   useEffect(() => {
     if (q.data && address) {
-      console.log("useEffect setFromServer", q.data, address);
+      // console.log("useEffect setFromServer", q.data, address);
       setFromServer(q.data as Partial<Profile>);
     }
   }, [q.data, address, setFromServer]);

@@ -22,7 +22,7 @@ export const JamendoPlayerFooter = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [bgColor, setBgColor] = useState("#2D0F3A");
 
-  console.log("is Expanded", isExpanded);
+  // console.log("is Expanded", isExpanded);
 
   // console.log("audioref", audioRef);
 

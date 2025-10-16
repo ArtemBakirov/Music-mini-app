@@ -10,17 +10,17 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const [initialized, setInitialized] = useState<boolean>(false);
   // console.log("SDK init");
   const getUserAddress = async () => {
-    console.log("get user address");
+    // console.log("get user address");
     try {
       setLoading(true);
       const inBastyon = SdkService.inBastyon();
-      console.log("inBastyon", inBastyon);
+      // console.log("inBastyon", inBastyon);
 
       let userInfo;
       if (inBastyon) {
         userInfo = await SdkService.getUsersInfo();
       } else {
-        console.log("setting default");
+        // console.log("setting default");
         userInfo = {
           address: "TGSzZGCTaYjjmMZontBcdi3M9EToS5ztEp",
           signature: {
@@ -38,7 +38,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
       }
 
       // console.log("patch address from sdk", userInfo?.address);
-      console.log("patch profile with", userInfo?.address);
+      // console.log("patch profile with", userInfo?.address);
       patchProfile({ address: userInfo?.address });
     } catch (e) {
       console.error(e);
@@ -49,15 +49,15 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    console.log("useEffect sdk provider");
+    // console.log("useEffect sdk provider");
     (async () => {
       await SdkService.init()
         .then((info) => {
-          console.log("app info", info);
+          // console.log("app info", info);
           setInitialized(true);
         })
         .catch((e) => {
-          console.error("failed init", e);
+          // console.error("failed init", e);
         });
       // await SdkService.requestPermissions();
       // Optional extras you had:
@@ -65,7 +65,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
       // void SdkService.showHelperMessage("test helper message");
       void SdkService.getUserState();
     })();
-    console.log("get address");
+    // console.log("get address");
     void getUserAddress();
   }, []);
 
