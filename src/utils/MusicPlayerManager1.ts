@@ -1,5 +1,6 @@
-import { musicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
+import { musicPlayerStore, Song } from "../hooks/stores/useMusicPlayerStore.ts";
 // import { YouTubeProps } from "react-youtube";
+import { updateMediaSession } from "./updateMediaSession.ts";
 
 export class MusicPlayerManager {
   private static audio: HTMLAudioElement | any | null = null;
@@ -14,10 +15,7 @@ export class MusicPlayerManager {
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
-      // console.log("init youtube");
       this.audio = audioEl; // window.YT.Player
-      // console.log("audioEl", audioEl);
-      // console.log("onReady", e.target);
       audioEl.mute(); // ensure safe autoplay during priming
       const iframe = audioEl.getIframe();
       iframe?.setAttribute(
@@ -25,10 +23,8 @@ export class MusicPlayerManager {
         "autoplay; encrypted-media; picture-in-picture; fullscreen",
       );
       // readyResolveRef.current?.();
-      // console.log("INIT FINISHED");
     }
 
-    // console.log("init music player manager");
     this.audio = audioEl;
     if (!this.listenersAttached) {
       this.attachListeners();
@@ -43,18 +39,15 @@ export class MusicPlayerManager {
       };
 
       this.unsubStore = musicPlayerStore.subscribe((state) => {
-        // console.log("store changed");
         const slice = {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
         };
-        // console.log("compare slice prevslice", slice, prevSlice);
+
         if (
           slice.currentSong !== prevSlice.currentSong ||
           slice.isPlaying !== prevSlice.isPlaying
         ) {
-          // console.log("store changed, different slice, sync", "slice", slice);
-          // console.log("prevSlice", prevSlice);
           void this.syncToState();
         }
 
@@ -62,7 +55,6 @@ export class MusicPlayerManager {
       });
     }
     // on first init, the subscriber will not be called, so we need to sync manually
-    // console.log("manual sync after init");
     void this.syncToState();
   }
 
@@ -81,7 +73,6 @@ export class MusicPlayerManager {
         const duration = player.getDuration();
         if (duration > 0) {
           const progress = (currentTime / duration) * 100;
-          // console.log("setting progress yt", progress);
           set({ currentTime, duration, progress });
         }
       };
@@ -133,13 +124,11 @@ export class MusicPlayerManager {
   }
 
   static async syncToState() {
-    console.log("syncToState");
     const { currentSong, isPlaying, provider, repeatMode } =
       musicPlayerStore.getState();
     if (!this.audio || !currentSong) return;
 
     if (provider === "youtube") {
-      console.log("sync youtube");
       /* console.log(
         "this current, currentSong audio",
         this.currentSrc,
@@ -147,9 +136,9 @@ export class MusicPlayerManager {
       );*/
       // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
       if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
-        console.log("different src");
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
+        console.log("sync youtube");
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
         this.audio.videoId = currentSong.audio;
@@ -164,10 +153,11 @@ export class MusicPlayerManager {
             // console.log("isPlaying, trying to play", this.audio.videoId);
             try {
               // console.log("cueing video");
-
-              this.audio.cueVideoById({ videoId: this.audio.videoId });
+              const videoId = this.audio.videoId;
+              console.log("videoId before cue", videoId);
+              this.audio.cueVideoById({ videoId });
               setTimeout(async () => {
-                console.log("STARTING PLAY");
+                console.log("EXECUTING YOUTUBE");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -184,9 +174,7 @@ export class MusicPlayerManager {
 
       // console.log("this audio in sync", this.audio);
     } else {
-      console.log("not youtube");
       if (this.currentSrc !== currentSong.audio) {
-        console.log("src", currentSong.audio);
         this.audio.src = currentSong.audio;
         this.currentSrc = currentSong.audio;
       }
@@ -194,7 +182,6 @@ export class MusicPlayerManager {
       if (isPlaying) {
         // console.log("sync to state playing");
         try {
-          console.log("play", this.audio);
           await this.audio.play();
         } catch (e) {
           console.warn("audio.play() failed (user gesture?):", e);
@@ -222,12 +209,10 @@ export class MusicPlayerManager {
   }
 
   static async resume() {
-    console.log("resume");
     if (!this.audio) return;
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       // not sure why I add this, maybe don't need to call playVideo here
-      console.log("play video");
       try {
         const p = this.audio;
         p.mute(); // safe
@@ -236,7 +221,6 @@ export class MusicPlayerManager {
         await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
         p.unMute();
         p.setVolume(70);
-        console.log("video playing");
       } catch (e) {
         console.log("play video failed", e);
       }
@@ -295,33 +279,50 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
-    // console.log("playYoutube");
+    console.log("playYoutube");
+    const { currentSong } = musicPlayerStore.getState();
+    if (currentSong) {
+      console.log("update session");
+      updateMediaSession(currentSong as Song);
+    }
+
     if (!audioEl) return;
 
     // console.log("play inside MusicPlayerManager", audioEl);
     // console.log("videoId", audioEl.videoId);
     const p = audioEl;
-    // console.log("play once");
+    console.log("play once");
     p.mute(); // safe
-    // console.log("did mute");
+    console.log("did mute");
     p.playVideo(); // starts muted, allowed
     await new Promise((r) => setTimeout(r, 500)); // brief tick so player actually transitions
     p.unMute();
     p.setVolume(70);
-    console.log("executed play");
+    // p.playVideo();
   }
 
-  static onYTStateChange(e: any) {
-    const { setIsPlaying } = musicPlayerStore.getState();
+  static async onYTStateChange(e: any) {
+    // const { setIsPlaying } = musicPlayerStore.getState();
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      // console.log("state changed to Playing");
+      // console.log("state changed to Playing, unmute");
+      // this.audio.unMute();
       // console.log("CHANGING STATE", e, "Setting playing true");
       // setIsPlaying(true);
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
-      // console.log("state changed to not Playing");
+      if (e.data === YT.PlayerState.PAUSED) {
+        console.log("state changed to paused");
+        // this.audio.playVideo();
+      } else {
+        console.log("state changed to Ended", YT.PlayerState, e.data);
+      }
+
+      // await new Promise((r) => setTimeout(r, 1000));
+      // console.log("on ended, playVideo", this.audio.playVideo);
+      // this.audio.playVideo();
+      // console.log("exec playVideo");
     }
 
     // setIsPlaying(false);
