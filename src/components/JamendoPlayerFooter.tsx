@@ -301,7 +301,8 @@ export const JamendoPlayerFooter = () => {
                 }
               >
                 <div className="justify-self-start text-xs text-gray-300 mt-1">
-                  {formatTime(currentTime)} / {formatTime(duration)}
+                  <span>{formatTime(currentTime)} /</span>
+                  <span>{formatTime(duration)}</span>
                 </div>
                 <div className={"justify-self-center mx-auto"}>
                   <FooterController
