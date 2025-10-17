@@ -9,6 +9,8 @@ import DragHandle from "../assets/icons/dragHandle.svg?react";
 import { motion, useMotionValue, useDragControls } from "framer-motion";
 import { Vibrant } from "node-vibrant/browser";
 
+import Add from "../assets/icons/add.svg?react";
+
 // mobile / desktop
 import { useDesktopMobileStore } from "../hooks/stores/useDesktopMobileStore.ts";
 
@@ -293,18 +295,25 @@ export const JamendoPlayerFooter = () => {
               </div>
 
               <ProgressBar />
-
-              <div className={"flex-shrink-0"}>
-                <FooterController
-                  onPlayPauseClick={handleClick}
-                  isPlaying={isPlaying}
-                  onPrevClick={prev}
-                  onNextClick={next}
-                  onShuffleClick={toggleShuffle}
-                  onRepeatClick={cycleRepeat}
-                  shuffleActive={isShuffling}
-                  repeatMode={repeatMode}
-                />
+              <div
+                className={"grid grid-cols-[1fr_auto_1fr] items-center gap-10"}
+              >
+                <div className="justify-self-start text-xs text-gray-300 mt-1">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </div>
+                <div className={"justify-self-center mx-auto"}>
+                  <FooterController
+                    onPlayPauseClick={handleClick}
+                    isPlaying={isPlaying}
+                    onPrevClick={prev}
+                    onNextClick={next}
+                    onShuffleClick={toggleShuffle}
+                    onRepeatClick={cycleRepeat}
+                    shuffleActive={isShuffling}
+                    repeatMode={repeatMode}
+                  />
+                </div>
+                <Add className={"justify-self-end"} />
               </div>
             </motion.div>
           </motion.div>
