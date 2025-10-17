@@ -297,7 +297,7 @@ export const JamendoPlayerFooter = () => {
               <ProgressBar />
               <div
                 className={
-                  "grid grid-cols-[1fr_auto_1fr] items-center gap-10 border-1 border-orange-600"
+                  "w-[78%] grid grid-cols-[1fr_auto_1fr] items-center gap-10"
                 }
               >
                 <div className="justify-self-start text-xs text-gray-300 mt-1">
