@@ -16,6 +16,7 @@ import { useDesktopMobileStore } from "../hooks/stores/useDesktopMobileStore.ts"
 
 // for yt
 import YouTube, { YouTubeProps } from "react-youtube";
+import { AnimatedModalContainer } from "../Layout/Animated/AnimatedModalContainer.tsx";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
@@ -129,6 +130,8 @@ export const JamendoPlayerFooter = () => {
     console.log("error in youtube", e);
   };
 
+  const [trackMenuOpen, setTrackMenuOpen] = useState<boolean>(false);
+
   // 🎵 Drag logic for mobile
   // const y = useMotionValue(0);
   /* const opacity = useTransform(y, [0, -300], [1, 0]);
@@ -138,7 +141,7 @@ export const JamendoPlayerFooter = () => {
   }; */
 
   // drag contols
-  const contols = useDragControls();
+  const controls = useDragControls();
   const y = useMotionValue(0);
 
   // if (!currentSong) return null;
@@ -265,7 +268,7 @@ export const JamendoPlayerFooter = () => {
               animate={{ y: 0 }}
               transition={{ ease: "easeInOut" }}
               drag={"y"}
-              dragControls={contols}
+              dragControls={controls}
               onDragEnd={() => {
                 if (y.get() >= 100) {
                   setIsExpanded(false);
@@ -279,7 +282,7 @@ export const JamendoPlayerFooter = () => {
               // onPointerDown={(e) => contols.start(e)}
             >
               <DragHandle
-                onPointerDown={(e) => contols.start(e)}
+                onPointerDown={(e) => controls.start(e)}
                 className="w-56 h-24 absolute left-0, right-0, -top-1 z-10"
               />
               <img
@@ -316,14 +319,32 @@ export const JamendoPlayerFooter = () => {
                     repeatMode={repeatMode}
                   />
                 </div>
-                <Add className={"justify-self-end"} />
+                <button
+                  onClick={() => setTrackMenuOpen(true)}
+                  className="justify-self-end p-2 rounded-full hover:bg-[#3a1a4d] transition"
+                >
+                  <Add />
+                </button>
               </div>
+              {trackMenuOpen && (
+                <AnimatedModalContainer onClose={() => setTrackMenuOpen(false)}>
+                  <div className={"flex flex-col gap-2"}>
+                    <button className="px-4 py-2 rounded-md bg-[#B065A0] text-white">
+                      Add to my Library
+                    </button>
+                    <button className="px-4 py-2 rounded-md bg-[#B065A0] text-white">
+                      Add to Playlist
+                    </button>
+                  </div>
+                </AnimatedModalContainer>
+              )}
             </motion.div>
           </motion.div>
         )}
       </div>
 
       {/* audio/youtube elements (still hidden) */}
+
       {provider === "jamendo" && <audio ref={audioRef} onEnded={handleEnded} />}
       {provider === "youtube" && (
         <YouTube
