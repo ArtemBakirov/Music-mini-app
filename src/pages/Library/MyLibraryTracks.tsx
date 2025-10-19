@@ -1,5 +1,6 @@
 import { useLibrary } from "../../hooks/query/library.queries.ts";
 import { useAccountStore } from "../../hooks/stores/useAccountStore.ts";
+import { DisplayYoutubeSongCard } from "../../components/DisplayYoutubeSongCard.tsx";
 // Optionally hydrate from YT for fresh metadata (see notes below).
 
 export const MyLibraryTracks = () => {
@@ -14,23 +15,20 @@ export const MyLibraryTracks = () => {
   if (isError) return <div className="p-6 text-red-400">Failed to load.</div>;
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
       <h1>My Tracks</h1>
-      {data?.items.map((it: any) => (
-        <div
-          key={it._id}
-          className="flex items-center gap-3 bg-[#2D0F3A] p-3 rounded"
-        >
-          <img
-            src={it.snapshot?.thumbnail}
-            className="w-14 h-14 rounded object-cover"
+      {data?.items.map((it: any, idx) => (
+        <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}>
+          <DisplayYoutubeSongCard
+            allTracks={data}
+            idx={idx}
+            key={idx}
+            videoId={it.externalId}
+            track={it}
+            title={it.snapshot.title}
+            channelTitle={it.snapshot.title}
+            thumbnail={it.snapshot.thumbnail}
           />
-          <div className="min-w-0">
-            <div className="font-semibold truncate">{it.snapshot?.title}</div>
-            <div className="text-sm text-gray-300 truncate">
-              {it.snapshot?.subtitle}
-            </div>
-          </div>
         </div>
       ))}
     </div>
