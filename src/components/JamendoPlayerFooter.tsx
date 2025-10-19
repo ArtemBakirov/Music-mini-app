@@ -17,6 +17,8 @@ import { useDesktopMobileStore } from "../hooks/stores/useDesktopMobileStore.ts"
 // for yt
 import YouTube, { YouTubeProps } from "react-youtube";
 import { AnimatedModalContainer } from "../Layout/Animated/AnimatedModalContainer.tsx";
+import { useToggleSave, useSavedMap } from "../hooks/query/library.queries.ts";
+import { useAccountStore } from "../hooks/stores/useAccountStore.ts";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
@@ -30,6 +32,13 @@ export const JamendoPlayerFooter = () => {
   // console.log("audioref", audioRef);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
+  const queue = useMusicPlayerStore((s) => s.queue);
+  const audioId = currentSong?.audio || "";
+
+  const batchKeyIds = queue.map((s) => s.externalId);
+  const { data: savedMap } = useSavedMap("track", batchKeyIds);
+  const isSaved = savedMap?.[audioId] ?? false;
+  const toggle = useToggleSave();
 
   // console.log("current song", currentSong);
 
@@ -71,6 +80,36 @@ export const JamendoPlayerFooter = () => {
   const provider = useMusicPlayerStore((s) => s.provider);
   // console.log("provider footer", provider);
   // console.log("provider", provider);
+
+  const profile = useAccountStore((s) => s.profile);
+  console.log("profile address", profile.address);
+
+  const handleAddToLibrary = () => {
+    console.log("add to library");
+    if (isSaved) {
+      console.log("removing");
+      toggle.mutate({
+        address: profile.address || "",
+        action: "remove",
+        kind: "track",
+        externalId: currentSong?.audio || "",
+      });
+    } else {
+      console.log("adding");
+      toggle.mutate({
+        address: profile.address || "",
+        action: "add",
+        kind: "track",
+        externalId: currentSong?.audio || "",
+        snapshot: {
+          title: currentSong?.name || "",
+          subtitle: currentSong?.name,
+          thumbnail: currentSong?.album_image || "",
+        },
+      });
+    }
+  };
+
   const formatTime = (seconds: number) => {
     if (!isFinite(seconds)) return "0:00";
     const m = Math.floor(seconds / 60);
@@ -273,7 +312,7 @@ export const JamendoPlayerFooter = () => {
                 if (y.get() >= 100) {
                   setIsExpanded(false);
                 }
-                console.log("on end", y.get());
+                // console.log("on end", y.get());
               }}
               dragListener={false}
               dragConstraints={{ top: 0, bottom: 0 }}
@@ -329,7 +368,10 @@ export const JamendoPlayerFooter = () => {
               {trackMenuOpen && (
                 <AnimatedModalContainer onClose={() => setTrackMenuOpen(false)}>
                   <div className={"flex flex-col gap-2"}>
-                    <button className="px-4 py-2 rounded-md bg-[#B065A0] text-white">
+                    <button
+                      onClick={handleAddToLibrary}
+                      className="px-4 py-2 rounded-md bg-[#B065A0] text-white"
+                    >
                       Add to my Library
                     </button>
                     <button className="px-4 py-2 rounded-md bg-[#B065A0] text-white">

@@ -31,34 +31,6 @@ export default function YouTubeMusicTracks() {
 
   // Keep child handles in a Map so we never "wipe" them by accident
   const handlesRef = useRef<Map<string, YtTrackHandle>>(new Map());
-  // const [primingInitial, setPrimingInitial] = useState(false);
-
-  // Prime the FIRST page before revealing UI; later pages can prime on the fly
-  /*useEffect(() => {
-    // if (!data?.pages?.length) return;
-
-    // let cancelled = false;
-    (async () => {
-      // Only prime after first page becomes available
-      /*const firstPageIds = new Set(
-        (data.pages[0]?.items ?? []).map((v: any) => v.id),
-      );*/
-
-  // Wait one macrotask to ensure callback refs have run
-  // await new Promise((r) => setTimeout(r, 0));
-
-  /*const firstPageHandles = Array.from(handlesRef.current.entries())
-        .filter(([id]) => firstPageIds.has(id))
-        .map(([_, h]) => h);
-
-      // await Promise.allSettled(firstPageHandles.map((h) => h.prime()));
-      // if (!cancelled) setPrimingInitial(false);
-    })();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [data?.pages?.length]); */
 
   // Prime newly appended pages (optional – doesn’t block UI)
   const prevCountRef = useRef(0);

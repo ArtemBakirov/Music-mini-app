@@ -154,10 +154,10 @@ export class MusicPlayerManager {
             try {
               // console.log("cueing video");
               const videoId = this.audio.videoId;
-              console.log("videoId before cue", videoId);
+              // console.log("videoId before cue", videoId);
               this.audio.cueVideoById({ videoId });
               setTimeout(async () => {
-                console.log("EXECUTING YOUTUBE");
+                //  console.log("EXECUTING YOUTUBE");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -279,7 +279,7 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
-    console.log("playYoutube");
+    // console.log("playYoutube");
     const { currentSong } = musicPlayerStore.getState();
     /* if (currentSong) {
       console.log("update session");
@@ -291,9 +291,9 @@ export class MusicPlayerManager {
     // console.log("play inside MusicPlayerManager", audioEl);
     // console.log("videoId", audioEl.videoId);
     const p = audioEl;
-    console.log("play once");
+    // console.log("play once");
     p.mute(); // safe
-    console.log("did mute");
+    // console.log("did mute");
     p.playVideo(); // starts muted, allowed
     // await new Promise((r) => setTimeout(r, 1000)); // brief tick so player actually transitions
     // console.log("unmuting");
@@ -307,7 +307,7 @@ export class MusicPlayerManager {
     const YT = (window as any).YT;
     if (!YT) return;
     if (e.data === YT.PlayerState.PLAYING) {
-      console.log("unmuting");
+      // console.log("unmuting");
       this.audio.unMute();
       this.audio.setVolume(70);
       // console.log("state changed to Playing, unmute");
@@ -317,10 +317,10 @@ export class MusicPlayerManager {
     }
     if (e.data === YT.PlayerState.PAUSED || e.data === YT.PlayerState.ENDED) {
       if (e.data === YT.PlayerState.PAUSED) {
-        console.log("state changed to paused");
+        // console.log("state changed to paused");
         // this.audio.playVideo();
       } else {
-        console.log("state changed to Ended", YT.PlayerState, e.data);
+        // console.log("state changed to Ended", YT.PlayerState, e.data);
       }
 
       // await new Promise((r) => setTimeout(r, 1000));

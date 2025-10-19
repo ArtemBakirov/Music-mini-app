@@ -33,7 +33,7 @@ export const SideBar = () => {
     { key: "recent", label: "Zuletzt hinzugefügt", Icon: RecentlyAdded },
     { key: "artists", label: "Künstler", Icon: Artists },
     { key: "albums", label: "Alben", Icon: Albums },
-    { key: "tracks", label: "Titel", Icon: Tracks },
+    { key: "library", label: "Titel", Icon: Tracks },
   ];
 
   const playlistsMenu: MenuItem[] = [

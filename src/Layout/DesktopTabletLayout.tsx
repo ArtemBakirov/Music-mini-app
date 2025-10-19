@@ -13,6 +13,8 @@ import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
 import YouTubeMusicArtists from "../pages/YoutubePages/YouTubeMusicArtists.tsx";
 import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
 import { CreateUploadPlaceholder } from "../pages/CreateUploadPlaceholder.tsx";
+import { Library } from "../pages/Library/Library.tsx";
+import { MyLibraryTracks } from "../pages/Library/MyLibraryTracks.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -67,6 +69,17 @@ export const DesktopTabletLayout = () => {
               />
               <Route path="account" element={<Account />} />
               <Route path="create" element={<CreateUploadPlaceholder />} />
+
+              {/* My Library */}
+              <Route
+                path="library"
+                element={<Library />}
+                children={
+                  <>
+                    <Route index element={<MyLibraryTracks />} />
+                  </>
+                }
+              />
             </>
           }
         />

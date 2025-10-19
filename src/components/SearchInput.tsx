@@ -21,7 +21,7 @@ export const SearchInput = ({
   // const [source, setSource] = useState<Source>("jamendo");
 
   const handleSourceChange = (source: Source) => {
-    console.log("change source", source);
+    // console.log("change source", source);
     setSource(source);
   };
 
