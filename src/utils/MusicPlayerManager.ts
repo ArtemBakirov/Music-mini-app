@@ -1,17 +1,18 @@
-import { musicPlayerStore, Song } from "../hooks/stores/useMusicPlayerStore.ts";
+import { musicPlayerStore } from "../hooks/stores/useMusicPlayerStore.ts";
+// import { Song } from "../types/youtube.types.ts";
 // import { YouTubeProps } from "react-youtube";
-import { updateMediaSession } from "./updateMediaSession.ts";
+// import { updateMediaSession } from "./updateMediaSession.ts";
 
 export class MusicPlayerManager {
   private static audio: HTMLAudioElement | any | null = null;
   private static listenersAttached = false;
   private static currentSrc: string | null = null;
-  private static newSrc: string | null = null;
+  // private static newSrc: string | null = null;
   private static unsubStore?: () => void;
   private static progressTimer: any | null = null;
 
   static init(audioEl: HTMLAudioElement | any) {
-    // console.log("init player");
+    console.log("init player");
     const { provider } = musicPlayerStore.getState();
     if (provider === "youtube") {
       if (!audioEl) return;
@@ -33,12 +34,14 @@ export class MusicPlayerManager {
 
     // Subscribe once to store changes (currentSong / isPlaying)
     if (!this.unsubStore) {
+      console.log("subscription");
       let prevSlice = {
         currentSong: musicPlayerStore.getState().currentSong,
         isPlaying: musicPlayerStore.getState().isPlaying,
       };
 
       this.unsubStore = musicPlayerStore.subscribe((state) => {
+        console.log("compare slice");
         const slice = {
           currentSong: state.currentSong,
           isPlaying: state.isPlaying,
@@ -135,14 +138,14 @@ export class MusicPlayerManager {
         currentSong.audio,
       );*/
       // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
-      if (this.currentSrc !== currentSong.audio || repeatMode === "one") {
+      if (this.currentSrc !== currentSong.audioId || repeatMode === "one") {
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************
-        // console.log("sync youtube");
+        console.log("sync youtube");
         // youtube player expects videoId property
         // console.log("setting videoId", currentSong.audio);
-        this.audio.videoId = currentSong.audio;
-        this.currentSrc = currentSong.audio;
+        this.audio.videoId = currentSong.audioId;
+        this.currentSrc = currentSong.audioId;
         // console.log("set videoId", this.audio);
         if (this.audio) {
           // console.log("sync this audio exists", this.audio);
@@ -174,9 +177,9 @@ export class MusicPlayerManager {
 
       // console.log("this audio in sync", this.audio);
     } else {
-      if (this.currentSrc !== currentSong.audio) {
-        this.audio.src = currentSong.audio;
-        this.currentSrc = currentSong.audio;
+      if (this.currentSrc !== currentSong.audioId) {
+        this.audio.src = currentSong.audioId;
+        this.currentSrc = currentSong.audioId;
       }
 
       if (isPlaying) {
@@ -279,8 +282,8 @@ export class MusicPlayerManager {
   }
 
   static async playYoutube(audioEl: any) {
-    // console.log("playYoutube");
-    const { currentSong } = musicPlayerStore.getState();
+    console.log("playYoutube", audioEl);
+    //const { currentSong } = musicPlayerStore.getState();
     /* if (currentSong) {
       console.log("update session");
       updateMediaSession(currentSong as Song);

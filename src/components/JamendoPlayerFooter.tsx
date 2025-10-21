@@ -22,6 +22,8 @@ import { useAccountStore } from "../hooks/stores/useAccountStore.ts";
 
 export const JamendoPlayerFooter = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
+  const profile = useAccountStore((s) => s.profile);
+  const address = profile.address || "";
 
   // animations/ extended
   const [isExpanded, setIsExpanded] = useState(false);
@@ -33,21 +35,26 @@ export const JamendoPlayerFooter = () => {
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
   const queue = useMusicPlayerStore((s) => s.queue);
-  const audioId = currentSong?.audio || "";
+  // console.log("queue", queue);
+  const audioId = currentSong?.audioId || "";
 
-  const batchKeyIds = queue.map((s) => s.externalId);
-  const { data: savedMap } = useSavedMap("track", batchKeyIds);
+  const batchKeyIds = queue.map((s) => s.audioId);
+  // console.log("batchedkeyIds", batchKeyIds);
+  const { data: savedMap } = useSavedMap(address, "track", batchKeyIds);
+  // console.log("savedMap", savedMap);
   const isSaved = savedMap?.[audioId] ?? false;
-  const toggle = useToggleSave();
+  // console.log("isSaved footer", isSaved);
+  const { mutate, isPending, data, error } = useToggleSave();
+  // console.log("mutation is pending", isPending);
 
-  // console.log("current song", currentSong);
+  // console.log("mutation data", data, error);
 
   // console.log("currentSong footer", currentSong);
 
   // Extract color from album cover
   useEffect(() => {
-    if (currentSong?.album_image) {
-      Vibrant.from(currentSong.album_image)
+    if (currentSong?.thumbnail) {
+      Vibrant.from(currentSong.thumbnail)
         .getPalette()
         .then((palette) => {
           const color = palette.Vibrant?.hex || "#2D0F3A";
@@ -55,13 +62,13 @@ export const JamendoPlayerFooter = () => {
         })
         .catch(() => setBgColor("#2D0F3A"));
     }
-  }, [currentSong?.album_image]);
+  }, [currentSong?.thumbnail]);
 
   // desktop/mobile store
   const isMobile = useDesktopMobileStore((s) => s.isMobile);
-  const platform = useDesktopMobileStore((s) => s.platform);
-  const width = useDesktopMobileStore((s) => s.width);
-  const height = useDesktopMobileStore((s) => s.height);
+  //const platform = useDesktopMobileStore((s) => s.platform);
+  //const width = useDesktopMobileStore((s) => s.width);
+  //const height = useDesktopMobileStore((s) => s.height);
 
   // console.log("in footer device", isMobile, platform, width, height);
 
@@ -81,32 +88,29 @@ export const JamendoPlayerFooter = () => {
   // console.log("provider footer", provider);
   // console.log("provider", provider);
 
-  const profile = useAccountStore((s) => s.profile);
-  console.log("profile address", profile.address);
+  // console.log("profile address", profile.address);
+  // console.log("currentSong", currentSong);
 
   const handleAddToLibrary = () => {
-    console.log("add to library");
-    if (isSaved) {
-      console.log("removing");
-      toggle.mutate({
-        address: profile.address || "",
-        action: "remove",
-        kind: "track",
-        externalId: currentSong?.audio || "",
-      });
-    } else {
-      console.log("adding");
-      toggle.mutate({
-        address: profile.address || "",
-        action: "add",
-        kind: "track",
-        externalId: currentSong?.audio || "",
-        snapshot: {
-          title: currentSong?.name || "",
-          subtitle: currentSong?.name,
-          thumbnail: currentSong?.album_image || "",
-        },
-      });
+    // console.log("library");
+    if (currentSong) {
+      if (isSaved) {
+        // console.log("removing");
+        mutate({
+          song: currentSong,
+          address: profile.address || "",
+          action: "remove",
+          kind: "track",
+        });
+      } else {
+        // console.log("adding");
+        mutate({
+          address: profile.address || "",
+          action: "add",
+          kind: "track",
+          song: currentSong,
+        });
+      }
     }
   };
 
@@ -129,18 +133,18 @@ export const JamendoPlayerFooter = () => {
   }, [currentSong]);
 
   const handleEnded = () => {
-    console.log("set after ended");
+    // console.log("set after ended");
     setIsPlaying(false);
   };
 
   const handleClick = async () => {
-    console.log("click footer");
+    // console.log("click footer");
     if (isPlaying) {
       MusicPlayerManager.pause();
       setIsPlaying(false);
     } else {
       MusicPlayerManager.resume();
-      console.log("Change state in Footer");
+      // console.log("Change state in Footer");
       setIsPlaying(true);
     }
   };
@@ -158,6 +162,7 @@ export const JamendoPlayerFooter = () => {
   };
 
   const onYTReady: YouTubeProps["onReady"] = (e) => {
+    //console.log("onYTReady", e);
     MusicPlayerManager.init(e.target); // YT.Player
   };
 
@@ -166,7 +171,7 @@ export const JamendoPlayerFooter = () => {
   };
 
   const handleError = (e) => {
-    console.log("error in youtube", e);
+    // console.log("error in youtube", e);
   };
 
   const [trackMenuOpen, setTrackMenuOpen] = useState<boolean>(false);
@@ -182,6 +187,8 @@ export const JamendoPlayerFooter = () => {
   // drag contols
   const controls = useDragControls();
   const y = useMotionValue(0);
+
+  //console.log("provider in footer", provider, currentSong);
 
   // if (!currentSong) return null;
   if (!isMobile) {
@@ -206,9 +213,9 @@ export const JamendoPlayerFooter = () => {
           <div className={"flex flex-col items-center w-full"}>
             <div className={"flex gap-4 justify-center mb-2"}>
               <div className="font-bold">
-                {currentSong?.title || currentSong?.name}
+                {currentSong?.title || currentSong?.title}
               </div>
-              <div className="font-bold">{currentSong?.artist_name}</div>
+              <div className="font-bold">{currentSong?.channelTitle}</div>
             </div>
             <ProgressBar />
           </div>
@@ -262,17 +269,17 @@ export const JamendoPlayerFooter = () => {
             className="flex items-center px-4 py-4 bg-[#2D0F3A]"
           >
             <img
-              src={currentSong?.album_image}
+              src={currentSong?.thumbnail}
               alt=""
               className="w-12 h-12 rounded object-cover flex-shrink-0 mr-4"
             />
 
             <div className="flex-1 min-w-0 basis-0">
               <p className="font-semibold truncate">
-                {currentSong?.title || currentSong?.name}
+                {currentSong?.title || currentSong?.title}
               </p>
               <p className="text-xs text-gray-300 truncate">
-                {currentSong?.artist_name}
+                {currentSong?.channelTitle}
               </p>
             </div>
 
@@ -325,15 +332,15 @@ export const JamendoPlayerFooter = () => {
                 className="w-56 h-24 absolute left-0, right-0, -top-1 z-10"
               />
               <img
-                src={currentSong?.album_image}
+                src={currentSong?.thumbnail}
                 alt=""
                 className="w-72 h-72 rounded-xl object-cover shadow-2xl"
               />
               <div className="flex flex-col items-center gap-2 text-center mt-4">
                 <div className="font-bold text-xl">
-                  {currentSong?.title || currentSong?.name}
+                  {currentSong?.title || currentSong?.title}
                 </div>
-                <div className="text-gray-200">{currentSong?.artist_name}</div>
+                <div className="text-gray-200">{currentSong?.channelTitle}</div>
               </div>
 
               <ProgressBar />
@@ -369,12 +376,20 @@ export const JamendoPlayerFooter = () => {
                 <AnimatedModalContainer onClose={() => setTrackMenuOpen(false)}>
                   <div className={"flex flex-col gap-2"}>
                     <button
+                      disabled={isPending}
                       onClick={handleAddToLibrary}
+                      className={`px-4 py-2 rounded-md text-white ${isSaved ? "bg-[#B080A6]" : "bg-[#B065A0]"}`}
+                    >
+                      {isPending
+                        ? "Adding..."
+                        : isSaved
+                          ? "Remove from Library"
+                          : "Add to my Library"}
+                    </button>
+                    <button
+                      disabled={isPending}
                       className="px-4 py-2 rounded-md bg-[#B065A0] text-white"
                     >
-                      Add to my Library
-                    </button>
-                    <button className="px-4 py-2 rounded-md bg-[#B065A0] text-white">
                       Add to Playlist
                     </button>
                   </div>

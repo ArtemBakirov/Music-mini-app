@@ -8,6 +8,7 @@ import {
 import { DisplayYoutubeAlbum } from "../../components/DisplayYoutubeAlbum.tsx";
 import { DisplayYoutubeArtist } from "../../components/DisplayYoutubeArtist.tsx";
 import { SearchYoutubeInput } from "../../components/SearchYoutubeInput.tsx";
+import { Song } from "../../types/youtube.types.ts";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw"; // your example key
@@ -21,6 +22,9 @@ export default function YouTubeMusic() {
   const [videos, setVideos] = useState<any[]>([]);
   const [playlists, setPlaylists] = useState<any[]>([]);
   const [channels, setChannels] = useState<any[]>([]);
+
+  // tracks with videoId changed to audioId for correct types
+  const [audioTracks, setAudioTracks] = useState<Song[]>([]);
 
   // Refs to all track cards (for priming)
   const itemRefs = useRef<Array<YtTrackHandle | null>>([]);
@@ -40,6 +44,14 @@ export default function YouTubeMusic() {
         YT_API_KEY,
         12,
       );
+      console.log("search youtube videos", videos);
+      const tracks = videos.map(({ id, ...rest }, idx) => {
+        return {
+          ...rest,
+          audioId: id,
+        };
+      });
+      setAudioTracks(tracks);
       setVideos(videos);
       setPlaylists(playlists);
       setChannels(channels);
@@ -54,21 +66,10 @@ export default function YouTubeMusic() {
   const tracksGrid = useMemo(
     () => (
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-        {videos.map((v, idx) => (
-          <DisplayYoutubeSongCard
-            key={v.id}
-            videoId={v.id}
-            title={v.title}
-            channelTitle={v.channelTitle}
-            thumbnail={v.thumbnail}
-            allTracks={videos}
-            idx={idx}
-            track={v}
-            /* ref={(el: any) => {
-              console.log("setting ref", el);
-              itemRefs.current[i] = el;
-            }} */
-          />
+        {audioTracks.map((v, idx) => (
+          <div key={idx}>
+            <DisplayYoutubeSongCard song={v} allTracks={audioTracks} />
+          </div>
         ))}
       </div>
     ),

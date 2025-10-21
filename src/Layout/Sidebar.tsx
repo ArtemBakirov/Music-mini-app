@@ -30,10 +30,14 @@ export const SideBar = () => {
   ];
 
   const libraryMenu: MenuItem[] = [
-    { key: "recent", label: "Zuletzt hinzugefügt", Icon: RecentlyAdded },
-    { key: "artists", label: "Künstler", Icon: Artists },
-    { key: "albums", label: "Alben", Icon: Albums },
-    { key: "library", label: "Titel", Icon: Tracks },
+    {
+      key: "/library/recent",
+      label: "Zuletzt hinzugefügt",
+      Icon: RecentlyAdded,
+    },
+    { key: "/library/artists", label: "Künstler", Icon: Artists },
+    { key: "/library/albums", label: "Alben", Icon: Albums },
+    { key: "/library", label: "Titel", Icon: Tracks },
   ];
 
   const playlistsMenu: MenuItem[] = [

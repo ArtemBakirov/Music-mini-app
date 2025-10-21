@@ -93,16 +93,8 @@ export default function YouTubeArtistTracks() {
         {videos.map((v, idx) => {
           const isLast = idx === videos.length - 1;
           return (
-            <div key={v.id} ref={isLast ? lastRef : undefined}>
-              <DisplayYoutubeSongCard
-                videoId={v.id}
-                title={v.title}
-                channelTitle={v.channelTitle}
-                thumbnail={v.thumbnail}
-                allTracks={videos}
-                idx={idx}
-                track={v}
-              />
+            <div key={idx} ref={isLast ? lastRef : undefined}>
+              <DisplayYoutubeSongCard song={v} allTracks={videos} />
             </div>
           );
         })}

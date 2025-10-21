@@ -4,8 +4,9 @@ import { shallow } from "zustand/shallow";
 import { persist } from "zustand/middleware";
 import { MusicPlayerManager } from "../../utils/MusicPlayerManager.ts";
 // import { JamendoSong } from "../../types/playList.types.ts"; // Make sure it matches Jamendo fields
+import { Song } from "../../types/youtube.types.ts";
 
-export type Song = {
+/* export type Song = {
   id?: string;
   name: string;
   artist_id?: string;
@@ -13,7 +14,7 @@ export type Song = {
   album_name?: string;
   album_image: string;
   audio: string;
-};
+};*/
 
 export type RepeatMode = "off" | "one" | "all";
 export type Provider = "youtube" | "jamendo" | null;
@@ -28,7 +29,7 @@ interface PlayerState {
   provider: Provider;
 
   // queue
-  queue: Array<any>;
+  queue: Array<Song>;
   currentIndex: number;
   isShuffling: boolean;
   repeatMode: RepeatMode;
@@ -71,13 +72,9 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setCurrentTime: (currentTime) => set({ currentTime }),
       setDuration: (duration) => set({ duration }),
       setCurrentSong: (song) => {
-        // console.log("set current song", song);
+        console.log("set current song", song);
         set({
-          currentSong: {
-            name: song.name,
-            album_image: song.album_image,
-            audio: song.audio,
-          },
+          currentSong: song,
         });
       },
       setProvider: (provider) => {
@@ -92,14 +89,17 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setProgress: (progress) => set({ progress }),
 
       setQueue: (tracks) => {
-        // console.log("setting queue, tracks", tracks);
+        console.log("setting queue, tracks", tracks);
         // keep current if still present; otherwise reset selection
         const { currentSong } = get();
         // console.log("setting queue, currentSong", currentSong);
         let currentIndex = -1;
         if (currentSong) {
-          currentIndex = tracks.findIndex((t) => t.id === currentSong.audio);
-          // console.log("current index found", currentIndex);
+          console.log("setting currentIndex", currentSong, tracks);
+          currentIndex = tracks.findIndex(
+            (t) => t.audioId === currentSong.audioId,
+          );
+          console.log("current index found", currentIndex);
         }
         set({
           queue: tracks,
@@ -116,7 +116,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
         if (index < 0 || index >= queue.length) return;
         // console.log("queue", queue);
         // console.log("new currentSong", queue[index]);
-        const { title, thumbnail, id } = queue[index];
+        const { title, thumbnail, audioId, channelTitle } = queue[index];
         const song = queue[index];
         // MusicPlayerManager.pause();
         // console.log("set...");
@@ -124,21 +124,17 @@ export const musicPlayerStore = createStore<PlayerState>()(
           set({
             currentIndex: index,
             currentSong: {
-              name: title,
-              album_image: thumbnail,
-              audio: id,
+              title,
+              thumbnail,
+              audioId,
+              channelTitle,
             },
             isPlaying: true,
           });
         } else {
           set({
             currentIndex: index,
-            currentSong: {
-              name: song.name,
-              album_image: song.album_image,
-              audio: song.audio,
-              id: song.id,
-            },
+            currentSong: song,
             isPlaying: true,
           });
         }

@@ -1,10 +1,10 @@
-import { useRef, useState } from "react";
-import { YouTubeProps } from "react-youtube";
+import { useState } from "react";
 import {
   musicPlayerStore,
   useMusicPlayerStore,
 } from "../hooks/stores/useMusicPlayerStore.ts";
 import { MusicPlayerManager } from "../utils/MusicPlayerManager.ts";
+import { Song } from "../types/youtube.types.ts";
 
 export type YtTrackHandle = {
   play: () => void;
@@ -13,35 +13,26 @@ export type YtTrackHandle = {
 };
 
 type Props = {
-  videoId: string;
-  title: string;
-  channelTitle: string;
-  thumbnail: string;
+  song: Song;
   allTracks: Array<any>;
-  idx: number;
-  track: any;
 };
 
-export const DisplayYoutubeSongCard = ({
-  videoId,
-  title,
-  channelTitle,
-  thumbnail,
-  allTracks,
-  idx,
-}: Props) => {
+export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
   const [isReady, setIsReady] = useState(true);
 
   const currentSong = useMusicPlayerStore((s) => s.currentSong);
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
-  const setCurrentSong = useMusicPlayerStore((s) => s.setCurrentSong);
+  // const setCurrentSong = useMusicPlayerStore((s) => s.setCurrentSong);
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
   const setQueue = useMusicPlayerStore((s) => s.setQueue);
-  const playAt = useMusicPlayerStore((s) => s.playAt);
-  const setProvider = useMusicPlayerStore((s) => s.setProvider);
-  const isCurrent = currentSong?.audio === videoId;
+  // const playAt = useMusicPlayerStore((s) => s.playAt);
+  // const setProvider = useMusicPlayerStore((s) => s.setProvider);
+  // console.log("songs in Youtube Card", currentSong, song);
+  const isCurrent = currentSong?.audioId === song.audioId;
   const isPlayingCurrent = isCurrent && isPlaying;
   const set = musicPlayerStore.setState;
+
+  // console.log("allTracks inside Card", allTracks);
 
   // console.log("is playing", isPlaying);
   // console.log("is playing current", isPlayingCurrent);
@@ -51,17 +42,14 @@ export const DisplayYoutubeSongCard = ({
       // console.log("not current");
       MusicPlayerManager.pause(); // pause whatever was playing
       // console.log("setting provider");
-      console.log("click");
+      // console.log("click");
       // setProvider("youtube");
       // setIsPlaying(true);
+      console.log("setting song", song);
       set({
         provider: "youtube",
         isPlaying: true,
-        currentSong: {
-          name: title,
-          album_image: thumbnail,
-          audio: videoId,
-        },
+        currentSong: song,
       });
       setQueue(allTracks);
       // find out why here was playAt? I think, I only need this when click prev/next
@@ -78,6 +66,8 @@ export const DisplayYoutubeSongCard = ({
     // console.log("current song", currentSong);
   };
 
+  // console.log("song in card", song);
+
   return (
     <div
       className={`p-2 px-0 mx-2 flex items-center gap-4 border-t-2 ${
@@ -87,8 +77,8 @@ export const DisplayYoutubeSongCard = ({
       {/* Custom UI (thumbnail and overlay button) */}
       <div className="relative rounded-md group flex-shrink-0">
         <img
-          src={thumbnail}
-          alt={title}
+          src={song.thumbnail}
+          alt={song.title}
           className="w-12 h-12 object-cover rounded-md"
         />
         {isReady ? (
@@ -131,8 +121,10 @@ export const DisplayYoutubeSongCard = ({
         )}
       </div>
       <div className="flex-grow">
-        <div className="font-semibold line-clamp-1">{title}</div>
-        <div className="text-sm text-gray-300 line-clamp-1">{channelTitle}</div>
+        <div className="font-semibold line-clamp-1">{song.title}</div>
+        <div className="text-sm text-gray-300 line-clamp-1">
+          {song.channelTitle}
+        </div>
       </div>
     </div>
   );

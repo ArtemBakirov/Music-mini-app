@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useYouTubeTracksInfinite } from "../../hooks/query/youtube.queries";
 import {
@@ -106,16 +106,9 @@ export default function YouTubeMusicTracks() {
               className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}
             >
               {tracks.map((v, idx) => (
-                <DisplayYoutubeSongCard
-                  allTracks={tracks}
-                  idx={idx}
-                  key={v.id}
-                  videoId={v.id}
-                  track={v}
-                  title={v.title}
-                  channelTitle={v.channelTitle}
-                  thumbnail={v.thumbnail}
-                />
+                <div key={idx}>
+                  <DisplayYoutubeSongCard allTracks={tracks} song={v} />
+                </div>
               ))}
             </div>
 

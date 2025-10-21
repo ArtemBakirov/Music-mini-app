@@ -2,8 +2,7 @@ import React, { useState } from "react";
 import Home from "../assets/icons/home.svg?react";
 import Playlists from "../assets/icons/playlists.svg?react";
 import Account from "../assets/icons/account.svg?react";
-import Upload from "../assets/icons/upload.svg?react";
-import MyUploads from "../assets/icons/my_uploads.svg?react";
+import Albums from "../assets/icons/albums.svg?react";
 
 import { Link } from "react-router-dom";
 
@@ -20,8 +19,7 @@ export const MobileMenu = () => {
     { key: "account", label: "Account", Icon: Account },
     { key: "/", label: "Startseite", Icon: Home },
     { key: "all-playlists", label: "Alle Playlists", Icon: Playlists },
-    { key: "create", label: "Create Upload", Icon: Upload },
-    { key: "myUploads", label: "My Uploads", Icon: MyUploads },
+    { key: "library", label: "My Library", Icon: Albums },
   ];
 
   const renderMenu = (items: MenuItem[]) => (

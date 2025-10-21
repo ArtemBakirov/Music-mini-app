@@ -1,6 +1,7 @@
 // src/api/library.ts
 import apiInstance from "../../utils/axios.ts";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { Song } from "../../types/youtube.types.ts";
 
 export type LibraryKind = "track" | "album" | "artist";
 export type Provider = "youtube" | "jamendo";
@@ -16,8 +17,7 @@ export async function addToLibrary(input: {
   address: string;
   kind: LibraryKind;
   provider: Provider;
-  externalId: string;
-  snapshot?: Snapshot;
+  song: Song;
 }) {
   console.log("adding input", input);
   const { data } = await apiInstance.post("/library", input);
@@ -28,7 +28,7 @@ export async function removeFromLibrary(params: {
   address: string;
   kind: LibraryKind;
   provider: Provider;
-  externalId: string;
+  audioId: string;
 }) {
   const { data } = await apiInstance.delete("/library", { params });
   return data;
@@ -52,6 +52,7 @@ export async function listLibrary(
 }
 
 export async function isSavedBatch(input: {
+  address: string;
   kind: LibraryKind;
   provider: Provider;
   ids: string[];
@@ -80,11 +81,15 @@ export function useLibrary(
   });
 }
 
-export function useSavedMap(kind: "track" | "album" | "artist", ids: string[]) {
+export function useSavedMap(
+  address: string,
+  kind: "track" | "album" | "artist",
+  ids: string[],
+) {
   return useQuery({
     enabled: ids.length > 0,
     queryKey: libraryKeys.savedMap(kind, ids),
-    queryFn: () => isSavedBatch({ kind, provider: "youtube", ids }),
+    queryFn: () => isSavedBatch({ address, kind, provider: "youtube", ids }),
     staleTime: 30_000,
   });
 }
@@ -96,28 +101,21 @@ export function useToggleSave() {
       address: string;
       action: "add" | "remove";
       kind: "track" | "album" | "artist";
-      externalId: string;
-      snapshot?: {
-        title: string;
-        subtitle?: string;
-        thumbnail: string;
-        extra?: any;
-      };
+      song: Song;
     }) => {
       if (p.action === "add") {
         return addToLibrary({
           address: p.address,
           kind: p.kind,
           provider: "youtube",
-          externalId: p.externalId,
-          snapshot: p.snapshot,
+          song: p.song,
         });
       } else {
         return removeFromLibrary({
           address: p.address,
           kind: p.kind,
           provider: "youtube",
-          externalId: p.externalId,
+          audioId: p.song.audioId,
         });
       }
     },

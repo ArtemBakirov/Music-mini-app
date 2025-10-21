@@ -11,6 +11,10 @@ export const MyLibraryTracks = () => {
 
   console.log("data", data);
 
+  const allTracks = data?.items.map((item) => {
+    return item.song;
+  });
+
   if (isLoading) return <div className="p-6">Loading…</div>;
   if (isError) return <div className="p-6 text-red-400">Failed to load.</div>;
 
@@ -18,17 +22,11 @@ export const MyLibraryTracks = () => {
     <div className="h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
       <h1>My Tracks</h1>
       {data?.items.map((it: any, idx) => (
-        <div className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}>
-          <DisplayYoutubeSongCard
-            allTracks={data}
-            idx={idx}
-            key={idx}
-            videoId={it.externalId}
-            track={it}
-            title={it.snapshot.title}
-            channelTitle={it.snapshot.title}
-            thumbnail={it.snapshot.thumbnail}
-          />
+        <div
+          key={idx}
+          className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}
+        >
+          <DisplayYoutubeSongCard allTracks={allTracks} song={it.song} />
         </div>
       ))}
     </div>

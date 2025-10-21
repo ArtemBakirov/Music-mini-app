@@ -15,6 +15,9 @@ import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
 import { CreateUploadPlaceholder } from "../pages/CreateUploadPlaceholder.tsx";
 import { Library } from "../pages/Library/Library.tsx";
 import { MyLibraryTracks } from "../pages/Library/MyLibraryTracks.tsx";
+import { MyLibraryArtists } from "../pages/Library/MyLibraryArtists.tsx";
+import { MyLibraryAlbums } from "../pages/Library/MyLibraryAlbums.tsx";
+import { MyLibraryLastAdded } from "../pages/Library/MyLibraryLastAdded.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -77,9 +80,13 @@ export const DesktopTabletLayout = () => {
                 children={
                   <>
                     <Route index element={<MyLibraryTracks />} />
+                    <Route path="albums" element={<MyLibraryAlbums />} />
+                    <Route path="artists" element={<MyLibraryArtists />} />
+                    <Route path="recent" element={<MyLibraryLastAdded />} />
                   </>
                 }
               />
+              {/* Playlists */}
             </>
           }
         />
