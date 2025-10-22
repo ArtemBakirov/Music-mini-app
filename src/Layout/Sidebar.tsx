@@ -41,7 +41,7 @@ export const SideBar = () => {
   ];
 
   const playlistsMenu: MenuItem[] = [
-    { key: "all-playlists", label: "Alle Playlists", Icon: Playlists },
+    { key: "/playlists", label: "Alle Playlists", Icon: Playlists },
   ];
 
   const uploadsMenu: MenuItem[] = [

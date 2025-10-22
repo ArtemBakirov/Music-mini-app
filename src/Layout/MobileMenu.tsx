@@ -18,7 +18,7 @@ export const MobileMenu = () => {
   const mobileMenu: MenuItem[] = [
     { key: "account", label: "Account", Icon: Account },
     { key: "/", label: "Startseite", Icon: Home },
-    { key: "all-playlists", label: "Alle Playlists", Icon: Playlists },
+    { key: "/playlists", label: "Alle Playlists", Icon: Playlists },
     { key: "library", label: "My Library", Icon: Albums },
   ];
 

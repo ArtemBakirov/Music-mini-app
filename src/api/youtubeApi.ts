@@ -202,7 +202,7 @@ export async function fetchYouTubeChannels(
 // ---- Videos by CHANNEL ----
 // NOTE: `search` gives lightweight video list; if you need durations, call /videos by ids after.
 export async function fetchChannelVideos(
-  key: string,
+  api_key: string,
   channelId: string,
   pageToken?: string,
   maxResults = 24,
@@ -210,7 +210,7 @@ export async function fetchChannelVideos(
   YTPage<{ id: string; title: string; channelTitle: string; thumbnail: string }>
 > {
   const params = new URLSearchParams({
-    key: key,
+    key: api_key,
     part: "snippet",
     type: "video",
     channelId,

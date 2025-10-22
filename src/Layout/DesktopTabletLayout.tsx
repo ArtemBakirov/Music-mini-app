@@ -18,6 +18,7 @@ import { MyLibraryTracks } from "../pages/Library/MyLibraryTracks.tsx";
 import { MyLibraryArtists } from "../pages/Library/MyLibraryArtists.tsx";
 import { MyLibraryAlbums } from "../pages/Library/MyLibraryAlbums.tsx";
 import { MyLibraryLastAdded } from "../pages/Library/MyLibraryLastAdded.tsx";
+import { Playlists } from "../pages/Playlists/Playlists.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -87,6 +88,11 @@ export const DesktopTabletLayout = () => {
                 }
               />
               {/* Playlists */}
+              <Route
+                path="playlists"
+                element={<Playlists />}
+                children={<></>}
+              />
             </>
           }
         />
