@@ -9,6 +9,9 @@ import { DisplayYoutubeAlbum } from "../../components/DisplayYoutubeAlbum.tsx";
 import { DisplayYoutubeArtist } from "../../components/DisplayYoutubeArtist.tsx";
 import { SearchYoutubeInput } from "../../components/SearchYoutubeInput.tsx";
 import { Song } from "../../types/youtube.types.ts";
+import { RenderTracks } from "./RenderTracks.tsx";
+import { RenderAlbums } from "./RenderAlbums.tsx";
+import { RenderArtists } from "./RenderArtists.tsx";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw"; // your example key
@@ -94,7 +97,6 @@ export default function YouTubeMusic() {
             </div>
           )}
 
-          {/* Loader / Priming Gate */}
           {loading && (
             <div className="space-y-6">
               <div className="h-6 w-40 bg-[#1f1f1f] rounded animate-pulse" />
@@ -111,65 +113,18 @@ export default function YouTubeMusic() {
 
           {/* Tracks */}
           {!loading && videos.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <Link to={`/ytsearch/tracks/${encodeURIComponent(query)}`}>
-                  <h2 className="text-xl font-bold">Titel</h2>
-                </Link>
-              </div>
-              {tracksGrid}
-            </section>
+            <RenderTracks tracks={audioTracks} query={query} />
           )}
 
           {/* Albums (playlists) */}
           {!loading && playlists.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <Link to={`/yt/search/playlists/${encodeURIComponent(query)}`}>
-                  <h2 className="text-xl font-bold">Alben</h2>
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-                {playlists.map((p: any) => (
-                  <DisplayYoutubeAlbum
-                    key={p.id}
-                    playlistId={p.id}
-                    title={p.title}
-                    channelTitle={p.channelTitle}
-                    thumbnail={p.thumbnail}
-                  />
-                ))}
-              </div>
-            </section>
+            <RenderAlbums albums={playlists} query={query} />
           )}
 
           {/* Artists (channels) */}
           {!loading && channels.length > 0 && (
-            <section>
-              <div className="flex items-center justify-between mb-3">
-                <Link to={`ytsearch/artists/${encodeURIComponent(query)}`}>
-                  <h2 className="text-xl font-bold">Artists</h2>
-                </Link>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-6 gap-6">
-                {channels.map((c: any) => (
-                  <DisplayYoutubeArtist
-                    id={c.id}
-                    key={c.id}
-                    title={c.title}
-                    thumbnail={c.thumbnail}
-                  />
-                ))}
-              </div>
-            </section>
+            <RenderArtists artists={channels} query={query} />
           )}
-          <div
-            className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-              ${priming ? "opacity-100 animate-pulse" : "opacity-0"}
-              `}
-          >
-            LOADING...
-          </div>
         </div>
       </>
     </div>

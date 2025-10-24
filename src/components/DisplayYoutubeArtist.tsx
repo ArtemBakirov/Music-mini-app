@@ -9,6 +9,7 @@ export function DisplayYoutubeArtist({
   thumbnail: string;
   id: string;
 }) {
+  console.log("display  artist", thumbnail);
   return (
     <div className="flex flex-col items-center">
       <div className="w-28 h-28 rounded-lg overflow-hidden bg-black">
@@ -18,6 +19,9 @@ export function DisplayYoutubeArtist({
           className="w-28 h-28 rounded-full overflow-hidden bg-[#222] block"
         >
           <img
+            referrerPolicy="no-referrer"
+            loading="lazy"
+            decoding="async"
             src={thumbnail}
             alt={title}
             className="w-full h-full object-cover"

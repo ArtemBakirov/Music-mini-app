@@ -9,7 +9,7 @@ import MusicPlaylists from "../pages/MusicPlaylists.tsx";
 import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
 import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
-import YouTubeMusicTracks from "../pages/YoutubePages/YouTubeMusicTracks.tsx";
+import RenderInfiniteTracks from "../pages/YoutubePages/RenderInfiniteTracks.tsx";
 import YouTubeMusicArtists from "../pages/YoutubePages/YouTubeMusicArtists.tsx";
 import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
 import { CreateUploadPlaceholder } from "../pages/CreateUploadPlaceholder.tsx";
@@ -41,7 +41,7 @@ export const DesktopTabletLayout = () => {
               {/* Music youTube search */}
               <Route
                 path="ytsearch/tracks/:query"
-                element={<YouTubeMusicTracks />}
+                element={<RenderInfiniteTracks />}
               />
               <Route
                 path="ytsearch/artists/:query"

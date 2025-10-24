@@ -160,7 +160,7 @@ export class MusicPlayerManager {
               // console.log("videoId before cue", videoId);
               this.audio.cueVideoById({ videoId });
               setTimeout(async () => {
-                //  console.log("EXECUTING YOUTUBE");
+                console.log("EXECUTING YOUTUBE");
                 await this.playYoutube(this.audio);
               }, 1500);
             } catch (e) {
@@ -171,7 +171,7 @@ export class MusicPlayerManager {
             this.audio.pauseVideo();
           }
         } else {
-          // console.log("no audio");
+          console.log("no audio");
         }
       }
 

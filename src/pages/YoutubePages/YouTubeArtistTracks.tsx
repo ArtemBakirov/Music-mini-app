@@ -17,7 +17,7 @@ export default function YouTubeArtistTracks() {
   const YT_API_KEY =
     import.meta.env.VITE_YT_API_KEY ||
     "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw";
-  console.log("chanel id", channelId);
+  // console.log("chanel id", channelId);
   const {
     data: meta,
     isLoading,
@@ -52,7 +52,7 @@ export default function YouTubeArtistTracks() {
           channelId,
           address: profile.address || "",
           action: "remove",
-          kind: "track",
+          kind: "artist",
         });
       } else {
         // console.log("adding");
@@ -60,7 +60,7 @@ export default function YouTubeArtistTracks() {
           channelId,
           address: profile.address || "",
           action: "add",
-          kind: "track",
+          kind: "artist",
         });
       }
     }

@@ -22,8 +22,14 @@ export async function addToLibrary(input: {
   playlistId?: string;
 }) {
   console.log("adding input", input);
-  const { data } = await apiInstance.post("/library", input);
-  return data;
+  try {
+    const { data } = await apiInstance.post("/library", input);
+    console.log("data adding input", data);
+    return data;
+  } catch (e) {
+    console.log("error", e);
+    return e;
+  }
 }
 
 export async function removeFromLibrary(params: {

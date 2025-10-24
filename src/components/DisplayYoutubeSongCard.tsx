@@ -28,7 +28,9 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
   // const playAt = useMusicPlayerStore((s) => s.playAt);
   // const setProvider = useMusicPlayerStore((s) => s.setProvider);
   // console.log("songs in Youtube Card", currentSong, song);
+  console.log("ids", currentSong?.audioId, song);
   const isCurrent = currentSong?.audioId === song.audioId;
+  // console.log("isCurrent", isCurrent);
   const isPlayingCurrent = isCurrent && isPlaying;
   const set = musicPlayerStore.setState;
 
@@ -38,8 +40,9 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
   // console.log("is playing current", isPlayingCurrent);
 
   const handleClick = async () => {
+    console.log("click");
     if (!isCurrent) {
-      // console.log("not current");
+      console.log("not current");
       MusicPlayerManager.pause(); // pause whatever was playing
       // console.log("setting provider");
       // console.log("click");

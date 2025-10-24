@@ -1,15 +1,12 @@
 import { useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useYouTubeTracksInfinite } from "../../hooks/query/youtube.queries";
-import {
-  DisplayYoutubeSongCard,
-  YtTrackHandle,
-} from "../../components/DisplayYoutubeSongCard";
+import { RenderTracks } from "./RenderTracks";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw";
 
-export default function YouTubeMusicTracks() {
+export default function RenderInfiniteTracks() {
   const { query = "" } = useParams();
   const {
     data,
@@ -20,21 +17,26 @@ export default function YouTubeMusicTracks() {
     isError,
     error,
   } = useYouTubeTracksInfinite(decodeURIComponent(query), 24, YT_API_KEY);
-  console.log("data", data);
 
   // flatten pages -> an array of videos
-  const tracks = useMemo(
+  const videos = useMemo(
     () => data?.pages.flatMap((p) => p.items) ?? [],
     [data],
   );
-  console.log("tracks", tracks);
+
+  const tracks = videos.map(({ id, ...rest }, idx) => {
+    return {
+      ...rest,
+      audioId: id,
+    };
+  });
 
   // Keep child handles in a Map so we never "wipe" them by accident
-  const handlesRef = useRef<Map<string, YtTrackHandle>>(new Map());
+  // const handlesRef = useRef<Map<string, YtTrackHandle>>(new Map());
 
   // Prime newly appended pages (optional – doesn’t block UI)
-  const prevCountRef = useRef(0);
-  useEffect(() => {
+  // const prevCountRef = useRef(0);
+  /*useEffect(() => {
     const count = tracks.length;
     if (count <= prevCountRef.current) return;
     const newIds = new Set(tracks.slice(prevCountRef.current).map((v) => v.id));
@@ -47,7 +49,7 @@ export default function YouTubeMusicTracks() {
         .map(([_, h]) => h);
       await Promise.allSettled(newHandles.map((h) => h.prime()));
     })();
-  }, [tracks]);
+  }, [tracks]);*/
 
   // IntersectionObserver sentinel to load more
   const sentinelRef = useRef<HTMLDivElement | null>(null);
@@ -59,7 +61,7 @@ export default function YouTubeMusicTracks() {
       (entries) => {
         const first = entries[0];
         if (first.isIntersecting && hasNextPage && !isFetchingNextPage) {
-          fetchNextPage();
+          void fetchNextPage();
         }
       },
       { root: null, rootMargin: "300px 0px", threshold: 0 },
@@ -71,8 +73,6 @@ export default function YouTubeMusicTracks() {
 
   return (
     <div className="h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
-      <h1 className="text-2xl font-bold">Tracks</h1>
-
       <div className="flex-1 overflow-y-auto pb-24 relative">
         {isLoading && (
           <div className="space-y-6">
@@ -102,15 +102,7 @@ export default function YouTubeMusicTracks() {
 
         {tracks.length > 0 && (
           <>
-            <div
-              className={`grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3`}
-            >
-              {tracks.map((v, idx) => (
-                <div key={idx}>
-                  <DisplayYoutubeSongCard allTracks={tracks} song={v} />
-                </div>
-              ))}
-            </div>
+            <RenderTracks tracks={tracks} query={query} />
 
             <div
               ref={sentinelRef}
