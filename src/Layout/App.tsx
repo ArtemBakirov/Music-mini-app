@@ -13,7 +13,7 @@ export const App = () => {
   return (
     <div
       className={`w-screen bg-[#371A4D] h-screen text-black
-      overflow-y-scroll
+      overflow-hidden
       ${!isMobile && "flex"}
         `}
     >
@@ -25,7 +25,7 @@ export const App = () => {
         }
       >
         <div className={"h-screen relative w-full"}>
-          <div className={"absolute top-5 left-5"}>
+          <div className={"absolute top-5 left-5 z-50"}>
             <BackButton />
           </div>
           <Outlet />

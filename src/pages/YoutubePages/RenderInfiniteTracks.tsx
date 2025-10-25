@@ -72,7 +72,7 @@ export default function RenderInfiniteTracks() {
   }, [fetchNextPage, hasNextPage, isFetchingNextPage]);
 
   return (
-    <div className="h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
+    <div className="h-screen w-full flex flex-col p-6 pt-24 gap-6 overflow-hidden bg-[#371A4D] text-white">
       <div className="flex-1 overflow-y-auto pb-24 relative">
         {isLoading && (
           <div className="space-y-6">

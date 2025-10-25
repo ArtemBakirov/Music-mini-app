@@ -10,7 +10,7 @@ export const RenderAlbums = ({ query, albums }: RenderAlbumsProps) => {
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <Link to={`/yt/search/playlists/${encodeURIComponent(query)}`}>
+        <Link to={`/ytsearch/playlists/${encodeURIComponent(query)}`}>
           <h2 className="text-xl font-bold">Alben</h2>
         </Link>
       </div>

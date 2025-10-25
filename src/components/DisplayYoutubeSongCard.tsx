@@ -28,7 +28,7 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
   // const playAt = useMusicPlayerStore((s) => s.playAt);
   // const setProvider = useMusicPlayerStore((s) => s.setProvider);
   // console.log("songs in Youtube Card", currentSong, song);
-  console.log("ids", currentSong?.audioId, song);
+  // console.log("ids", currentSong?.audioId, song);
   const isCurrent = currentSong?.audioId === song.audioId;
   // console.log("isCurrent", isCurrent);
   const isPlayingCurrent = isCurrent && isPlaying;

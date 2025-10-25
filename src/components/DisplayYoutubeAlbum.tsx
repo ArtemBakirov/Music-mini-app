@@ -12,7 +12,7 @@ export function DisplayYoutubeAlbum({
   thumbnail: string;
 }) {
   return (
-    <Link to={`/yt/playlist/${playlistId}`}>
+    <Link to={`/ytsearch/playlist/${playlistId}`}>
       <div className="group">
         <div className="aspect-square overflow-hidden rounded-lg bg-[#222]">
           <img

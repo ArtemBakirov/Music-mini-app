@@ -10,8 +10,8 @@ import AlbumDetailsPage from "../pages/details/AlbumDetailsPage.tsx";
 import PlaylistDetailsPage from "../pages/details/PlayListDetailsPage.tsx";
 import { MusicPageContainer } from "../pages/MusicPageContainer.tsx";
 import RenderInfiniteTracks from "../pages/YoutubePages/RenderInfiniteTracks.tsx";
-import YouTubeMusicArtists from "../pages/YoutubePages/YouTubeMusicArtists.tsx";
-import YouTubeArtistTracks from "../pages/YoutubePages/YouTubeArtistTracks.tsx";
+import RenderInfiniteArtists from "../pages/YoutubePages/RenderInfiniteArtists.tsx";
+import RenderArtist from "../pages/YoutubePages/RenderArtist.tsx";
 import { CreateUploadPlaceholder } from "../pages/CreateUploadPlaceholder.tsx";
 import { Library } from "../pages/Library/Library.tsx";
 import { MyLibraryTracks } from "../pages/Library/MyLibraryTracks.tsx";
@@ -19,6 +19,8 @@ import { MyLibraryArtists } from "../pages/Library/MyLibraryArtists.tsx";
 import { MyLibraryAlbums } from "../pages/Library/MyLibraryAlbums.tsx";
 import { MyLibraryLastAdded } from "../pages/Library/MyLibraryLastAdded.tsx";
 import { Playlists } from "../pages/Playlists/Playlists.tsx";
+import RenderInfiniteAlbums from "../pages/YoutubePages/RenderInfiniteAlbums.tsx";
+import { RenderAlbum } from "../pages/YoutubePages/RenderAlbum.tsx";
 
 export const DesktopTabletLayout = () => {
   return (
@@ -45,26 +47,30 @@ export const DesktopTabletLayout = () => {
               />
               <Route
                 path="ytsearch/artists/:query"
-                element={<YouTubeMusicArtists />}
+                element={<RenderInfiniteArtists />}
               />
               <Route
                 path="ytsearch/album/:albumId"
                 element={<AlbumDetailsPage />}
               />
               <Route
-                path="ytsearch/artist/tracks/:channelId"
-                element={<YouTubeArtistTracks />}
+                path="ytsearch/artist/:channelId"
+                element={<RenderArtist />}
               />
 
               {/*<Route
                 path="ytsearch/albums/:query"
                 element={<YouTubeMusicAlbums />}
-              />
+              />  */}
 
               <Route
                 path="ytsearch/playlists/:query"
-                element={<YouTubeMusicPlaylists />}
-              /> */}
+                element={<RenderInfiniteAlbums />}
+              />
+              <Route
+                path="ytsearch/playlist/:query"
+                element={<RenderAlbum />}
+              />
 
               <Route path="album/:albumId" element={<AlbumDetailsPage />} />
               <Route
