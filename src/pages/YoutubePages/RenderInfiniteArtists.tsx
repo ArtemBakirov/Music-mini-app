@@ -107,13 +107,18 @@ export default function RenderInfiniteArtists() {
 
   return (
     <div className="h-screen overflow-hidden w-full flex flex-col p-6 mt-16 gap-6 bg-[#371A4D] text-white">
-      <RenderArtists query={query} artists={artists} />
-      <div ref={sentinelRef} className="h-10 flex items-center justify-center">
-        {isFetchingNextPage ? (
-          <span className="text-sm opacity-70">Loading more…</span>
-        ) : !hasNextPage && artists.length > 0 ? (
-          <span className="text-xs opacity-50">No more results</span>
-        ) : null}
+      <div className="flex-1 overflow-y-auto pb-24 relative">
+        <RenderArtists query={query} artists={artists} />
+        <div
+          ref={sentinelRef}
+          className="h-10 flex items-center justify-center"
+        >
+          {isFetchingNextPage ? (
+            <span className="text-sm opacity-70">Loading more…</span>
+          ) : !hasNextPage && artists.length > 0 ? (
+            <span className="text-xs opacity-50">No more results</span>
+          ) : null}
+        </div>
       </div>
     </div>
   );

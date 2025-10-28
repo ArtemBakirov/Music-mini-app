@@ -5,6 +5,8 @@ export type Song = {
   title: string;
 };
 
+export type Mode = "channel" | "search";
+
 export type YtChannelMeta = {
   id: string;
   title: string;

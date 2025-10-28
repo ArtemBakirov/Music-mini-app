@@ -52,6 +52,7 @@ export async function searchYouTubeAll(
   const res = await fetch(url.toString());
   if (!res.ok) throw new Error(`YT search failed: ${res.status}`);
   const json = await res.json();
+  console.log("yt search res from fetch", json);
 
   const videos: YtVideoHit[] = [];
   const playlists: YtPlaylistHit[] = [];

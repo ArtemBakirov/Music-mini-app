@@ -2,12 +2,14 @@ import { useEffect, useMemo, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { useYouTubeTracksInfinite } from "../../hooks/query/youtube.queries";
 import { RenderTracks } from "./RenderTracks";
+import { Mode } from "../../types/youtube.types.ts";
 
 const YT_API_KEY =
   import.meta.env.VITE_YT_API_KEY || "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw";
 
 export default function RenderInfiniteTracks() {
-  const { query = "" } = useParams();
+  const { query = "", channelId = "", mode = "" } = useParams();
+  console.log("channelid", channelId);
   const {
     data,
     fetchNextPage,
@@ -16,7 +18,12 @@ export default function RenderInfiniteTracks() {
     isLoading,
     isError,
     error,
-  } = useYouTubeTracksInfinite(decodeURIComponent(query), 24, YT_API_KEY);
+  } = useYouTubeTracksInfinite(
+    YT_API_KEY,
+    decodeURIComponent(query),
+    channelId,
+    24,
+  );
 
   // flatten pages -> an array of videos
   const videos = useMemo(
@@ -102,7 +109,7 @@ export default function RenderInfiniteTracks() {
 
         {tracks.length > 0 && (
           <>
-            <RenderTracks tracks={tracks} query={query} />
+            <RenderTracks mode={mode as Mode} tracks={tracks} query={query} />
 
             <div
               ref={sentinelRef}

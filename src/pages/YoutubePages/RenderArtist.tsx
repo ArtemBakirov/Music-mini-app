@@ -24,6 +24,7 @@ export default function RenderArtist() {
     isLoading: isLoadingMeta,
     isError: isErrorMeta,
   } = useYoutubeChannelMeta(YT_API_KEY, channelId);
+
   const {
     data: videosData,
     isLoading: isLoadingVideos,
@@ -34,6 +35,8 @@ export default function RenderArtist() {
     isLoading: isLoadingPlaylists,
     isError: isErrorPlaylists,
   } = useYoutubeChannelPlaylistsFirstPage(YT_API_KEY, channelId, 12);
+
+  console.log("playlistData artist", playlistsData);
 
   const profile = useAccountStore((s) => s.profile);
   const address = profile?.address || "";
@@ -158,7 +161,9 @@ export default function RenderArtist() {
         )}
       </>
       <div className="overflow-y-auto p-6 mb-24 flex flex-col gap-6">
-        {tracks && <RenderTracks tracks={tracks} query={channelId} />}
+        {tracks && (
+          <RenderTracks mode={"channel"} tracks={tracks} query={channelId} />
+        )}
         {isLoadingVideos && (
           <div className="p-6 mt-16 text-white">Loading channel videos…</div>
         )}
@@ -168,7 +173,11 @@ export default function RenderArtist() {
           </div>
         )}
         {playlistsData && (
-          <RenderAlbums albums={playlistsData.items} query={channelId} />
+          <RenderAlbums
+            mode={"channel"}
+            albums={playlistsData.items}
+            query={channelId}
+          />
         )}
         {isLoadingPlaylists && (
           <div className="p-6 mt-16 text-white">Loading channel playlists…</div>

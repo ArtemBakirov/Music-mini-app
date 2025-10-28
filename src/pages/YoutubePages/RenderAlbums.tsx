@@ -1,16 +1,18 @@
 import { Link } from "react-router-dom";
 import { DisplayYoutubeAlbum } from "../../components/DisplayYoutubeAlbum.tsx";
+import { Mode } from "../../types/youtube.types.ts";
 
 type RenderAlbumsProps = {
   query: string;
   albums: any[];
+  mode: Mode;
 };
 
-export const RenderAlbums = ({ query, albums }: RenderAlbumsProps) => {
+export const RenderAlbums = ({ query, albums, mode }: RenderAlbumsProps) => {
   return (
     <section>
       <div className="flex items-center justify-between mb-3">
-        <Link to={`/ytsearch/playlists/${encodeURIComponent(query)}`}>
+        <Link to={`/ytsearch/playlists/${mode}/${encodeURIComponent(query)}`}>
           <h2 className="text-xl font-bold">Alben</h2>
         </Link>
       </div>

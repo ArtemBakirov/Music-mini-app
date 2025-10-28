@@ -1,7 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { App } from "./App.tsx";
 import Account from "../pages/Account.tsx";
-import StartCreating from "../pages/StartCreating.tsx";
 import { MusicTracks } from "../pages/MusicTracks.tsx";
 import MusicAlbums from "../pages/MusicAlbums.tsx";
 import MusicArtists from "../pages/MusicArtists.tsx";
@@ -42,10 +41,6 @@ export const DesktopTabletLayout = () => {
               />
               {/* Music youTube search */}
               <Route
-                path="ytsearch/tracks/:query"
-                element={<RenderInfiniteTracks />}
-              />
-              <Route
                 path="ytsearch/artists/:query"
                 element={<RenderInfiniteArtists />}
               />
@@ -58,15 +53,28 @@ export const DesktopTabletLayout = () => {
                 element={<RenderArtist />}
               />
 
-              {/*<Route
+              {/* <Route
                 path="ytsearch/albums/:query"
                 element={<YouTubeMusicAlbums />}
               />  */}
 
               <Route
-                path="ytsearch/playlists/:query"
+                path="ytsearch/playlists/search/:query"
                 element={<RenderInfiniteAlbums />}
               />
+              <Route
+                path="ytsearch/playlists/channel/:channelId"
+                element={<RenderInfiniteAlbums />}
+              />
+              <Route
+                path="ytsearch/tracks/search/:query"
+                element={<RenderInfiniteTracks />}
+              />
+              <Route
+                path="ytsearch/tracks/channel/:channelId"
+                element={<RenderInfiniteTracks />}
+              />
+
               <Route
                 path="ytsearch/playlist/:query"
                 element={<RenderAlbum />}

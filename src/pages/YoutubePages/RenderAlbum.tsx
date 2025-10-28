@@ -1,20 +1,11 @@
 import { useParams } from "react-router-dom";
 import {
-  useYoutubeChannelMeta,
-  useYoutubeChannelPlaylistsFirstPage,
-  useYoutubeChannelVideosFirstPage,
   useYoutubePlaylistItemsInfinite,
   useYoutubePlaylistMeta,
 } from "../../hooks/query/youtube.queries.ts";
-import { YouTubeArtistBanner } from "./YouTubeArtistBanner.tsx";
 import Play from "../../assets/icons/play.svg?react";
-import {
-  useSavedMap,
-  useToggleSave,
-} from "../../hooks/query/library.queries.ts";
 import { useAccountStore } from "../../hooks/stores/useAccountStore.ts";
 import { RenderTracks } from "./RenderTracks.tsx";
-import { RenderAlbums } from "./RenderAlbums.tsx";
 import { useEffect, useMemo, useRef } from "react";
 
 export const RenderAlbum = () => {
@@ -22,11 +13,7 @@ export const RenderAlbum = () => {
   const YT_API_KEY =
     import.meta.env.VITE_YT_API_KEY ||
     "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw";
-  /*const {
-    data: meta,
-    isLoading: isLoadingMeta,
-    isError: isErrorMeta,
-  } = useYoutubeChannelMeta(YT_API_KEY, channelId);*/
+
   const {
     data: videosData,
     isLoading: isLoadingVideos,
@@ -35,14 +22,17 @@ export const RenderAlbum = () => {
     hasNextPage: hasNextVideosPage,
     isFetchingNextPage: isFetchingNextVideosPage,
   } = useYoutubePlaylistItemsInfinite(YT_API_KEY, query, 24);
+  console.log("Album videoDatas", videosData);
+
   const {
     data: metaData,
     isLoading: isMetaLoading,
     isError: isMetaError,
     error: metaError,
   } = useYoutubePlaylistMeta(YT_API_KEY, query);
+
   console.log("metaData", metaData);
-  // console.log("data", videosData);
+
   const artwork =
     metaData?.thumbnails.maxres ||
     metaData?.thumbnails.high ||

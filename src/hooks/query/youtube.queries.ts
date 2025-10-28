@@ -1,5 +1,6 @@
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import { YtSearchVideosPage, YtVideoHit } from "../../api/youtubeApi";
+import apiInstance from "../../utils/axios.ts";
 
 export type YtChannelMeta = {
   id: string;
@@ -57,38 +58,81 @@ export interface YtPlaylistMeta {
   };
 }
 
+export type YtChannelHit = {
+  id: string; // channelId
+  title: string; // channel name
+  thumbnail: string;
+};
+
 const API_BASE = "https://www.googleapis.com/youtube/v3";
 
+/* global search in YT */
+
 export async function searchYouTubeVideosPaged(
+  key: string,
+  q: string,
+  channelId: string,
+  maxResults = 24,
+  pageToken?: string,
+): Promise<YtSearchVideosPage> {
+  const res = await apiInstance.get(`/yt/search/videos`, {
+    params: {
+      q,
+      channelId,
+      max: maxResults,
+      pageToken,
+      key,
+    },
+  });
+  console.log("res videos paged infinite", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
+  return { items: data.items, nextPageToken: data.nextPageToken };
+}
+
+export async function searchYouTubePlaylistsPaged(
+  q: string,
+  channelId: string,
+  key: string,
+  maxResults = 24,
+  pageToken?: string,
+): Promise<YTPage<YtPlaylistHit>> {
+  const res = await apiInstance.get(`/yt/search/playlists`, {
+    params: {
+      q,
+      channelId,
+      max: maxResults,
+      pageToken,
+      key,
+    },
+  });
+  console.log("axios res", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
+  return { items: data.items, nextPageToken: data.nextPageToken };
+}
+
+export async function searchYouTubeChannelsPaged(
   q: string,
   key: string,
   maxResults = 24,
   pageToken?: string,
-): Promise<YtSearchVideosPage> {
-  const url = new URL(`${API_BASE}/search`);
-  url.searchParams.set("part", "snippet");
-  url.searchParams.set("q", q);
-  url.searchParams.set("type", "video");
-  url.searchParams.set("maxResults", String(maxResults));
-  if (pageToken) url.searchParams.set("pageToken", pageToken);
-  url.searchParams.set("key", key);
-
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`YT search (videos) failed: ${res.status}`);
-  const json = await res.json();
-
-  const items: YtVideoHit[] = (json.items ?? []).map((it: any) => {
-    const s = it.snippet;
-    const id = it.id?.videoId;
-    return {
-      id,
-      title: s.title,
-      channelTitle: s.channelTitle,
-      thumbnail: `https://i.ytimg.com/vi/${id}/hqdefault.jpg`,
-    } as YtVideoHit;
+): Promise<YTPage<YtChannelHit>> {
+  const res = await apiInstance.get(`/yt/search/channels`, {
+    params: {
+      q,
+      max: maxResults,
+      pageToken,
+      key,
+    },
   });
-
-  return { items, nextPageToken: json.nextPageToken };
+  console.log("axios res", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
+  return { items: data.items, nextPageToken: data.nextPageToken };
 }
 
 /* CHANNEL / ARTIST */
@@ -97,32 +141,22 @@ export async function fetchChannelMeta(
   apiKey: string,
   channelId: string,
 ): Promise<YtChannelMeta> {
-  const url = new URL("https://www.googleapis.com/youtube/v3/channels");
-  url.searchParams.set("part", "snippet,brandingSettings");
-  url.searchParams.set("id", channelId);
-  url.searchParams.set("key", apiKey);
+  const res = await apiInstance.get(`/yt/channel/${channelId}`, {
+    params: {
+      key: apiKey,
+    },
+  });
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const item = res.data;
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Failed to load channel meta (${res.status})`);
-  const json = await res.json();
-
-  const item = json.items?.[0];
   if (!item) throw new Error("Channel not found");
 
-  const title = item.snippet?.title ?? "Channel";
-  const avatar =
-    item.snippet?.thumbnails?.high?.url ||
-    item.snippet?.thumbnails?.medium?.url ||
-    item.snippet?.thumbnails?.default?.url ||
-    null;
+  const title = item?.title ?? "Channel";
+  const avatar = item.avatar;
+  const banner = item.banner;
 
-  // YouTube returns a base URL for banner; you can add sizing suffix, e.g. "=w2120"
-  const rawBanner: string | undefined =
-    item.brandingSettings?.image?.bannerExternalUrl;
-  const banner = rawBanner ? `${rawBanner}=w2120` : null;
-
-  const unsubscribedTrailer: string | null =
-    item.brandingSettings?.channel?.unsubscribedTrailer ?? null;
+  const unsubscribedTrailer = item?.unsubscribedTrailer || null;
 
   return { id: channelId, title, avatar, banner, unsubscribedTrailer };
 }
@@ -131,16 +165,16 @@ export async function fetchPlaylistMeta(
   apiKey: string,
   playlistId: string,
 ): Promise<YtPlaylistMeta> {
-  const url = new URL("https://www.googleapis.com/youtube/v3/playlists");
-  url.searchParams.set("part", "snippet,contentDetails,status,player");
-  url.searchParams.set("id", playlistId);
-  url.searchParams.set("key", apiKey);
+  const res = await apiInstance.get(`/yt/playlist/${playlistId}`, {
+    params: {
+      key: apiKey,
+    },
+  });
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
+  const p = data.items?.[0];
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`Failed to load playlist meta (${res.status})`);
-  const json = await res.json();
-
-  const p = json.items?.[0];
   if (!p) throw new Error("Playlist not found");
 
   const s = p.snippet ?? {};
@@ -172,34 +206,20 @@ export async function fetchChannelVideos(
 ): Promise<
   YTPage<{ id: string; title: string; channelTitle: string; thumbnail: string }>
 > {
-  const params = new URLSearchParams({
-    key: api_key,
-    part: "snippet",
-    type: "video",
-    channelId,
-    order: "date", // or "viewCount" / "relevance"
-    maxResults: String(maxResults),
+  const res = await apiInstance.get(`/yt/search/videos`, {
+    params: {
+      key: api_key,
+      channelId,
+      max: String(maxResults),
+      pageToken,
+    },
   });
-  if (pageToken) params.set("pageToken", pageToken);
+  // console.log("axios res", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
 
-  const res = await fetch(
-    `https://www.googleapis.com/youtube/v3/search?${params}`,
-  );
-  console.log("channels tracks fetch res", res);
-  if (!res.ok) throw new Error("YouTube channel videos fetch failed");
-  const json = await res.json();
-
-  const items = (json.items ?? []).map((it: any) => ({
-    id: it.id.videoId,
-    title: it.snippet.title,
-    channelTitle: it.snippet.channelTitle,
-    thumbnail:
-      it.snippet.thumbnails?.medium?.url ||
-      it.snippet.thumbnails?.default?.url ||
-      "",
-  }));
-
-  return { items, nextPageToken: json.nextPageToken };
+  return { items: data.items, nextPageToken: data.nextPageToken };
 }
 
 export async function fetchChannelPlaylistsPaged(
@@ -208,36 +228,20 @@ export async function fetchChannelPlaylistsPaged(
   maxResults = 24,
   pageToken?: string,
 ): Promise<YTPage<YtPlaylistHit>> {
-  console.log("query function");
-  const url = new URL(`${API_BASE}/playlists`);
-  url.searchParams.set("part", "snippet");
-  url.searchParams.set("channelId", channelId);
-  url.searchParams.set("maxResults", String(maxResults));
-  if (pageToken) url.searchParams.set("pageToken", pageToken);
-  url.searchParams.set("key", apiKey);
-
-  const res = await fetch(url.toString());
-  console.log("fetch channel playlists res", res);
-  if (!res.ok) throw new Error(`YT channel playlists failed: ${res.status}`);
-  const json = await res.json();
-
-  const items: YtPlaylistHit[] = (json.items ?? []).map((it: any) => {
-    const s = it.snippet;
-    const id = it.id;
-    const thumb =
-      s?.thumbnails?.high?.url ||
-      s?.thumbnails?.medium?.url ||
-      s?.thumbnails?.default?.url ||
-      "";
-    return {
-      id,
-      title: s?.title ?? "Playlist",
-      channelTitle: s?.channelTitle ?? "",
-      thumbnail: thumb,
-    };
+  const res = await apiInstance.get(`/yt/search/playlists`, {
+    params: {
+      key: apiKey,
+      channelId,
+      max: String(maxResults),
+      pageToken,
+    },
   });
+  // console.log("axios res", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
 
-  return { items, nextPageToken: json.nextPageToken };
+  return { items: data.items, nextPageToken: data.nextPageToken };
 }
 
 export async function fetchPlaylistItemsPaged(
@@ -246,47 +250,34 @@ export async function fetchPlaylistItemsPaged(
   maxResults = 25,
   pageToken?: string,
 ): Promise<YtPlaylistItemsPage> {
-  const url = new URL(`${API_BASE}/playlistItems`);
-  url.searchParams.set("part", "snippet");
-  url.searchParams.set("playlistId", playlistId);
-  url.searchParams.set("maxResults", String(maxResults));
-  url.searchParams.set("key", apiKey);
-  if (pageToken) url.searchParams.set("pageToken", pageToken);
+  const res = await apiInstance.get(`/yt/playlist/${playlistId}/items`, {
+    params: {
+      key: apiKey,
+      max: String(maxResults),
+      pageToken,
+    },
+  });
+  // console.log("axios res", res);
+  if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);
+  const data = res.data;
 
-  const res = await fetch(url.toString());
-  if (!res.ok) throw new Error(`YT playlistItems failed: ${res.status}`);
-  const json = await res.json();
-
-  const items: YtPlaylistItem[] = (json.items ?? [])
-    .map((it: any) => {
-      const s = it.snippet;
-      const videoId = s?.resourceId?.videoId;
-      if (!videoId) return null;
-      return {
-        videoId,
-        title: s.title,
-        channelTitle: s.channelTitle,
-        thumbnail:
-          s.thumbnails?.high?.url ??
-          `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
-      };
-    })
-    .filter(Boolean);
-
-  return { items, nextPageToken: json.nextPageToken };
+  return { items: data.items, nextPageToken: data.nextPageToken };
 }
 
 export const youtubeKeys = {
   all: ["youtube"] as const,
-  tracksInfinite: (query: string, pageSize: number) =>
-    ["youtube", "tracks", query, pageSize] as const,
+  searchTracks: (q: string, size: number) =>
+    [...youtubeKeys.all, "search", "tracks", q, size] as const,
+  searchPlaylists: (q: string, size: number) =>
+    [...youtubeKeys.all, "search", "playlists", q, size] as const,
+  searchChannels: (q: string, size: number) =>
+    [...youtubeKeys.all, "search", "channels", q, size] as const,
   channel: (id: string) => [...youtubeKeys.all, "channel", id] as const,
   channelVideosInfinite: (channelId: string, pageSize: number) =>
     ["youtube", "channelVideos", channelId, pageSize] as const,
   channelVideosFirstPage: (channelId: string, pageSize: number) =>
     ["youtube", "channelVideosFirstPage", channelId, pageSize] as const,
-  playlistsInfinite: (query: string, pageSize: number) =>
-    ["youtube", "playlists", query, pageSize] as const,
   channelPlaylistsInfinite: (channelId: string, pageSize: number) =>
     ["youtube", "channelPlaylists", channelId, pageSize] as const,
   playlistItemsInfinite: (playlistId: string, pageSize: number) =>
@@ -388,29 +379,6 @@ export function useYoutubePlaylistMeta(apiKey: string, playlistId: string) {
   });
 }
 
-export function useYouTubeTracksInfinite(
-  query: string,
-  pageSize = 24,
-  apiKey: string,
-) {
-  return useInfiniteQuery({
-    queryKey: youtubeKeys.tracksInfinite(query, pageSize),
-    enabled: !!query,
-    initialPageParam: undefined as string | undefined, // pageToken
-    getNextPageParam: (last) => last.nextPageToken ?? undefined,
-    queryFn: async ({ pageParam }) => {
-      const page = await searchYouTubeVideosPaged(
-        query,
-        apiKey,
-        pageSize,
-        pageParam,
-      );
-      return page;
-    },
-    staleTime: 1000 * 60 * 5,
-  });
-}
-
 export function useYoutubePlaylistItemsInfinite(
   apiKey: string,
   playlistId: string,
@@ -424,6 +392,119 @@ export function useYoutubePlaylistItemsInfinite(
     queryFn: ({ pageParam }) =>
       fetchPlaylistItemsPaged(playlistId, apiKey, pageSize, pageParam),
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
+  });
+}
+
+export function useYouTubeTracksInfinite(
+  apiKey: string,
+  query: string,
+  channelId: string,
+  pageSize = 24,
+) {
+  return useInfiniteQuery({
+    queryKey: youtubeKeys.searchTracks(query, pageSize),
+    enabled: !!query || !!channelId,
+    initialPageParam: undefined as string | undefined, // pageToken
+    getNextPageParam: (last) => last.nextPageToken ?? undefined,
+    queryFn: async ({ pageParam }) => {
+      const page = await searchYouTubeVideosPaged(
+        apiKey,
+        query,
+        channelId,
+        pageSize,
+        pageParam,
+      );
+      return page;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useYouTubeTracksFirstPage(
+  query: string,
+  channelId: string,
+  pageSize = 24,
+  apiKey: string,
+) {
+  console.log("useYoutubeTracks", query);
+  return useQuery<YTPage<YtVideoHit>, Error>({
+    queryKey: youtubeKeys.searchTracks(query, pageSize),
+    enabled: Boolean(query),
+    queryFn: () => searchYouTubeVideosPaged(apiKey, query, channelId, pageSize),
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
+}
+
+export function useYouTubePlaylistsInfinite(
+  apiKey: string,
+  query: string,
+  channelId: string,
+  pageSize = 24,
+) {
+  console.log("use Playlists infinite", query, channelId);
+  return useInfiniteQuery<YTPage<YtPlaylistHit>, Error>({
+    queryKey: youtubeKeys.searchPlaylists(query, pageSize),
+    enabled: Boolean(query) || Boolean(channelId),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => last.nextPageToken ?? undefined,
+    queryFn: ({ pageParam }) =>
+      searchYouTubePlaylistsPaged(
+        query,
+        channelId,
+        apiKey,
+        pageSize,
+        pageParam,
+      ),
+    throwOnError: true,
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useYouTubePlaylistsFirstPage(
+  query: string,
+  channelId: string,
+  pageSize = 24,
+  apiKey: string,
+) {
+  return useQuery<YTPage<YtPlaylistHit>, Error>({
+    queryKey: youtubeKeys.searchPlaylists(query, pageSize),
+    enabled: Boolean(query),
+    queryFn: () =>
+      searchYouTubePlaylistsPaged(query, channelId, apiKey, pageSize),
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
+  });
+}
+
+/* ---------- CHANNELS ---------- */
+export function useYouTubeChannelsInfinite(
+  query: string,
+  pageSize = 24,
+  apiKey: string,
+) {
+  return useInfiniteQuery<YTPage<YtChannelHit>, Error>({
+    queryKey: youtubeKeys.searchChannels(query, pageSize),
+    enabled: Boolean(query),
+    initialPageParam: undefined as string | undefined,
+    getNextPageParam: (last) => last.nextPageToken ?? undefined,
+    queryFn: ({ pageParam }) =>
+      searchYouTubeChannelsPaged(query, apiKey, pageSize, pageParam),
+    staleTime: 1000 * 60 * 5,
+  });
+}
+
+export function useYouTubeChannelsFirstPage(
+  query: string,
+  pageSize = 24,
+  apiKey: string,
+) {
+  return useQuery<YTPage<YtChannelHit>, Error>({
+    queryKey: youtubeKeys.searchChannels(query, pageSize),
+    enabled: Boolean(query),
+    queryFn: () => searchYouTubeChannelsPaged(query, apiKey, pageSize),
+    staleTime: 1000 * 60 * 5,
     retry: 2,
   });
 }

@@ -8,7 +8,6 @@ import Tracks from "../assets/icons/tracks.svg?react";
 import Playlists from "../assets/icons/playlists.svg?react";
 import Account from "../assets/icons/account.svg?react";
 import Upload from "../assets/icons/upload.svg?react";
-import MyUploads from "../assets/icons/my_uploads.svg?react";
 
 // router
 import { Link } from "react-router-dom";
@@ -26,7 +25,7 @@ export const SideBar = () => {
   const mainMenu: MenuItem[] = [
     { key: "account", label: "Account", Icon: Account },
     { key: "/", label: "Startseite", Icon: Home },
-    { key: "new", label: "Neu", Icon: NewReleases },
+    // { key: "new", label: "Neu", Icon: NewReleases },
   ];
 
   const libraryMenu: MenuItem[] = [
@@ -40,14 +39,14 @@ export const SideBar = () => {
     { key: "/library", label: "Titel", Icon: Tracks },
   ];
 
-  const playlistsMenu: MenuItem[] = [
+  /*const playlistsMenu: MenuItem[] = [
     { key: "/playlists", label: "Alle Playlists", Icon: Playlists },
-  ];
+  ];*/
 
-  const uploadsMenu: MenuItem[] = [
+  /*const uploadsMenu: MenuItem[] = [
     { key: "create", label: "Create Upload", Icon: Upload },
     // { key: "myUploads", label: "My Uploads", Icon: MyUploads },
-  ];
+  ];*/
 
   const renderMenu = (title: string, items: MenuItem[]) => (
     <div className="mb-6">
@@ -82,8 +81,8 @@ export const SideBar = () => {
     <aside className=" bg-[#502B6C] w-60 h-screen text-white flex flex-col py-4 pt-16py-4 pt-16">
       {renderMenu("", mainMenu)}
       {renderMenu("Meine Mediathek", libraryMenu)}
-      {renderMenu("Playlists", playlistsMenu)}
-      {renderMenu("Meine Uploads", uploadsMenu)}
+      {/* renderMenu("Playlists", playlistsMenu)}
+      {renderMenu("Meine Uploads", uploadsMenu) */}
     </aside>
   );
 };
