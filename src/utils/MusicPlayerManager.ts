@@ -206,7 +206,7 @@ export class MusicPlayerManager {
     const { provider } = musicPlayerStore.getState();
     if (this.audio) {
       if (provider === "youtube") {
-        // console.log("this audio", this.audio);
+        console.log("pausing video, this audio", this.audio);
         this.audio?.pauseVideo();
       } else {
         // console.log("this audio", this.audio);
@@ -286,6 +286,10 @@ export class MusicPlayerManager {
 
   static onEnded(callback: () => void) {
     this.audio?.addEventListener("ended", callback);
+  }
+
+  static clearPlayerState() {
+    this.audio = null;
   }
 
   static async playYoutube(audioEl: any) {

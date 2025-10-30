@@ -66,11 +66,6 @@ export const PlayerFooterComponent = () => {
 
   // desktop/mobile store
   const isMobile = useDesktopMobileStore((s) => s.isMobile);
-  //const platform = useDesktopMobileStore((s) => s.platform);
-  //const width = useDesktopMobileStore((s) => s.width);
-  //const height = useDesktopMobileStore((s) => s.height);
-
-  // console.log("in footer device", isMobile, platform, width, height);
 
   const isPlaying = useMusicPlayerStore((s) => s.isPlaying);
   const setIsPlaying = useMusicPlayerStore((s) => s.setIsPlaying);
@@ -171,8 +166,15 @@ export const PlayerFooterComponent = () => {
   };
 
   const handleError = (e) => {
-    // console.log("error in youtube", e);
+    console.log("error in youtube", e);
   };
+
+  useEffect(() => {
+    return () => {
+      // component unmounted → player destroyed
+      MusicPlayerManager.clearPlayerState();
+    };
+  }, []);
 
   const [trackMenuOpen, setTrackMenuOpen] = useState<boolean>(false);
 
@@ -188,7 +190,7 @@ export const PlayerFooterComponent = () => {
   const controls = useDragControls();
   const y = useMotionValue(0);
 
-  //console.log("provider in footer", provider, currentSong);
+  console.log("currentSong in footer", currentSong);
 
   // if (!currentSong) return null;
   if (!isMobile) {

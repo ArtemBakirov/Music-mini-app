@@ -32,9 +32,9 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
   const isPlayingCurrent = isCurrent && isPlaying;
   const set = musicPlayerStore.setState;
 
-  useEffect(() => {
+  /* useEffect(() => {
     setQueue(allTracks);
-  }, [allTracks]);
+  }, [allTracks]); */
 
   const handleClick = async () => {
     console.log("click");
@@ -47,7 +47,7 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
         isPlaying: true,
         currentSong: song,
       });
-      // setQueue(allTracks);
+      setQueue(allTracks);
     } else {
       if (isPlaying) {
         MusicPlayerManager.pause();
@@ -61,10 +61,10 @@ export const DisplayYoutubeSongCard = ({ song, allTracks }: Props) => {
 
   const profile = useAccountStore((s) => s.profile);
   const address = profile.address || "";
-  const queue = useMusicPlayerStore((s) => s.queue);
+  // const queue = useMusicPlayerStore((s) => s.queue);
   const audioId = song?.audioId || "";
 
-  const batchKeyIds = queue.map((s) => s.audioId);
+  const batchKeyIds = allTracks.map((s) => s.audioId);
   // console.log("batchedkeyIds", batchKeyIds);
   const { data: savedMap } = useSavedMap(address, "track", batchKeyIds);
   // console.log("savedMap", savedMap);
