@@ -127,6 +127,7 @@ export class MusicPlayerManager {
   }
 
   static async syncToState() {
+    console.log("sync to state");
     const { currentSong, isPlaying, provider, repeatMode } =
       musicPlayerStore.getState();
     if (!this.audio || !currentSong) return;
@@ -137,7 +138,13 @@ export class MusicPlayerManager {
         this.currentSrc,
         currentSong.audio,
       );*/
-      // console.log("src data", this.currentSrc, currentSong.audio, currentSong);
+      console.log(
+        "src data",
+        this.currentSrc,
+        currentSong.audioId,
+        currentSong,
+        repeatMode,
+      );
       if (this.currentSrc !== currentSong.audioId || repeatMode === "one") {
         // console.log("change src", this.currentSrc, currentSong.audio);
         //*****************

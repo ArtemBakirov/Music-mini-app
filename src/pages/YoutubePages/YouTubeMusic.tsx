@@ -19,6 +19,7 @@ export default function YouTubeMusic() {
     isLoading: videosLoading,
     isError: videosError,
   } = useYouTubeTracksFirstPage(query, "", 12, YT_API_KEY);
+  console.log("videosData", videosData);
   const {
     data: playlistsData,
     isLoading: isPlaylistsLoading,

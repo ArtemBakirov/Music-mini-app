@@ -85,8 +85,8 @@ export async function searchYouTubeVideosPaged(
     },
   });
   console.log("res videos paged infinite", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /*if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);*/
   const data = res.data;
   return { items: data.items, nextPageToken: data.nextPageToken };
 }
@@ -108,8 +108,8 @@ export async function searchYouTubePlaylistsPaged(
     },
   });
   console.log("axios res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /*if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);*/
   const data = res.data;
   return { items: data.items, nextPageToken: data.nextPageToken };
 }
@@ -129,8 +129,8 @@ export async function searchYouTubeChannelsPaged(
     },
   });
   console.log("axios res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`); */
   const data = res.data;
   return { items: data.items, nextPageToken: data.nextPageToken };
 }
@@ -146,8 +146,8 @@ export async function fetchChannelMeta(
       key: apiKey,
     },
   });
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`); */
   const item = res.data;
 
   if (!item) throw new Error("Channel not found");
@@ -171,8 +171,8 @@ export async function fetchPlaylistMeta(
     },
   });
   console.log("get metadata res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`); */
   const p = res.data;
 
   if (!p) throw new Error("Playlist not found");
@@ -197,8 +197,8 @@ export async function fetchChannelVideos(
     },
   });
   // console.log("axios res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`);*/
   const data = res.data;
 
   return { items: data.items, nextPageToken: data.nextPageToken };
@@ -219,8 +219,8 @@ export async function fetchChannelPlaylistsPaged(
     },
   });
   // console.log("axios res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`); */
   const data = res.data;
 
   return { items: data.items, nextPageToken: data.nextPageToken };
@@ -240,8 +240,8 @@ export async function fetchPlaylistItemsPaged(
     },
   });
   // console.log("axios res", res);
-  if (res.statusText !== "OK")
-    throw new Error(`YT search (videos) failed: ${res.status}`);
+  /* if (res.statusText !== "OK")
+    throw new Error(`YT search (videos) failed: ${res.status}`); */
   const data = res.data;
 
   return { items: data.items, nextPageToken: data.nextPageToken };
