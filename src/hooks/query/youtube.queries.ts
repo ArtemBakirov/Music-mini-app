@@ -170,32 +170,14 @@ export async function fetchPlaylistMeta(
       key: apiKey,
     },
   });
+  console.log("get metadata res", res);
   if (res.statusText !== "OK")
     throw new Error(`YT search (videos) failed: ${res.status}`);
-  const data = res.data;
-  const p = data.items?.[0];
+  const p = res.data;
 
   if (!p) throw new Error("Playlist not found");
 
-  const s = p.snippet ?? {};
-  const t = s.thumbnails ?? {};
-
-  return {
-    id: p.id,
-    title: s.title ?? "Playlist",
-    description: s.description ?? null,
-    channelId: s.channelId ?? "",
-    channelTitle: s.channelTitle ?? "",
-    publishedAt: s.publishedAt ?? "",
-    itemCount: p.contentDetails?.itemCount ?? 0,
-    thumbnails: {
-      default: t.default?.url,
-      medium: t.medium?.url,
-      high: t.high?.url,
-      standard: t.standard?.url,
-      maxres: t.maxres?.url,
-    },
-  };
+  return res.data;
 }
 
 export async function fetchChannelVideos(

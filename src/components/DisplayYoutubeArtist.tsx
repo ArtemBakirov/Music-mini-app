@@ -9,6 +9,7 @@ export function DisplayYoutubeArtist({
   thumbnail: string;
   id: string;
 }) {
+  console.log("artists thumbnail", thumbnail);
   return (
     <div className="flex flex-col items-center">
       <div className="w-28 h-28 rounded-lg overflow-hidden bg-black">

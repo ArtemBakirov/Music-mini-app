@@ -20,11 +20,12 @@ export async function addToLibrary(input: {
   song?: Song;
   channelId?: string;
   playlistId?: string;
+  videoId?: string;
 }) {
   console.log("adding input", input);
   try {
     const { data } = await apiInstance.post("/library", input);
-    console.log("data adding input", data);
+    // console.log("data adding input", data);
     return data;
   } catch (e) {
     console.log("error", e);
@@ -36,10 +37,16 @@ export async function removeFromLibrary(params: {
   address: string;
   kind: LibraryKind;
   provider: Provider;
-  audioId?: string;
   channelId?: string;
   playlistId?: string;
+  videoId?: string;
+  id?: string;
 }) {
+  console.log("removing params", params);
+  params = {
+    ...params,
+    id: params.videoId || params.playlistId || params.channelId,
+  };
   const { data } = await apiInstance.delete("/library", { params });
   return data;
 }
@@ -114,6 +121,7 @@ export function useToggleSave() {
       song?: Song;
       channelId?: string;
       playlistId?: string;
+      videoId?: string;
     }) => {
       if (p.action === "add") {
         return addToLibrary({
@@ -123,15 +131,16 @@ export function useToggleSave() {
           song: p.song,
           channelId: p.channelId,
           playlistId: p.playlistId,
+          videoId: p.videoId,
         });
       } else {
         return removeFromLibrary({
           address: p.address,
           kind: p.kind,
           provider: "youtube",
-          audioId: p?.song?.audioId,
           channelId: p.channelId,
           playlistId: p.playlistId,
+          videoId: p.videoId,
         });
       }
     },

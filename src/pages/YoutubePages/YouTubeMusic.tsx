@@ -19,7 +19,6 @@ export default function YouTubeMusic() {
     isLoading: videosLoading,
     isError: videosError,
   } = useYouTubeTracksFirstPage(query, "", 12, YT_API_KEY);
-  console.log("videoData", videosData);
   const {
     data: playlistsData,
     isLoading: isPlaylistsLoading,
@@ -38,7 +37,6 @@ export default function YouTubeMusic() {
       audioId: id,
     };
   });
-  console.log("tracks", tracks);
 
   const handleSearch = async (q: string) => {
     if (!q.trim()) return;

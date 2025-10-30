@@ -11,13 +11,14 @@ export const MusicPageContainer = () => {
 
   return (
     <div className="flex flex-col bg-[#371A4D] text-white h-screen w-full overflow-hidden">
-      {source === "jamendo" ? (
+      {/* source === "jamendo" ? (
         <Music />
       ) : source === "youtube" ? (
         <YouTubeMusic />
       ) : (
         <BastyonMusic />
-      )}
+      ) */}
+      <YouTubeMusic />
     </div>
   );
 };

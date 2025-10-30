@@ -89,17 +89,17 @@ export const musicPlayerStore = createStore<PlayerState>()(
       setProgress: (progress) => set({ progress }),
 
       setQueue: (tracks) => {
-        console.log("setting queue, tracks", tracks);
+        //console.log("setting queue, tracks", tracks);
         // keep current if still present; otherwise reset selection
         const { currentSong } = get();
         // console.log("setting queue, currentSong", currentSong);
         let currentIndex = -1;
         if (currentSong) {
-          console.log("setting currentIndex", currentSong, tracks);
+          // console.log("setting currentIndex", currentSong, tracks);
           currentIndex = tracks.findIndex(
             (t) => t.audioId === currentSong.audioId,
           );
-          console.log("current index found", currentIndex);
+          // console.log("current index found", currentIndex);
         }
         set({
           queue: tracks,
@@ -152,7 +152,7 @@ export const musicPlayerStore = createStore<PlayerState>()(
         }); */
       },
       next: () => {
-        console.log("next");
+        // console.log("next");
         const { queue, currentIndex, isShuffling, repeatMode } = get();
         // console.log("next, currentIndex", currentIndex);
         // console.log("queue", queue);

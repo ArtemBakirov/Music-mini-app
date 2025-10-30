@@ -7,12 +7,52 @@ import Play from "../../assets/icons/play.svg?react";
 import { useAccountStore } from "../../hooks/stores/useAccountStore.ts";
 import { RenderTracks } from "./RenderTracks.tsx";
 import { useEffect, useMemo, useRef } from "react";
+import {
+  useSavedMap,
+  useToggleSave,
+} from "../../hooks/query/library.queries.ts";
 
 export const RenderAlbum = () => {
   const { query = "" } = useParams();
   const YT_API_KEY =
     import.meta.env.VITE_YT_API_KEY ||
     "AIzaSyCUpYD21lRefE6F_WuO993Z4ityPj3aQdw";
+
+  const profile = useAccountStore((s) => s.profile);
+  const address = profile?.address || "";
+  const playlistId = query;
+
+  const batchKeyIds = [playlistId];
+  // console.log("batchedkeyIds", batchKeyIds);
+  const { data: savedMap } = useSavedMap(address, "album", batchKeyIds);
+  // console.log("savedMap", savedMap);
+  const isSaved = savedMap?.[playlistId] ?? false;
+  // console.log("isSaved footer", isSaved);
+  const { mutate } = useToggleSave();
+  // console.log("mutation is pending", isPending);
+
+  const handleAddToLibrary = () => {
+    console.log("add artist to library");
+    if (playlistId) {
+      if (isSaved) {
+        // console.log("removing");
+        mutate({
+          playlistId,
+          address: profile.address || "",
+          action: "remove",
+          kind: "album",
+        });
+      } else {
+        // console.log("adding");
+        mutate({
+          playlistId,
+          address: profile.address || "",
+          action: "add",
+          kind: "album",
+        });
+      }
+    }
+  };
 
   const {
     data: videosData,
@@ -22,7 +62,6 @@ export const RenderAlbum = () => {
     hasNextPage: hasNextVideosPage,
     isFetchingNextPage: isFetchingNextVideosPage,
   } = useYoutubePlaylistItemsInfinite(YT_API_KEY, query, 24);
-  console.log("Album videoDatas", videosData);
 
   const {
     data: metaData,
@@ -42,9 +81,6 @@ export const RenderAlbum = () => {
   const year = metaData?.publishedAt
     ? new Date(metaData.publishedAt).getFullYear()
     : "";
-
-  const profile = useAccountStore((s) => s.profile);
-  const address = profile?.address || "";
 
   const videos = useMemo(
     () => videosData?.pages.flatMap((p) => p.items) ?? [],
@@ -137,6 +173,12 @@ export const RenderAlbum = () => {
                     className="w-12 h-12 flex items-center justify-center rounded-full bg-white text-black hover:scale-105 transition-transform"
                   >
                     {<Play />}
+                  </button>
+                  <button
+                    onClick={handleAddToLibrary}
+                    className="bg-white text-black rounded-full px-4 py-2 text-sm hover:opacity-90"
+                  >
+                    {isSaved ? "- Remove from Library" : "+ Add to Library"}
                   </button>
                 </div>
               </>

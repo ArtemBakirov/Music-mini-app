@@ -1,6 +1,7 @@
 import { useLibrary } from "../../hooks/query/library.queries.ts";
 import { useAccountStore } from "../../hooks/stores/useAccountStore.ts";
 import { DisplayYoutubeSongCard } from "../../components/DisplayYoutubeSongCard.tsx";
+import { RenderArtists } from "../YoutubePages/RenderArtists.tsx";
 // Optionally hydrate from YT for fresh metadata (see notes below).
 
 export const MyLibraryArtists = () => {
@@ -11,16 +12,22 @@ export const MyLibraryArtists = () => {
 
   console.log("data", data);
 
-  /* const allTracks = data?.items.map((item) => {
-    return item.song;
-  }); */
+  const allArtistsMeta = data?.items.map((item) => {
+    console.log("item avatar", item.avatar);
+    return {
+      ...item.meta,
+      thumbnail: item.meta.avatar,
+      id: item.meta.channelId,
+    };
+  });
+  console.log("all tracks meta", allArtistsMeta);
 
   if (isLoading) return <div className="p-6">Loading…</div>;
   if (isError) return <div className="p-6 text-red-400">Failed to load.</div>;
 
   return (
     <div className="h-screen w-full flex flex-col p-6 pt-16 gap-6 overflow-hidden bg-[#371A4D] text-white">
-      Artists
+      {allArtistsMeta && <RenderArtists artists={allArtistsMeta} />}
     </div>
   );
 };

@@ -36,8 +36,6 @@ export default function RenderArtist() {
     isError: isErrorPlaylists,
   } = useYoutubeChannelPlaylistsFirstPage(YT_API_KEY, channelId, 12);
 
-  console.log("playlistData artist", playlistsData);
-
   const profile = useAccountStore((s) => s.profile);
   const address = profile?.address || "";
 

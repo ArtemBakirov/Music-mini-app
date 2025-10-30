@@ -20,7 +20,7 @@ import { AnimatedModalContainer } from "../Layout/Animated/AnimatedModalContaine
 import { useToggleSave, useSavedMap } from "../hooks/query/library.queries.ts";
 import { useAccountStore } from "../hooks/stores/useAccountStore.ts";
 
-export const JamendoPlayerFooter = () => {
+export const PlayerFooterComponent = () => {
   const audioRef = useRef<HTMLAudioElement | any>(null);
   const profile = useAccountStore((s) => s.profile);
   const address = profile.address || "";
@@ -238,14 +238,10 @@ export const JamendoPlayerFooter = () => {
             {provider === "youtube" && (
               <>
                 <YouTube
-                  // ref={audioRef}
-                  // videoId={videoId}
                   opts={opts}
                   onReady={onYTReady}
                   onStateChange={onYTStateChange}
                   onError={handleError}
-                  // onReady={onReady}
-                  // onStateChange={onStateChange}
                 />
               </>
             )}
