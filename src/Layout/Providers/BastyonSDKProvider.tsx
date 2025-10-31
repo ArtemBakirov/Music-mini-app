@@ -8,7 +8,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   const setError = useAccountStore((s) => s.setError);
   const patchProfile = useAccountStore((s) => s.patchProfile);
   const [initialized, setInitialized] = useState<boolean>(false);
-  // console.log("SDK init");
+  console.log("SDK init");
   const getUserAddress = async () => {
     // console.log("get user address");
     try {
@@ -49,15 +49,18 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
   };
 
   useEffect(() => {
-    // console.log("useEffect sdk provider");
+    console.log("useEffect sdk provider");
     (async () => {
       await SdkService.init()
         .then((info) => {
-          // console.log("app info", info);
+          console.log("app info", info);
           setInitialized(true);
         })
         .catch((e) => {
-          // console.error("failed init", e);
+          console.error("failed init", e);
+        })
+        .finally(() => {
+          console.log("tried init");
         });
       // await SdkService.requestPermissions();
       // Optional extras you had:
@@ -65,7 +68,7 @@ export const BastyonSDKProvider = ({ children }: { children: ReactNode }) => {
       // void SdkService.showHelperMessage("test helper message");
       void SdkService.getUserState();
     })();
-    // console.log("get address");
+    console.log("log here");
     void getUserAddress();
   }, []);
 

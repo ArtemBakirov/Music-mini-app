@@ -10,7 +10,12 @@ export class SdkService {
   private static sdk: BastyonSdk | null = null;
 
   public static inBastyon() {
-    this.ensureInitialized();
+    try {
+      this.ensureInitialized();
+    } catch (e) {
+      console.log("sdk error", e);
+      return;
+    }
     return this.sdk?.inbastyon();
   }
 
@@ -29,7 +34,9 @@ export class SdkService {
     }
 
     try {
+      console.log("new window");
       this.sdk = new window.BastyonSdk();
+      console.log("this sdk", this.sdk);
       const sdkInfo = await this.sdk.init();
       this.sdk!.emit("loaded");
       console.log("Bastyon SDK successfully initialized.");

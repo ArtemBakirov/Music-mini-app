@@ -5,10 +5,15 @@ import { InfoBar } from "./Infobar.tsx";
 import { useDesktopMobileStore } from "../hooks/stores/useDesktopMobileStore.ts";
 import { MobileMenu } from "./MobileMenu.tsx";
 import { BackButton } from "../components/BackButton.tsx";
+import { SdkService } from "../bastyon-sdk/sdkService.ts";
+
+// if inside bastyon, there must be a padding on the top, because of the iframe's navigation buttons
 
 export const App = () => {
   // mobile/desktop
   const isMobile = useDesktopMobileStore((s) => s.isMobile);
+  const inBastyon = SdkService.inBastyon();
+  console.log("in bastyon", inBastyon);
 
   return (
     <div
@@ -24,8 +29,13 @@ export const App = () => {
           "flex flex-col flex-1 relative my-0 mx-auto font-bold items-center justify-center"
         }
       >
-        <div className={"h-screen relative w-full"}>
-          <div className={"absolute top-5 left-5 z-50"}>
+        <div
+          className={`h-screen relative w-full border-2 border-green-500
+          ${inBastyon ? "pt-14" : isMobile ? "pt-5" : ""}`}
+        >
+          <div
+            className={`absolute left-5 z-50 ${inBastyon ? "top-14" : "top-5"}`}
+          >
             <BackButton />
           </div>
           <Outlet />
