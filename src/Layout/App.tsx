@@ -30,7 +30,7 @@ export const App = () => {
         }
       >
         <div
-          className={`h-screen relative w-full border-2 border-green-500
+          className={`h-screen relative w-full
           ${inBastyon ? "pt-14" : isMobile ? "pt-5" : ""}`}
         >
           <div
